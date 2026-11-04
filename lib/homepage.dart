@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/Constant/constantText.dart';
-import 'package:mahindra_bricks/Constant_Color.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/report.dart';
 
 import 'Constant/Constantcustomecalender.dart';
 import 'addproduction.dart';
+import 'clients.dart';
 import 'dailyattendence.dart';
+import 'dailypayout.dart';
 import 'drawer.dart';
 import 'labourmanagement.dart';
 import 'orders.dart';
@@ -44,29 +46,26 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         backgroundColor: pageColor,
         drawer: MahindraDrawer(
-          selectedIndex: selectedIndex,
-          onMenuTap: (index) {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
         ),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                SizedBox(height: topPadding),
-
-                _buildHeader(),
-                Expanded(
-                  child: _buildSelectedPage(),
-                ),
-              ],
-            ),
-          ],
+        body: SafeArea(
+          top: false,
+          bottom: true,
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  SizedBox(height: topPadding),
+                  _buildHeader(),
+                  Expanded(
+                    child: _buildSelectedPage(),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
 
-        bottomNavigationBar: _buildBottomNavigationBar(),
+        // bottomNavigationBar: _buildBottomNavigationBar(),
       ),
     );
   }
@@ -179,10 +178,10 @@ class _HomePageState extends State<HomePage> {
       child:  Stack(
         children: [
           Positioned(
-            top: 0,
+            top: -10,
             left: 0,
             right: 0,
-            height: Sizes.screenHeight * 0.39,
+            height: Sizes.screenHeight * 0.30,
             child: Image.asset(
               'assets/homebg.jpg',
               fit: BoxFit.cover,
@@ -193,7 +192,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                  top: 105,
+                  top: 40,
                   right: 12,
                 ),
                 child: Align(
@@ -279,79 +278,79 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(width: 5),
 
 
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: pageColor,
-                        borderRadius: BorderRadius.circular(7),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month,
-                            color: primaryColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
+                    InkWell(
 
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                [
-                                  'Monday',
-                                  'Tuesday',
-                                  'Wednesday',
-                                  'Thursday',
-                                  'Friday',
-                                  'Saturday',
-                                  'Sunday',
-                                ][selectedDate.weekday - 1],
-                                style: GoogleFonts.poppins(
-                                  fontSize: 9,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              Text(
-                                '${selectedDate.day} ${[
-                                  'Jan', 'Feb', 'Mar', 'Apr',
-                                  'May', 'Jun', 'Jul', 'Aug',
-                                  'Sep', 'Oct', 'Nov', 'Dec'
-                                ][selectedDate.month - 1]} ${selectedDate.year}',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (dialogContext) {
+                            return Dialog(
+                              child: CustomCalendar(
+                                selectedDate: selectedDate,
+                                onDateSelected: (date) {
+                                  setState(() {
+                                    selectedDate = date;
+                                  });
 
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (dialogContext) {
-                                  return Dialog(
-                                    child: CustomCalendar(
-                                      selectedDate: selectedDate,
-                                      onDateSelected: (date) {
-                                        setState(() {
-                                          selectedDate = date;
-                                        });
-
-                                        Navigator.pop(dialogContext);
-                                      },
-                                    ),
-                                  );
+                                  Navigator.pop(dialogContext);
                                 },
-                              );
-                            },
-                            child: const Icon(
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: pageColor,
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_month,
+                              color: primaryColor,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 4),
+
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  [
+                                    'Monday',
+                                    'Tuesday',
+                                    'Wednesday',
+                                    'Thursday',
+                                    'Friday',
+                                    'Saturday',
+                                    'Sunday',
+                                  ][selectedDate.weekday - 1],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 9,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  '${selectedDate.day} ${[
+                                    'Jan', 'Feb', 'Mar', 'Apr',
+                                    'May', 'Jun', 'Jul', 'Aug',
+                                    'Sep', 'Oct', 'Nov', 'Dec'
+                                  ][selectedDate.month - 1]} ${selectedDate.year}',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Icon(
                               Icons.keyboard_arrow_down,
                               size: 20,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     )
 
@@ -381,10 +380,19 @@ class _HomePageState extends State<HomePage> {
                         unitColor:  AppColor.stockUnitColor,
                         background: AppColor.backgroundColor,
                         rightImage: 'assets/bricks.jpg',
+                        showArrow: true,
                       ),
                     ),
 
                     DashboardCardWidget(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Clients(),
+                          ),
+                        );
+                      },
                       title: "Today's Production",
                       value: '8,500',
                       unit: 'Pieces',
@@ -399,16 +407,27 @@ class _HomePageState extends State<HomePage> {
                       rightImage: 'assets/bricks2.jpg',
                     ),
 
-                    DashboardCardWidget(
-                      title: 'Total Clients',
-                      value: '48',
-                      subtitle: '6 Pending Payments',
-                      leftImage: 'assets/c3.jpg',
-                      color: AppColor.clientsAmountColor,
-                      background: AppColor.clientsBackgroundColor,
-                      titleColor:AppColor.clientsTitleColor,
-                      subtitleColor: AppColor.pendingPaymentsColor,
-                      rightImage: 'assets/homec1.jpg',
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Clients(),
+                          ),
+                        );
+                      },
+                      child: DashboardCardWidget(
+                        title: 'Total Clients',
+                        value: '48',
+                        subtitle: '6 Pending Payments',
+                        leftImage: 'assets/c3.jpg',
+                        color: AppColor.clientsAmountColor,
+                        background: AppColor.clientsBackgroundColor,
+                        titleColor:AppColor.clientsTitleColor,
+                        subtitleColor: AppColor.pendingPaymentsColor,
+                        rightImage: 'assets/homec1.jpg',
+                        showArrow: true,
+                      ),
                     ),
 
                     DashboardCardWidget(
@@ -427,6 +446,14 @@ class _HomePageState extends State<HomePage> {
                     ),
 
                     DashboardCardWidget(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Dailyattendence(),
+                          ),
+                        );
+                      },
                       title: 'Labour Present',
                       value: '28 / 32',
                       subtitle: '2 Absent | 2 Half Day',
@@ -437,19 +464,31 @@ class _HomePageState extends State<HomePage> {
                       valueColor: AppColor.labourAmountColor,
                       subtitleColor: AppColor.labourSubtitleColor,
                       rightImage: 'assets/homec2.jpg',
+                      showArrow: true,
                     ),
 
-                    DashboardCardWidget(
-                      title: 'Pending Labour Payout',
-                      value: '₹ 42,600',
-                      subtitle: '8 Labourers',
-                      leftImage: 'assets/c4.jpg',
-                      color: AppColor.payoutTitleColor,
-                      background: AppColor.payoutBackgroundColor,
-                      titleColor: AppColor.payoutTitleColor,
-                      valueColor: AppColor.payoutAmountColor,
-                      subtitleColor: AppColor.payoutSubtitleColor,
-                      rightImage: 'assets/homec3.jpg',
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Dailypayout(),
+                          ),
+                        );
+                      },
+                      child: DashboardCardWidget(
+                        title: 'Labour Payout',
+                        value: '₹ 42,600',
+                        subtitle: '8 Labourers',
+                        leftImage: 'assets/c4.jpg',
+                        color: AppColor.payoutTitleColor,
+                        background: AppColor.payoutBackgroundColor,
+                        titleColor: AppColor.payoutTitleColor,
+                        valueColor: AppColor.payoutAmountColor,
+                        subtitleColor: AppColor.payoutSubtitleColor,
+                        rightImage: 'assets/homec3.jpg',
+                        showArrow: true,
+                      ),
                     ),
                   ],
                 ),
@@ -536,8 +575,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
   Widget _buildPlaceholderPage(
       String title,
       IconData icon,
@@ -569,87 +606,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBottomNavigationBar() {
-    final List<IconData> icons = [
-      Icons.home,
-      Icons.inventory_2,
-      Icons.shopping_cart,
-      Icons.groups,
-      Icons.bar_chart,
-    ];
-
-    final List<String> labels = [
-      'Home',
-      'Stock',
-      'Orders',
-      'Labour',
-      'Reports',
-    ];
-
-    return Container(
-      height: Sizes.screenHeight * 0.082,
-      padding: EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 5,
-      ),
-      decoration: BoxDecoration(
-        color: Color(0xFFFFFCF8),
-        border: Border(
-          top: BorderSide(
-            color: Color(0xFFF0E7DF),
-            width: 1,
-          ),
-        ),
-      ),
-      child: Row(
-        children: List.generate(labels.length, (index) {
-          final bool isSelected = selectedIndex == index;
-
-          return Expanded(
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-              borderRadius: BorderRadius.circular(30),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? Color(0xFFFBE8DC)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      icons[index],
-                      size: 19,
-                      color: isSelected
-                          ? primaryColor
-                          : Color(0xFF858078),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      labels[index],
-                      style: GoogleFonts.poppins(
-                        fontSize: 9,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.normal,
-                        color: isSelected
-                            ? primaryColor
-                            : Color(0xFF77716D),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
 }

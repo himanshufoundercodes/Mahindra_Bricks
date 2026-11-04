@@ -1,432 +1,168 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
-import 'package:mahindra_bricks/Constant_Color.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 
+import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constantstockcard.dart';
+import 'Constant/Constnat_Appbutton.dart';
 
-class Addproduct extends StatelessWidget {
-  Addproduct({super.key});
+class Addproduct extends StatefulWidget {
+  final image;
+  final name;
+  final size;
+  final code;
+  final price;
+  final stockStatus;
+  final category;
+
+  Addproduct({
+    super.key,
+    required this.image,
+    required this.name,
+    required this.size,
+    required this.code,
+    required this.price,
+    required this.stockStatus, this.category,
+  });
+
+  @override
+  State<Addproduct> createState() => _AddproductState();
+}
+
+class _AddproductState extends State<Addproduct> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF8F3),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: Sizes.screenWidth * 0.12,
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                color: Color(0xFFFFF9F0),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Color(0xFF702B1C),
-                        size: 27,
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Container(
-                      height: Sizes.screenWidth * 0.094,
-                      width: Sizes.screenWidth * 0.094,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Color(0xFFB58B76),
-                        ),
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/logo.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              'MAHINDRA BRICKS',
-                              style: GoogleFonts.poppins(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF702B1C),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 3),
-                          Text(
-                            'P A V E R   B L O C K S',
-                            style: GoogleFonts.poppins(
-                              fontSize: 9,
-                              color: Color(0xFF702B1C),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+      backgroundColor: AppColor.bodybackgroundColor,
+      appBar: const ConstantAppBar(
+        title: 'Dashboard',
+        showBranding: true,
+        showBackButton: true,
+        logoAsset: 'assets/logo.jpg',
+      ),
+      body: Column(
+        children: [
+          _buildHeader(),
+          Card(
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.circular(12),
               ),
-
-              Container(
-                width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(color: Color(0xFFFFF8F3)),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Product Details',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF782A17),
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'View product information and stock details',
-                        style: GoogleFonts.poppins(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF77716D),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-      
-                SizedBox(width: 8),
-      
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF963A20),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: Sizes.screenWidth * 0.385,
+                    decoration: BoxDecoration(
+                      color: AppColor.imgbg,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Image.asset(
+                      widget.image,
+                      fit: BoxFit.contain,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.edit, size: 14),
-                      SizedBox(width: 4),
-                      Text(
-                        'Edit Product',
-                        style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 5),
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Color(0xFFFFFBF8),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color(0xFFEDE5DF)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Column(
-                    children: [
-                      Container(
-                        height: Sizes.screenWidth * 0.292,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFAEFEB),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Image.asset(
-                          'assets/bricks.jpg',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-      
-                      SizedBox(height: 5),
-      
-                      Row(
-                        children: [
-                          for (int i = 1; i <= 4; i++)
+
+
+                  SizedBox(width: 10),
+
+                  Expanded(
+                    flex: 6,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
                             Expanded(
-                              child: Container(
-                                height: 32,
-                                margin: EdgeInsets.only(right: 3),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: i == 1
-                                        ? Color(0xFF963A20)
-                                        : Colors.transparent,
-                                  ),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Image.asset(
-                                  'assets/bricks.jpg',
-                                  fit: BoxFit.cover,
+                              child: Text(
+                                widget.name,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.stockTitleColor,
                                 ),
                               ),
                             ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-      
-                SizedBox(width: 10),
-      
-                Expanded(
-                  flex: 6,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Red Bricks (Standard)',
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF782A17),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Sizes.screenWidth * 0.016,
+                                vertical: Sizes.screenHeight * 0.004,
+                              ),
+                              decoration: BoxDecoration(
+                                color:AppColor.lightgreen,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                widget.stockStatus,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 10,
+                                  color: Colors.green,
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFE0F4E4),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              'Active',
-                              style: GoogleFonts.poppins(fontSize: 10, color: Colors.green),
-                            ),
-                          ),
-                        ],
-                      ),
-      
-                      SizedBox(height: 4),
-      
-                      Row(
-                        children: [
-                          Text(
-                            'Code: RB-001',
-                            style: GoogleFonts.poppins(
-                              fontSize: 10,
-                              color: Colors.blueGrey,
-                            ),
-                          ),
-                          SizedBox(width: 6),
-                          Icon(Icons.copy, size: 11, color: Color(0xFF963A20)),
-                        ],
-                      ),
-      
-                      SizedBox(height: 4),
-      
-                      Text(
-                        'Standard red clay bricks suitable for construction. High strength and durable.',
-                        style: GoogleFonts.poppins(
-                          fontSize: 9,
-                          color: Colors.blueGrey,
-                          height: 1.3,
+                          ],
                         ),
-                      ),
-      
-                      SizedBox(height: 6),
-      
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFAEFEB),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Icon(
-                              Icons.category,
-                              size: 16,
-                              color: Color(0xFF963A20),
-                            ),
-                          ),
-                          SizedBox(width: 6),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Category',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  color: Colors.blueGrey,
-                                ),
+
+                        SizedBox(height: 4),
+
+                        Row(
+                          children: [
+                            Text(
+                              "Code : ${widget.code}",
+                              style: GoogleFonts.poppins(
+                                fontSize: 10,
+                                color: AppColor.gey,
                               ),
-                              Text(
-                                'Bricks',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-      
-                      SizedBox(height: 4),
-      
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFAEFEB),
-                              borderRadius: BorderRadius.circular(5),
                             ),
-                            child: Icon(
-                              Icons.straighten,
-                              size: 16,
-                              color: Color(0xFF963A20),
+                            SizedBox(width: 6),
+                            Icon(
+                              Icons.copy,
+                              size: 11,
+                              color:AppColor.stockUnitColor,
                             ),
+                          ],
+                        ),
+
+                        SizedBox(height: 4),
+
+                        Text(
+                          'Standard red clay bricks suitable for construction. High strength and durable.',
+                          style: GoogleFonts.poppins(
+                            fontSize: 9,
+                            color:AppColor.gey,
+                            height: 1.3,
                           ),
-                          SizedBox(width: 6),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Size (L × W × H)',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  color: Colors.blueGrey,
-                                ),
-                              ),
-                              Text(
-                                '230 × 110 × 70 mm',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-      
-                      SizedBox(height: 4),
-      
-                      Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFAEFEB),
-                              borderRadius: BorderRadius.circular(5),
+                        ),
+                        SizedBox(height: 8),
+
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                product(title: 'Category', subtitle: 'Bricks', icon: Icons.eighteen_mp),
+                                SizedBox(width: 4),
+                                product(title: 'Size (L × W × H)', subtitle: '230 × 110 × 70 mm', icon: Icons.straighten),
+                              ],
                             ),
-                            child: Icon(
-                              Icons.palette,
-                              size: 16,
-                              color: Color(0xFF963A20),
-                            ),
-                          ),
-                          SizedBox(width: 6),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Colour',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  color: Colors.blueGrey,
-                                ),
-                              ),
-                              Text(
-                                'Red',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-      
-                      SizedBox(height: 4),
-      
-                      Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFAEFEB),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Icon(
-                              Icons.view_in_ar,
-                              size: 16,
-                              color: Color(0xFF963A20),
-                            ),
-                          ),
-                          SizedBox(width: 6),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Product Type',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 9,
-                                  color: Colors.blueGrey,
-                                ),
-                              ),
-                              Text(
-                                'Standard',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                           SizedBox(height: 10),
+                           Row(
+                             children: [
+                               product(title: 'Colour', subtitle: 'Red', icon: Icons.view_in_ar),
+                               SizedBox(width: 18),
+                               product(title: 'Product Type', subtitle: 'Standard', icon: Icons.straighten)
+                             ],
+                           )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Padding(
@@ -444,200 +180,312 @@ class Addproduct extends StatelessWidget {
                   value: '15,000',
                   subtitle: 'Pieces',
                   icon: Icons.inventory_2,
-                  backgroundColor:  Color(0xFFFFF0EC),
-                  iconBackgroundColor:  Color(0xFFFCE0D8),
-                  iconColor:  Color(0xFF9D2417),
-                  titleColor:  Color(0xFF555555),
-                  valueColor:  AppColor.stockAmountColor,
-                  subtitleColor:  AppColor.stockUnitColor,
+                  backgroundColor: AppColor.lightred,
+                  iconBackgroundColor: AppColor.lightredbg,
+                  iconColor: AppColor.stockUnitColor,
+                  titleColor: AppColor.gey,
+                  valueColor: AppColor.stockAmountColor,
+                  subtitleColor: AppColor.stockUnitColor,
                 ),
                 StockCard(
                   title: 'Minimum Stock Alert',
                   value: '1,000',
                   icon: Icons.notifications,
-                  backgroundColor: Color(0xFFFFF0EC),
-                  iconBackgroundColor: Color(0xFFFCE0D8),
-                  iconColor: Color(0xFF9D2417),
-                  valueColor:  AppColor.stockAmountColor,
-                  subtitleColor:  AppColor.stockUnitColor,
+                  backgroundColor: AppColor.lightred,
+                  iconBackgroundColor: AppColor.lightredbg,
+                  iconColor: AppColor.stockUnitColor,
+                  titleColor: AppColor.gey,
+                  valueColor: AppColor.stockAmountColor,
+                  subtitleColor: AppColor.stockUnitColor,
                 ),
                 StockCard(
                   title: 'Total Production',
                   value: '45,000',
                   icon: Icons.settings,
-                  backgroundColor: Color(0xFFEEF8F0),
-                  iconBackgroundColor: Color(0xFFDDF1E3),
-                  iconColor: Color(0xFF16804A),
-                  valueColor:  AppColor.productionAmountColor,
-                  titleColor:  AppColor.green
+                  backgroundColor: AppColor.productbackgroundColor,
+                  iconBackgroundColor: AppColor.bgicon,
+                  iconColor: AppColor.productionUnitColor,
+                  valueColor: AppColor.productionAmountColor,
+                  titleColor: AppColor.green,
                 ),
                 StockCard(
                   title: 'Total Dispatched',
                   value: '28,500',
                   icon: Icons.local_shipping,
-                  backgroundColor: Color(0xFFEBF5FF),
-                  iconBackgroundColor: Color(0xFFD8ECFF),
-                  iconColor: Color(0xFF0864B5),
-                    valueColor:  AppColor.productionAmountColor,
-                    titleColor:  AppColor.blueAccent
+                  backgroundColor: AppColor.dispatchBackgroundColor,
+                  iconBackgroundColor: AppColor.dispatcheColor,
+                  iconColor: AppColor.dispatchiconcolore,
+                  valueColor: AppColor.productionAmountColor,
+                  titleColor: AppColor.blueAccent,
                 ),
                 StockCard(
                   title: 'Total Sold',
                   value: '25,000',
                   icon: Icons.shopping_cart,
-                  backgroundColor: Color(0xFFFFF9E9),
-                  iconBackgroundColor: Color(0xFFFFF0D0),
-                  iconColor: Color(0xFFAA6800),
-                  valueColor: Colors.black,
+                  backgroundColor: AppColor.lightyellow,
+                  iconBackgroundColor: AppColor.lightmediumyellow,
+                  iconColor: AppColor.darkyellow,
+                  valueColor: AppColor.black,
                 ),
                 StockCard(
                   title: 'Current Stock Value',
                   value: '₹ 1,20,000',
                   subtitle: '(at selling price)',
                   icon: Icons.widgets,
-                  backgroundColor: Color(0xFFFFF0EC),
-                  iconBackgroundColor: Color(0xFFFCE0D8),
-                  iconColor: Color(0xFF9D2417),
-                  valueColor:  AppColor.stockAmountColor,
+                  backgroundColor: AppColor.lightred,
+                  iconBackgroundColor: AppColor.lightredbg,
+                  iconColor: AppColor.stockUnitColor,
+                  titleColor: AppColor.gey,
+                  valueColor: AppColor.stockAmountColor,
+                  subtitleColor: AppColor.gey,
                 ),
                 StockCard(
                   title: 'Cost Price',
                   value: '₹ 5.00',
                   subtitle: '(per piece)',
                   icon: Icons.currency_rupee,
-                  backgroundColor: Color(0xFFFFFBF8),
-                  iconBackgroundColor: Color(0xFFFCE7DF),
-                  iconColor: Color(0xFF9D2417),
-                  valueColor:  AppColor.stockAmountColor,
+                  backgroundColor: AppColor.lightbgcolor,
+                  iconBackgroundColor: AppColor.lightredbg,
+                  iconColor: AppColor.stockUnitColor,
+                  titleColor: AppColor.gey,
+                  valueColor: AppColor.stockAmountColor,
+                  subtitleColor: AppColor.gey,
                 ),
                 StockCard(
                   title: 'Selling Price',
                   value: '₹ 8.00',
                   subtitle: '(per piece)',
                   icon: Icons.currency_rupee,
-                  backgroundColor: Color(0xFFFFFBF8),
-                  iconBackgroundColor: Color(0xFFFCE7DF),
-                  iconColor: Color(0xFF9D2417),
-                  valueColor:  AppColor.stockAmountColor,
+                  backgroundColor: AppColor.lightbgcolor,
+                  iconBackgroundColor: AppColor.lightredbg,
+                  iconColor: AppColor.stockUnitColor,
+                  titleColor: AppColor.gey,
+                  valueColor: AppColor.stockAmountColor,
+                  subtitleColor: AppColor.gey,
                 ),
               ],
             ),
           ),
 
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 5,
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: Sizes.screenWidth * 0.33,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF963A20),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.settings, size: 18),
-                          SizedBox(width: 7),
-                          Flexible(
-                            child: Text(
-                              'Add Production',
-                              maxLines: 1,
-                              style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: 6),
-
-                  SizedBox(
-                    width: Sizes.screenWidth * 0.33,
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Color(0xFF963A20),
-                        side: BorderSide(
-                          color: Color(0xFF963A20),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.swap_vert, size: 18),
-                          SizedBox(width: 5),
-                          Flexible(
-                            child: Text(
-                              'Stock Adjustment',
-                              maxLines: 1,
-                              style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: 6),
-
-                  SizedBox(
-                    width: Sizes.screenWidth * 0.33,
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Color(0xFF963A20),
-                        side: BorderSide(
-                          color: Color(0xFF963A20),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.local_shipping, size: 16),
-                          SizedBox(width: 5),
-                          Flexible(
-                            child: Text(
-                              'Create Dispatch',
-                              maxLines: 1,
-                              style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
+          // Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          //   child: SingleChildScrollView(
+          //     scrollDirection: Axis.horizontal,
+          //     child: Row(
+          //       children: [
+          //         SizedBox(
+          //           width: Sizes.screenWidth * 0.33,
+          //           child: ElevatedButton(
+          //             onPressed: () {},
+          //             style: ElevatedButton.styleFrom(
+          //               backgroundColor: Color(0xFF963A20),
+          //               foregroundColor: Colors.white,
+          //               elevation: 0,
+          //               padding: EdgeInsets.symmetric(vertical: 12),
+          //               shape: RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(7),
+          //               ),
+          //             ),
+          //             child: Row(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               children: [
+          //                 Icon(Icons.settings, size: 18),
+          //                 SizedBox(width: 7),
+          //                 Flexible(
+          //                   child: Text(
+          //                     'Add Production',
+          //                     maxLines: 1,
+          //                     style: GoogleFonts.poppins(
+          //                       fontSize: 10,
+          //                       fontWeight: FontWeight.w600,
+          //                     ),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //
+          //         SizedBox(width: 6),
+          //
+          //         SizedBox(
+          //           width: Sizes.screenWidth * 0.33,
+          //           child: OutlinedButton(
+          //             onPressed: () {},
+          //             style: OutlinedButton.styleFrom(
+          //               foregroundColor: Color(0xFF963A20),
+          //               side: BorderSide(color: Color(0xFF963A20)),
+          //               padding: EdgeInsets.symmetric(vertical: 12),
+          //               shape: RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(7),
+          //               ),
+          //             ),
+          //             child: Row(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               children: [
+          //                 Icon(Icons.swap_vert, size: 18),
+          //                 SizedBox(width: 5),
+          //                 Flexible(
+          //                   child: Text(
+          //                     'Stock Adjustment',
+          //                     maxLines: 1,
+          //                     style: GoogleFonts.poppins(
+          //                       fontSize: 10,
+          //                       fontWeight: FontWeight.w600,
+          //                     ),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //
+          //         SizedBox(width: 6),
+          //
+          //         SizedBox(
+          //           width: Sizes.screenWidth * 0.33,
+          //           child: OutlinedButton(
+          //             onPressed: () {},
+          //             style: OutlinedButton.styleFrom(
+          //               foregroundColor: Color(0xFF963A20),
+          //               side: BorderSide(color: Color(0xFF963A20)),
+          //               padding: EdgeInsets.symmetric(vertical: 12),
+          //               shape: RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(7),
+          //               ),
+          //             ),
+          //             child: Row(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               children: [
+          //                 Icon(Icons.local_shipping, size: 16),
+          //                 SizedBox(width: 5),
+          //                 Flexible(
+          //                   child: Text(
+          //                     'Create Dispatch',
+          //                     maxLines: 1,
+          //                     style: GoogleFonts.poppins(
+          //                       fontSize: 10,
+          //                       fontWeight: FontWeight.w600,
+          //                     ),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
+    );
+  }
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: Sizes.screenHeight * 0.010,
+          vertical: Sizes.screenHeight * 0.010
       ),
-    ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Product Details',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.stockAmountColor,
+                  ),
+                ),
+                Text(
+                  'View product information and stock details',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.gey,
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(width: 8),
+
+            CustomButton(
+              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              height: 35,
+              width: 100,
+              text: 'Edit Product',
+              fontSize:  12,
+              fontWeight: .w500,
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => AddProductPage()),
+                // );
+              },
+              iconOnLeft: true,
+              icon: Icons.edit,
+              iconSize: 15,
+              iconSpacing: 2,
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget product({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+  }) {
+    return  Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color:AppColor.imgbg,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Icon(
+            icon,
+            size: 16,
+            color: AppColor.stockTitleColor,
+          ),
+        ),
+        SizedBox(width: 6),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 10,
+                color: Colors.blueGrey,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: GoogleFonts.poppins(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
-
-

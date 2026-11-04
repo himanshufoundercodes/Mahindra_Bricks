@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:mahindra_bricks/utils/utils.dart';
+import 'package:mahindra_bricks/viewmodel/addcategoryview_model.dart';
+import 'package:provider/provider.dart';
+
+import 'Constant/Constnat_Appbutton.dart';
 
 class AddCategorySheet extends StatefulWidget {
   AddCategorySheet({super.key});
@@ -12,9 +17,34 @@ class AddCategorySheet extends StatefulWidget {
 class _AddCategorySheetState extends State<AddCategorySheet> {
   final TextEditingController categoryController =
   TextEditingController();
-
   final TextEditingController descriptionController =
   TextEditingController();
+
+  Future<void> handleaddcategory() async {
+    if (categoryController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, "Please enter category name");
+      return;
+    }
+    final viewModel = context.read<AddcategoryviewModel>();
+    if (viewModel.loading) return;
+    final success = await viewModel.addcategoryApi(
+      categoryController.text,
+      descriptionController.text,
+    );
+    if (!context.mounted) return;
+    if (success) {
+      Utils.showSuccessMessage(
+        context,
+        "Add Category Successfully!",
+      );
+      Navigator.pop(context, true);
+    } else {
+      Utils.showErrorMessage(
+        context,
+        viewModel.errorMessage ?? "Add category failed",
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -25,7 +55,7 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
 
   @override
   Widget build(BuildContext context) {
-    final Color brown = Color(0xFF941008);
+  //  final Color brown = Color(0xFF941008);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -150,7 +180,6 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
               ),
 
               SizedBox(height: 12),
-
               Text(
                 "Description",
                 style: TextStyle(fontSize: 14),
@@ -184,47 +213,12 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
               ),
 
               SizedBox(height: 14),
-
-              SizedBox(
-                width: double.infinity,
-                height: 46,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (categoryController.text.trim().isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Please enter category name"),
-                        ),
-                      );
-                      return;
-                    }
-
-                    String categoryName =
-                    categoryController.text;
-                    String description =
-                    descriptionController.text;
-
-                    Navigator.pop(context);
-
-                    debugPrint("Category: $categoryName");
-                    debugPrint("Description: $description");
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: brown,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(9),
-                    ),
-                  ),
-                  child: Text(
-                    "Save Category",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+              CustomButton(
+                text: 'Save Category',
+                isLoading: context.watch<AddcategoryviewModel>().loading,
+                onPressed: () async {
+                  await handleaddcategory();
+                },
               ),
             ],
           ),

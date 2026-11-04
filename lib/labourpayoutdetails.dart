@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/paymenthistory.dart';
 
+import 'Constant/Constantadvancepaymnet.dart';
 import 'Constant/Constantcustomecalender.dart';
 import 'Constant/Constantheader.dart';
 
@@ -18,6 +20,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
   final TextEditingController amountController =
   TextEditingController( text: "1200");
   String selectedPayment = 'Cash';
+  String selectedPaymentbtn = 'Save Payment';
   DateTime? selectedPaymentDate = DateTime(2026, 10, 17);
   DateTime? selectedStartDate = DateTime(2026, 10, 15);
   DateTime? selectedEndDate = DateTime(2026, 10, 17);
@@ -27,7 +30,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 30),
+            SizedBox(height: 35),
             CustomHeader(),
           SizedBox(height: 8),
             Padding(
@@ -195,7 +198,6 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
             ),
           ),
           SizedBox(height: 5),
-          // CustomDateSelector(),
             Container(
               height: Sizes.screenHeight * 0.062,
               margin: EdgeInsets.symmetric(horizontal: 10),
@@ -277,24 +279,16 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       child: Icon(
                         Icons.keyboard_arrow_down,
                         color: Color(0xFF9E2424),
-                        size: 23,
+                        size: 22,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 8),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Color(0xFFF0E8E3),
-              ),
-            ),
+            SizedBox(height: 10),
+          Padding(
+            padding:  EdgeInsets.symmetric(horizontal: 12),
             child: Column(
               children: [
                 Row(
@@ -302,72 +296,176 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Attendance Summary (15 Oct – 17 Oct)',
+                        'Attendance Summary ',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.poppins(
-                          fontSize: 12,
+                          fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF782A17),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        'View Details',
-                        style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF782A17),
+                          color: AppColor.red,
                         ),
                       ),
                     ),
                   ],
                 ),
-
-                SizedBox(height: 8),
-
+                SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
-                      child: _attendanceSummaryItem(
-                        icon: Icons.check_circle,
-                        value: '3',
-                        title: 'Present',
-                        iconColor: Color(0xFF16833B),
-                        bgColor: Color(0xFFE8F8ED),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF5FBF7),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: Sizes.screenHeight * 0.037,
+                              width: Sizes.screenWidth * 0.08,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFDDF5E8),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.verified_user,
+                                color: Color(0xFF15965B),
+                                size: 22,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Present",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    color: Color(0xFF626675),
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  "12 days",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF202331),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(width: 5),
+                    SizedBox(width: 8),
                     Expanded(
-                      child: _attendanceSummaryItem(
-                        icon: Icons.watch_later,
-                        value: '0',
-                        title: 'Half Day',
-                        iconColor: Color(0xFFC46A12),
-                        bgColor: Color(0xFFFFF3E4),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFFF9F2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: Sizes.screenHeight * 0.037,
+                              width: Sizes.screenWidth * 0.08,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFFE9D1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.assignment_late,
+                                color: Color(0xFFEF8A21),
+                                size: 20,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Half Day",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    color: Color(0xFF626675),
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  "3 days",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF202331),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(width: 5),
+
+                    SizedBox(width: 8),
+
                     Expanded(
-                      child: _attendanceSummaryItem(
-                        icon: Icons.close,
-                        value: '0',
-                        title: 'Absent',
-                        iconColor: Color(0xFFC62828),
-                        bgColor: Color(0xFFFFEEEE),
-                      ),
-                    ),
-                    SizedBox(width: 5),
-                    Expanded(
-                      child: _attendanceSummaryItem(
-                        icon: Icons.access_time,
-                        value: '4',
-                        title: 'Overtime(Hrs)',
-                        iconColor: Color(0xFF7045B5),
-                        bgColor: Color(0xFFF1E9FF),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFBF7FF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: Sizes.screenHeight * 0.037,
+                              width: Sizes.screenWidth * 0.08,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFEDE0FF),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.access_time_filled,
+                                color: Color(0xFF8738F5),
+                                size: 20,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Overtime",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    color: Color(0xFF626675),
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  "4 hrs",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF202331),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -376,340 +474,212 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
             ),
           ),
           SizedBox(height: 10),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(9),
-              border: Border.all(
-                color: Color(0xFFF0E8E3),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(9),
+                border: Border.all(
+                  color: Color(0xFFF0E8E3),
+                ),
               ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Amount Calculation',
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF782A17),
-                  ),
-                ),
-
-                SizedBox(height: 5),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 3,
-                    vertical: 2,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Present (3 × ₹600)',
-                        style: GoogleFonts.poppins(
-                          fontSize: 11,
-                          color: Color(0xFF687386),
-                        ),
-                      ),
-                      Text(
-                        '₹ 1,800',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF172033),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Divider(
-                  height: 7,
-                  thickness: 0.5,
-                  color: Color(0xFFEAEAEA),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 3,
-                    vertical: 2,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Half Day (0 × ₹300)',
-                        style: GoogleFonts.poppins(
-                          fontSize: 11,
-                          color: Color(0xFF687386),
-                        ),
-                      ),
-                      Text(
-                        '₹ 0',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF172033),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Divider(
-                  height: 7,
-                  thickness: 0.5,
-                  color: Color(0xFFEAEAEA),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 3,
-                    vertical: 2,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Overtime (4 hrs × ₹150)',
-                        style: GoogleFonts.poppins(
-                          fontSize: 11,
-                          color: Color(0xFF687386),
-                        ),
-                      ),
-                      Text(
-                        '₹ 600',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF172033),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 5),
-
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 7,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFF0ED),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Total Payable Amount',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF782A17),
-                        ),
-                      ),
-                      Text(
-                        '₹ 2,400',
-                        style: GoogleFonts.poppins(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF963025),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            padding: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(9),
-              border: Border.all(
-                color: Color(0xFFF0E8E3),
-              ),
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: Sizes.screenWidth * 0.30,
-                    height: Sizes.screenHeight * 0.065,
-                    padding: EdgeInsets.symmetric(horizontal: 6),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFE9F9F0),
-                      borderRadius: BorderRadius.circular(7),
+                  Text(
+                    'Payment Calculation',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppColor.red,
                     ),
+                  ),
+
+                  SizedBox(height: 3),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                            color: Color(0xFFD5F3E1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.currency_rupee,
-                            size: 19,
-                            color: Color(0xFF16833B),
+                        Text(
+                          'Attendance Amount (3 × 600)',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Color(0xFF687386),
                           ),
                         ),
-                        SizedBox(width: 7),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '₹ 1,200',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF16833B),
-                                ),
-                              ),
-                              Text(
-                                'Total Paid',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  color: Color(0xFF5D6470),
-                                ),
-                              ),
-                            ],
+                        Text(
+                          '₹ 1,800',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF172033),
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  SizedBox(width: 8),
+                  Divider(height: 5, thickness: 0.5, color: Color(0xFFEAEAEA)),
 
-                  Container(
-                    width: Sizes.screenWidth * 0.30,
-                    height: Sizes.screenHeight * 0.065,
-                    padding: EdgeInsets.symmetric(horizontal: 6),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFFEEEE),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          height: 35,
-                          width: 35,
-                          decoration: BoxDecoration(
-                            color: Color(0xFFFFDCDC),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.monetization_on,
-                            size: 21,
-                            color: Color(0xFFC62828),
+                        Text(
+                          'Half Day (1 × 300)',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Color(0xFF687386),
                           ),
                         ),
-                        SizedBox(width: 7),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '₹ 1,200',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFFC62828),
-                                ),
-                              ),
-                              Text(
-                                'Remaining',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  color: Color(0xFF5D6470),
-                                ),
-                              ),
-                            ],
+                        Text(
+                          '₹ 300',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF172033),
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  SizedBox(width: 8),
+                  Divider(height: 5, thickness: 0.5, color: Color(0xFFEAEAEA)),
 
-                  Container(
-                    width: Sizes.screenWidth * 0.30,
-                    height: Sizes.screenHeight * 0.065,
-                    padding: EdgeInsets.symmetric(horizontal: 6),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFEDF5FF),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                            color: Color(0xFFD8EAFE),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.currency_rupee,
-                            size: 21,
-                            color: Color(0xFF1763B5),
+                        Text(
+                          'Overtime (2 hrs × 150)',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Color(0xFF687386),
                           ),
                         ),
-                        SizedBox(width: 7),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '₹ 0',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF17396B),
-                                ),
-                              ),
-                              Text(
-                                "Today's Payment",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 9,
-                                  color: Color(0xFF5D6470),
-                                ),
-                              ),
-                            ],
+                        Text(
+                          '₹ 300',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF172033),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 4),
+
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFFF0ED),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total Earned',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.red,
+                          ),
+                        ),
+                        Text(
+                          '₹ 2,400',
+                          style: GoogleFonts.poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Less: Advance Paid (Outstanding)',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Color(0xFF687386),
+                          ),
+                        ),
+                        Text(
+                          '− ₹ 500',
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Less: Previous Payments',
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: Color(0xFF687386),
+                          ),
+                        ),
+                        Text(
+                          '− ₹ 0',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 3),
+
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFFF0ED),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Remaining Payable',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.red,
+                          ),
+                        ),
+                        Text(
+                          '₹ 1,900',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.red,
                           ),
                         ),
                       ],
@@ -718,9 +688,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                 ],
               ),
             ),
-          ),
-            SizedBox(height: 10),
-
+          SizedBox(height: 10),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               padding: EdgeInsets.all(10),
@@ -739,7 +707,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF782A17),
+                      color: AppColor.red,
                     ),
                   ),
 
@@ -911,7 +879,6 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
 
                   Row(
                     children: [
-                      // Cash
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
@@ -943,11 +910,11 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                                       ? Color(0xFF963025)
                                       : Color(0xFF45505E),
                                 ),
-                                SizedBox(width: 6),
+                                SizedBox(width: 4),
                                 Text(
                                   'Cash',
                                   style: GoogleFonts.poppins(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     color: selectedPayment == 'Cash'
                                         ? Color(0xFF782A17)
                                         : Color(0xFF172033),
@@ -958,7 +925,8 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: 8),
+
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
@@ -990,12 +958,60 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                                       ? Color(0xFF963025)
                                       : Color(0xFF45505E),
                                 ),
-                                SizedBox(width: 6),
+                                SizedBox(width: 4),
                                 Text(
                                   'UPI',
                                   style: GoogleFonts.poppins(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     color: selectedPayment == 'UPI'
+                                        ? Color(0xFF782A17)
+                                        : Color(0xFF172033),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedPayment = 'Advance';
+                            });
+                          },
+                          child: Container(
+                            height: Sizes.screenHeight * 0.045,
+                            decoration: BoxDecoration(
+                              color: selectedPayment == 'Advance'
+                                  ? Color(0xFFFFF2EE)
+                                  : Colors.white,
+                              border: Border.all(
+                                color: selectedPayment == 'Advance'
+                                    ? Color(0xFF963025)
+                                    : Color(0xFFE0E0E0),
+                                width: selectedPayment == 'Advance' ? 1.2 : 1,
+                              ),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.account_balance_wallet_outlined,
+                                  size: 18,
+                                  color: selectedPayment == 'Advance'
+                                      ? Color(0xFF963025)
+                                      : Color(0xFF45505E),
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Advance',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: selectedPayment == 'Advance'
                                         ? Color(0xFF782A17)
                                         : Color(0xFF172033),
                                   ),
@@ -1007,7 +1023,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 11),
                   Text(
                     'Notes (Optional)',
                     style: GoogleFonts.poppins(
@@ -1016,7 +1032,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                     ),
                   ),
 
-                  SizedBox(height: 8),
+                  SizedBox(height: 10),
 
                   Container(
                     height: Sizes.screenHeight * 0.045,
@@ -1042,45 +1058,120 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                         contentPadding: EdgeInsets.zero,
                       ),
                       style: GoogleFonts.poppins(
-                        fontSize: 11,
+                        fontSize: 12,
                         color: Color(0xFF172033),
                       ),
                     ),
                   ),
 
-                  SizedBox(height: 12),
+                  SizedBox(height: 15),
 
-                  Container(
-                    height: Sizes.screenHeight * 0.050,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF963025),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.save,
-                          size: 25,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 12),
-                        Text(
-                          'Save Payment',
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedPaymentbtn = 'Give Advance';
+                            });
+
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) {
+                                return GiveAdvancePopup();
+                              },
+                            );
+                          },
+                          child: Container(
+                            height: Sizes.screenHeight * 0.050,
+                            decoration: BoxDecoration(
+                              color: selectedPaymentbtn == 'Give Advance'
+                                  ? Color(0xFF963025)
+                                  : Color(0xFFFFF2EE),
+                              border: Border.all(
+                                color: Color(0xFF963025),
+                              ),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.volunteer_activism,
+                                  size: 20,
+                                  color: selectedPaymentbtn == 'Give Advance'
+                                      ? Colors.white
+                                      : Color(0xFF963025),
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Give Advance',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: selectedPaymentbtn == 'Give Advance'
+                                        ? Colors.white
+                                        : Color(0xFF963025),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedPaymentbtn = 'Save Payment';
+                            });
+                          },
+                          child: Container(
+                            height: Sizes.screenHeight * 0.050,
+                            decoration: BoxDecoration(
+                              color: selectedPaymentbtn == 'Save Payment'
+                                  ? Color(0xFF963025)
+                                  : Color(0xFFFFF2EE),
+                              border: Border.all(
+                                color: Color(0xFF963025),
+                              ),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.save,
+                                  size: 20,
+                                  color: selectedPaymentbtn == 'Save Payment'
+                                      ? Colors.white
+                                      : Color(0xFF963025),
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Save Payment',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: selectedPaymentbtn == 'Save Payment'
+                                        ? Colors.white
+                                        : Color(0xFF963025),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
-            SizedBox(height: 25),
+            SizedBox(height: 40),
           ],
       ),
 

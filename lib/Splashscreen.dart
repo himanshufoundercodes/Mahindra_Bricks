@@ -1,8 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
+import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
-import 'Loginpage.dart';
+import 'Constant/Constant_bottomnav.dart';
+import 'Loginpagenew.dart';
+import 'core/storage/login_sharedpreferences.dart';
 
 class MahindraSplashScreen extends StatefulWidget {
   const MahindraSplashScreen({super.key});
@@ -11,107 +16,123 @@ class MahindraSplashScreen extends StatefulWidget {
   State<MahindraSplashScreen> createState() =>
       _MahindraSplashScreenState();
 }
-
 class _MahindraSplashScreenState
     extends State<MahindraSplashScreen> {
 
   @override
   void initState() {
     super.initState();
+    _navigateToNextScreen();
+  }
 
-    Future.delayed( Duration(seconds: 3), () {
-      if (!mounted) return;
+  Future<void> _navigateToNextScreen() async {
+
+    await Future.delayed(Duration(seconds: 3));
+
+    if (!mounted) return;
+
+    String? token = await PreferenceService.getToken();
+
+    if (!mounted) return;
+
+    if (token != null && token.isNotEmpty) {
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>  Loginpage(),
+          builder: (context) => CustomBottomNavBar(),
         ),
       );
-    });
-  }
 
+    } else {
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Loginpagenew(),
+        ),
+      );
+
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/splash.jpg',
-              fit: BoxFit.cover,
-            ),
+      body: Container(
+        width: Sizes.screenWidth,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/splash.jpg"),
+            fit: BoxFit.cover,
           ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.09,
-            left: 10,
-            right: 10,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  width: 110,
-                  height: 110,
-                  padding:  EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color:  Color(0xFF9B543C),
-                      width: 3.5,
+
+                Padding(
+                  padding:  EdgeInsets.only(top: Sizes.screenHeight * 0.095),
+                  child: Container(
+                    width: Sizes.screenWidth * 0.35,
+                    height: Sizes.screenWidth * 0.35,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(image: AssetImage("assets/logo.jpg"),),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color:  AppColor.stockUnitColor,
+                        width: Sizes.screenWidth * 0.01,
+                      ),
+                      color: AppColor.white,
                     ),
-                    color: Colors.white,
-                  ),
-                  child: Image.asset(
-                    'assets/logo.jpg',
-                    fit: BoxFit.contain,
                   ),
                 ),
-                 SizedBox(height: 3),
-                 Text(
+                Text(
                   'MAHINDRA BRICKS',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    color: Color(0xFF793D2C),
+                    color: AppColor.stockTitleColor,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.9,
                   ),
                 ),
-                 SizedBox(height: 2),
-                 Text(
+                Text(
                   'P A V E R   B L O C K S',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    color: Color(0xFF9B543C),
+                    color: AppColor.stockTitleColor,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: 35,
-                      height: 1,
-                      color:  Color(0xFFB9A28A),
+                      width: Sizes.screenWidth * 0.1,
+                      height: Sizes.screenHeight * 0.002,
+                      color: AppColor.lineColor,
                     ),
-
-                     SizedBox(width: 8),
-                     Text(
+                    SizedBox(width: Sizes.screenWidth * 0.02),
+                    Text(
                       "STRONGER FOUNDATIONS",
                       style: GoogleFonts.poppins(
                         fontSize: 10,
-                        color: Color(0xFF654735),
+                        color: AppColor.stockTitleColor,
                         letterSpacing: 1.2,
                       ),
                     ),
-
-                     SizedBox(width: 8),
+                    SizedBox(width: Sizes.screenWidth * 0.02),
                     Container(
-                      width: 35,
-                      height: 1,
-                      color: const Color(0xFFB9A28A),
+                      width: Sizes.screenWidth * 0.1,
+                      height: Sizes.screenHeight * 0.002,
+                      color: AppColor.lineColor,
                     ),
                   ],
                 ),
@@ -119,54 +140,44 @@ class _MahindraSplashScreenState
                   "FOR A BETTER TOMORROW",
                   style: GoogleFonts.poppins(
                     fontSize: 9,
-                    color: Color(0xFF654735),
+                    color: AppColor.stockTitleColor,
                     letterSpacing: 1.2,
                   ),
                 ),
-
               ],
             ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 120,
-                      height: 5,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child:  LinearProgressIndicator(
-                          backgroundColor: Colors.white38,
-                          valueColor:
-                          AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
+            Container(
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: Sizes.screenWidth * 0.30,
+                    height: Sizes.screenHeight * 0.005,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child:  LinearProgressIndicator(
+                        backgroundColor: AppColor.white38,
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(
+                          AppColor.white,
                         ),
                       ),
                     ),
-                    SizedBox(height: 7),
-                    Text(
-                      'Loading...',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w400,
-                      ),
+                  ),
+                  SizedBox(height: Sizes.screenHeight * 0.005),
+                  Text(
+                    'Loading...',
+                    style: GoogleFonts.poppins(
+                      color:AppColor.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: Sizes.screenHeight * 0.05),
+                ],
               ),
-            ),
-          ),
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

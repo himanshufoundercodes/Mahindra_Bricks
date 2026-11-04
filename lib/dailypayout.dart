@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'Constant/Constantcustomecalender.dart';
 import 'Constant/Constantheader.dart';
+import 'Constant/Constantlabourcard.dart';
 import 'Constant/Constantpayout.dart';
 import 'Constant/Sizes.dart';
 import 'labourpayoutdetails.dart';
@@ -20,76 +22,59 @@ class _DailypayoutState extends State<Dailypayout> {
   final TextEditingController searchController =
   TextEditingController();
 
-  final List<Map<String, String>> labourList = [
+  final List<Map<String, dynamic>> labourList = [
     {
-      'name': 'Rajesh Kumar',
-      'mobile': '9876543210',
-      'present': '3',
-      'halfDay': '0',
-      'absent': '0',
-      'overtimeHours': '4',
-      'payable': '2,400',
-      'paid': '1,200',
-      'remaining': '1,200',
+      "name": "Amit Singh",
+      "rate": 500,
+      "present": 3,
+      "half": 1,
+      "amount": 1750,
+      "advance": 500,
+      "noAdvance": false,
+      "icon": Icons.person,
     },
     {
-      'name': 'Suresh Kumar',
-      'mobile': '9123456789',
-      'present': '2',
-      'halfDay': '1',
-      'absent': '0',
-      'overtimeHours': '2',
-      'payable': '1,800',
-      'paid': '1,000',
-      'remaining': '800',
+      "name": "Pradeep Kumar",
+      "rate": 600,
+      "present": 2,
+      "half": 0,
+      "amount": 1200,
+      "advance": 1000,
+      "noAdvance": false,
+      "icon": Icons.person,
     },
     {
-      'name': 'Amit Singh',
-      'mobile': '9988776655',
-      'present': '4',
-      'halfDay': '0',
-      'absent': '1',
-      'overtimeHours': '3',
-      'payable': '2,400',
-      'paid': '1,500',
-      'remaining': '900',
+      "name": "Rajesh Kumar",
+      "rate": 600,
+      "present": 3,
+      "half": 1,
+      "amount": 2400,
+      "advance": 2000,
+      "noAdvance": false,
+      "icon": Icons.inventory_2,
     },
     {
-      'name': 'Amit Singh',
-      'mobile': '9988776655',
-      'present': '4',
-      'halfDay': '0',
-      'absent': '1',
-      'overtimeHours': '3',
-      'payable': '2,400',
-      'paid': '1,500',
-      'remaining': '900',
-    },
-    {
-      'name': 'Amit Singh',
-      'mobile': '9988776655',
-      'present': '4',
-      'halfDay': '0',
-      'absent': '1',
-      'overtimeHours': '3',
-      'payable': '2,400',
-      'paid': '1,500',
-      'remaining': '900',
-    },
-    {
-      'name': 'Amit Singh',
-      'mobile': '9988776655',
-      'present': '4',
-      'halfDay': '0',
-      'absent': '1',
-      'overtimeHours': '3',
-      'payable': '2,400',
-      'paid': '1,500',
-      'remaining': '900',
+      "name": "Suresh Kumar",
+      "rate": 550,
+      "present": 4,
+      "half": 0,
+      "amount": 2200,
+      "advance": 0,
+      "noAdvance": true,
+      "icon": Icons.person,
     },
   ];
 
   String searchText = '';
+
+  int _parseInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is num) return value.toInt();
+    if (value is String) {
+      return int.tryParse(value) ?? double.tryParse(value)?.toInt() ?? 0;
+    }
+    return 0;
+  }
 
   @override
   void dispose() {
@@ -100,8 +85,8 @@ class _DailypayoutState extends State<Dailypayout> {
   @override
   Widget build(BuildContext context) {
     final filteredLabours = labourList.where((labour) {
-      final name = labour['name']!.toLowerCase();
-      final mobile = labour['mobile']!;
+      final name = (labour['name'] ?? '').toString().toLowerCase();
+      final mobile = (labour['mobile'] ?? '').toString().toLowerCase();
       final query = searchText.toLowerCase();
 
       return name.contains(query) || mobile.contains(query);
@@ -149,8 +134,7 @@ class _DailypayoutState extends State<Dailypayout> {
               ),
             ),
 
-            SizedBox(height: 8),
-            //CustomDateSelector(),
+            SizedBox(height: 10),
             Container(
               height: Sizes.screenHeight * 0.062,
               margin: EdgeInsets.symmetric(horizontal: 10),
@@ -239,111 +223,322 @@ class _DailypayoutState extends State<Dailypayout> {
                 ],
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 10),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
+              padding:  EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _summaryCard(
-                          icon: Icons.groups,
-                          value: '24',
-                          title: 'Total Labour',
-                          iconColor: Color(0xFF963025),
-                          bgColor: Color(0xFFFFEEEE),
+                  Expanded(
+                    child: Container(
+                      padding:  EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color:  Color(0xFFFFEEE8),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color:  Color(0xFFF6DDD4),
                         ),
                       ),
-                      SizedBox(width: 5),
-                      Expanded(
-                        child: _summaryCard(
-                          icon: Icons.check_circle,
-                          value: '18',
-                          title: 'Present',
-                          iconColor: Color(0xFF16833B),
-                          bgColor: Color(0xFFE8F8ED),
-                        ),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: Sizes.screenWidth * 0.105,
+                            width: Sizes.screenWidth * 0.105,
+                            decoration:  BoxDecoration(
+                              color: Color(0xFFFFE1D6),
+                              shape: BoxShape.circle,
+                            ),
+                            child:  Icon(
+                              Icons.account_balance_wallet,
+                              color: Color(0xFF9F1717),
+                              size: 20,
+                            ),
+                          ),
+                           SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                 Text(
+                                  "Total Payout Amount",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 9,
+                                    color: AppColor.red,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                 SizedBox(height: 3),
+                                 Text(
+                                  "₹ 12,400",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: AppColor.red,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                 Text(
+                                  "6 Labourers",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    color: Color(0xFF53616B),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 5),
-                      Expanded(
-                        child: _summaryCard(
-                          icon: Icons.watch_later,
-                          value: '3',
-                          title: 'Half Day',
-                          iconColor: Color(0xFFC46A12),
-                          bgColor: Color(0xFFFFF3E4),
-                        ),
-                      ),
-                      SizedBox(width: 5),
-                      Expanded(
-                        child: _summaryCard(
-                          icon: Icons.close,
-                          value: '2',
-                          title: 'Absent',
-                          iconColor: Color(0xFFC62828),
-                          bgColor: Color(0xFFFFEEEE),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
 
-                  SizedBox(height: 6),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _summaryCard(
-                          icon: Icons.access_time,
-                          value: '12',
-                          title: 'Overtime(Hours)',
-                          iconColor: Color(0xFF7045B5),
-                          bgColor: Color(0xFFF1E9FF),
+                   SizedBox(width: 10),
+                  Expanded(
+                    child: Container(
+                      padding:  EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color:  Color(0xFFFFEEE8),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color:  Color(0xFFF6DDD4),
                         ),
                       ),
-                      SizedBox(width: 5),
-                      Expanded(
-                        child: _summaryCard(
-                          icon: Icons.currency_rupee,
-                          value: '₹ 7,200',
-                          title: 'Total Payable',
-                          iconColor: Color(0xFF1763B5),
-                          bgColor: Color(0xFFEAF4FF),
-                        ),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: Sizes.screenWidth * 0.105,
+                            width: Sizes.screenWidth * 0.105,
+                            decoration:  BoxDecoration(
+                              color: Color(0xFFFFE1D6),
+                              shape: BoxShape.circle,
+                            ),
+                            child:  Icon(
+                              Icons.currency_exchange,
+                              color: Color(0xFFD97706),
+                              size: 20,
+                            ),
+                          ),
+                           SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                 Text(
+                                  "Total Advance Given",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 9,
+                                    color: AppColor.red,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                 SizedBox(height: 3),
+                                 Text(
+                                  "₹ 4,000",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: AppColor.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                 Text(
+                                  "3 Labourers",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    color: Color(0xFF53616B),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 5),
-                      Expanded(
-                        child: _summaryCard(
-                          icon: Icons.payments,
-                          value: '₹ 3,500',
-                          title: 'Total Paid',
-                          iconColor: Color(0xFF16833B),
-                          bgColor: Color(0xFFE8F8ED),
-                        ),
-                      ),
-                      SizedBox(width: 5),
-                      Expanded(
-                        child: _summaryCard(
-                          icon: Icons.monetization_on,
-                          value: '₹ 3,700',
-                          title: 'Remaining',
-                          iconColor: Color(0xFFC62828),
-                          bgColor: Color(0xFFFFEEEE),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
+            SizedBox(height: 10),
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF5FBF7),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: Sizes.screenHeight * 0.037,
+                            width: Sizes.screenWidth * 0.08,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFDDF5E8),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.verified_user,
+                              color: Color(0xFF15965B),
+                              size: 22,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Present",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: Color(0xFF626675),
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              Text(
+                                "12 days",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF202331),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFF9F2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: Sizes.screenHeight * 0.037,
+                            width: Sizes.screenWidth * 0.08,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFFFE9D1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.assignment_late,
+                              color: Color(0xFFEF8A21),
+                              size: 20,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Half Day",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: Color(0xFF626675),
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              Text(
+                                "3 days",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF202331),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
+                  SizedBox(width: 8),
+
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFBF7FF),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: Sizes.screenHeight * 0.037,
+                            width: Sizes.screenWidth * 0.08,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFEDE0FF),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.access_time_filled,
+                              color: Color(0xFF8738F5),
+                              size: 20,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Overtime",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: Color(0xFF626675),
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              Text(
+                                "4 hrs",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF202331),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: 8),
 
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Container(
-                height: Sizes.screenHeight * 0.048,
+                height: Sizes.screenHeight * 0.052,
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -389,93 +584,95 @@ class _DailypayoutState extends State<Dailypayout> {
                 ),
               ),
             ),
+            SizedBox(height: 5),
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 5),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Labour List (6)",
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.red,
+                      ),
+                    ),
 
+                    Container(
+                      height: 30,
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFFBF8),
+                        borderRadius: BorderRadius.circular(7),
+                        border: Border.all(
+                          color: Color(0xFFECE5E0),
+                          width: 1,
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: "Name (A-Z)",
+                          icon: Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 20,
+                            color: Color(0xFF343434),
+                          ),
+                          style: GoogleFonts.poppins(
+                            fontSize: 10,
+                            color: Color(0xFF252525),
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: "Name (A-Z)",
+                              child: Text("Name (A-Z)"),
+                            ),
+                            DropdownMenuItem(
+                              value: "Name (Z-A)",
+                              child: Text("Name (Z-A)"),
+                            ),
+                          ],
+                          onChanged: (value) {},
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             SizedBox(height: 4),
 
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: filteredLabours.length,
-                itemBuilder: (context, index) {
-                  final labour = filteredLabours[index];
+               child:  ListView.builder(
+                  itemCount: labourList.length,
+                  shrinkWrap: true,
+                  physics:  NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final labour = labourList[index];
 
-                  return LabourSummaryCard(
-                    name: labour['name']!,
-                    mobile: labour['mobile']!,
-                    present: labour['present']!,
-                    halfDay: labour['halfDay']!,
-                    absent: labour['absent']!,
-                    overtimeHours: labour['overtimeHours']!,
-                    payable: labour['payable']!,
-                    paid: labour['paid']!,
-                    remaining: labour['remaining']!,
-                    onTap: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (context)=> Labourpayoutdetails()));
-                    },
-                  );
-                },
-              ),
+                    return CustomLabourCard(
+                      name: labour["name"]?.toString() ?? "",
+                      dailyRate: (labour["rate"] as num?)?.toInt() ?? 0,
+                      presentDays: (labour["present"] as num?)?.toInt() ?? 0,
+                      halfDays: (labour["half"] as num?)?.toInt() ?? 0,
+                      amount: (labour["amount"] as num?)?.toInt() ?? 0,
+                      advance: (labour["advance"] as num?)?.toInt() ?? 0,
+                      isNoAdvance: labour["noAdvance"] as bool? ?? false,
+                      icon: labour["icon"] as IconData? ?? Icons.person,
+                      onTap: () {
+                       Navigator.push(context, MaterialPageRoute(builder: (context)=> Labourpayoutdetails()));
+                      },
+                    );
+                  },
+                )
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _summaryCard({
-    required IconData icon,
-    required String value,
-    required String title,
-    required Color iconColor,
-    required Color bgColor,
-  }) {
-    return Container(
-      height: Sizes.screenHeight * 0.055,
-      padding: EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(9),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 17,
-            color: iconColor,
-          ),
-          SizedBox(width: 4),
-          Flexible(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    value,
-                    maxLines: 1,
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: iconColor,
-                    ),
-                  ),
-                ),
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
-                    fontSize: 8,
-                    color: Color(0xFF5D6470),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

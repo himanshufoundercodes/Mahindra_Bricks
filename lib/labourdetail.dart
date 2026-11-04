@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'Constant/Constant_Appbar.dart';
+import 'Constant/Constant_Color.dart';
+import 'Constant/Constant_attendence_card.dart';
 import 'Constant/Constantheader.dart';
+import 'Constant/Constnat_Appbutton.dart';
+import 'Constant/Sizes.dart';
 
 class Labourdetail extends StatefulWidget {
   Labourdetail({super.key});
@@ -14,55 +19,30 @@ class _LabourdetailState extends State<Labourdetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.bodybackgroundColor,
+      appBar:  ConstantAppBar(
+        title: 'Dashboard',
+        showBranding: true,
+        showBackButton: true,
+        logoAsset: 'assets/logo.jpg',
+      ),
       body: Column(
         children: [
-          SizedBox(height: 30),
-          CustomHeader(),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Labour Details",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF991B12),
-                        ),
-                      ),
-                      Text(
-                        "View labour information and summary",
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF777777),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
+          _buildHeader(),
           Container(
             margin: EdgeInsets.all(10),
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color(0xFFF0E5E0)),
+              border: Border.all(color: AppColor.grey),
             ),
             child: Column(
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 7,
+                    horizontal: Sizes.screenWidth * 0.027,
+                    vertical: Sizes.screenHeight * 0.009,
                   ),
                   decoration: BoxDecoration(
                     color: Color(0xFFFFF3F0),
@@ -71,15 +51,15 @@ class _LabourdetailState extends State<Labourdetail> {
                   child: Row(
                     children: [
                       Container(
-                        height: 30,
-                        width: 30,
+                        height: Sizes.screenHeight * 0.030,
+                        width: Sizes.screenWidth * 0.08,
                         decoration: BoxDecoration(
-                          color: Color(0xFFFFE3DA),
-                          borderRadius: BorderRadius.circular(6),
+                          color: AppColor.lightredbg,
+                          borderRadius: BorderRadius.circular(17),
                         ),
                         child: Icon(
                           Icons.person,
-                          color: Color(0xFF9E2418),
+                          color: AppColor.stockUnitColor,
                           size: 22,
                         ),
                       ),
@@ -89,61 +69,55 @@ class _LabourdetailState extends State<Labourdetail> {
                         child: Text(
                           'Labour Information',
                           style: GoogleFonts.poppins(
-                            color: Color(0xFF9E2418),
+                            color: AppColor.stockAmountColor,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-
-                      OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Color(0xFF9E2418),
-                          side: BorderSide(
-                            color: Color(0xFFDDA99D),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7),
-                          ),
+                      CustomButton(
+                        text: "Edit",
+                        onPressed: () {
+                        },
+                        type: CustomButtonType.outlined,
+                        width: Sizes.screenWidth * 0.15,
+                        height: Sizes.screenHeight * 0.032,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        icon: Icons.edit,
+                        iconSize: 12,
+                        iconOnLeft: true,
+                        backgroundColor: AppColor.lightredbg,
+                        textColor:AppColor.stockUnitColor,
+                        borderColor: AppColor.stockUnitColor,
+                        borderRadius: 9,
+                        padding:  EdgeInsets.symmetric(
+                          horizontal: Sizes.screenWidth * 0.021,
+                          vertical: Sizes.screenHeight * 0.005,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.edit, size: 15),
-                            SizedBox(width: 6),
-                            Text('Edit', style: TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                      ),
+                      )
                     ],
                   ),
                 ),
 
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 7,
+                    horizontal: Sizes.screenWidth * 0.021,
+                    vertical: Sizes.screenHeight * 0.009,
                   ),
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: Color(0xFFF0F0F0)),
+                      bottom: BorderSide(color: AppColor.grey),
                     ),
                   ),
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 132,
+                        width: Sizes.screenWidth * 0.352,
                         child: Text(
                           'Labour ID',
                           style: GoogleFonts.poppins(
-                            color: Color(0xFF858B96),
+                            color: AppColor.gey,
                             fontSize: 12,
                           ),
                         ),
@@ -161,8 +135,8 @@ class _LabourdetailState extends State<Labourdetail> {
 
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 5,
+                    horizontal: Sizes.screenWidth * 0.021,
+                    vertical: Sizes.screenHeight * 0.009,
                   ),
                   decoration: BoxDecoration(
                     border: Border(
@@ -172,7 +146,7 @@ class _LabourdetailState extends State<Labourdetail> {
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 132,
+                        width: Sizes.screenWidth * 0.352,
                         child: Text(
                           'Labour Name',
                           style: TextStyle(
@@ -194,22 +168,22 @@ class _LabourdetailState extends State<Labourdetail> {
 
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 5,
+                    horizontal: Sizes.screenWidth * 0.021,
+                    vertical: Sizes.screenHeight * 0.006,
                   ),
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: Color(0xFFF0F0F0)),
+                      bottom: BorderSide(color:AppColor.grey),
                     ),
                   ),
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 132,
+                        width: Sizes.screenWidth * 0.352,
                         child: Text(
                           'Mobile Number',
-                          style: TextStyle(
-                            color: Color(0xFF858B96),
+                          style: GoogleFonts.poppins(
+                            color: AppColor.gey,
                             fontSize: 12,
                           ),
                         ),
@@ -218,37 +192,27 @@ class _LabourdetailState extends State<Labourdetail> {
                       Expanded(
                         child: Text(
                           '9876543210',
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF08783B),
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.call, size: 15),
-                            SizedBox(width: 7),
-                            Text('Call', style: TextStyle(fontSize: 12)),
-                          ],
-                        ),
+                      CustomButton(
+                        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.011,
+                          vertical: Sizes.screenHeight * 0.005),
+                        height: Sizes.screenHeight * 0.038,
+                        width: Sizes.screenWidth * 0.175,
+                        text: 'Call',
+                        backgroundColor: AppColor.green,
+                        fontSize:  12,
+                        fontWeight: .w500,
+                        onPressed: () {
+                        },
+                        iconOnLeft: true,
+                        icon: Icons.call,
+                        iconSize: 18,
+                        iconSpacing: 2,
                       ),
                     ],
                   ),
@@ -256,24 +220,24 @@ class _LabourdetailState extends State<Labourdetail> {
 
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 7,
+                    horizontal: Sizes.screenWidth * 0.021,
+                    vertical: Sizes.screenHeight * 0.009,
                   ),
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 132,
+                        width: Sizes.screenWidth * 0.352,
                         child: Text(
                           'Daily Rate (₹)',
-                          style: TextStyle(
-                            color: Color(0xFF858B96),
+                          style: GoogleFonts.poppins(
+                            color: AppColor.gey,
                             fontSize: 12,
                           ),
                         ),
                       ),
                       Text(
                         '600',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -285,34 +249,33 @@ class _LabourdetailState extends State<Labourdetail> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.021),
             child: Column(
               children: [
-
                 Container(
-                  margin: EdgeInsets.only(bottom: 10),
+                  margin: EdgeInsets.only(bottom: Sizes.screenHeight * 0.012),
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColor.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Color(0xFFF1E7E2)),
+                    border: Border.all(color: AppColor.grey),
                   ),
                   child: Column(
                     children: [
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
+                          horizontal: Sizes.screenWidth * 0.027,
+                          vertical: Sizes.screenHeight * 0.007,
                         ),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFFF2EF),
+                          color: AppColor.lightred,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.calendar_month,
-                              color: Color(0xFF922216),
+                              color: AppColor.stockUnitColor,
                               size: 22,
                             ),
                             SizedBox(width: 10),
@@ -320,174 +283,60 @@ class _LabourdetailState extends State<Labourdetail> {
                               child: Text(
                                 'Attendance Summary',
                                 style: GoogleFonts.poppins(
-                                  color: Color(0xFF922216),
+                                  color: AppColor.stockAmountColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
                               ),
                             ),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFFE3D9),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                'This Month',
-                                style: GoogleFonts.poppins(fontSize: 11),
-                              ),
-                            ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: Sizes.screenHeight * 0.012),
                       Row(
                         children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF0FAF3),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 13,
-                                    backgroundColor: Color(0xFFD5F4DE),
-                                    child: Icon(
-                                      Icons.check_circle,
-                                      color: Color(0xFF08783B),
-                                      size: 16,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '18',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF12652C),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Present Days',
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color(0xFF526577),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CustomAttendanceCard(
+                            icon: Icons.check_circle,
+                            backgroundColor: AppColor.lightgreen,
+                            iconBackgroundColor: AppColor.iconbggreen,
+                            iconColor: AppColor.green,
+                            valueColor: AppColor.green,
+                            textColor: AppColor.gey,
+                            value: '18',
+                            text: 'Present Days',
+                            width: Sizes.screenWidth * 0.29,
+                            height: Sizes.screenHeight * 0.065,
                           ),
-                          SizedBox(width: 6),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFFF8EB),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 13,
-                                    backgroundColor: Color(0xFFFFEAC5),
-                                    child: Icon(
-                                      Icons.timelapse,
-                                      color: Color(0xFFB75B00),
-                                      size: 16,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '3',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF853A00),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Half Days',
-                                          maxLines: 1,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 10,
-                                            color: Color(0xFF526577),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          SizedBox(width: Sizes.screenWidth * 0.016),
+                          CustomAttendanceCard(
+                            icon: Icons.timelapse,
+                            backgroundColor: AppColor.lightyellow,
+                            iconBackgroundColor: AppColor.lightmediumyellow,
+                            iconColor: AppColor.darkyellow,
+                            valueColor: AppColor.stockAmountColor,
+                            textColor: AppColor.gey,
+                            value: '3',
+                            text: 'Half Days',
+                            width: Sizes.screenWidth * 0.29,
+                            height: Sizes.screenHeight * 0.065,
                           ),
-                          SizedBox(width: 6),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFFF0F0),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 13,
-                                    backgroundColor: Color(0xFFFFDADA),
-                                    child: Icon(
-                                      Icons.close,
-                                      color: Color(0xFFBD1717),
-                                      size: 16,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '2',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFFBD1717),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Absent Days',
-                                          maxLines: 1,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 10,
-                                            color: Color(0xFF526577),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+
+                          SizedBox(width: Sizes.screenWidth * 0.016),
+
+                          CustomAttendanceCard(
+                            icon: Icons.close,
+                            backgroundColor: AppColor.lightred,
+                            iconBackgroundColor: AppColor.lightredbg,
+                            iconColor: AppColor.stockUnitColor,
+                            valueColor: AppColor.stockUnitColor,
+                            textColor: AppColor.gey,
+                            value: '2',
+                            text: 'Absent Days',
+                            width: Sizes.screenWidth * 0.29,
+                            height: Sizes.screenHeight * 0.065,
                           ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -504,11 +353,11 @@ class _LabourdetailState extends State<Labourdetail> {
                     children: [
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
+                          horizontal: Sizes.screenWidth * 0.027,
+                          vertical: Sizes.screenHeight * 0.007,
                         ),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFFF0ED),
+                          color: AppColor.lightred,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -518,7 +367,7 @@ class _LabourdetailState extends State<Labourdetail> {
                               color: Color(0xFF922216),
                               size: 22,
                             ),
-                            SizedBox(width: 10),
+                            SizedBox(width: Sizes.screenWidth * 0.027),
                             Text(
                               'Overtime Summary',
                               style: TextStyle(
@@ -530,104 +379,36 @@ class _LabourdetailState extends State<Labourdetail> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Row(
+                      SizedBox(height: Sizes.screenHeight * 0.012),
+                       Row(
                         children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFEEF7FD),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 14,
-                                    backgroundColor: Color(0xFFD4EDFF),
-                                    child: Icon(
-                                      Icons.access_time,
-                                      color: Color(0xFF07599C),
-                                      size: 17,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '12',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF172B4D),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Total Overtime Hours',
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color(0xFF526577),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CustomAttendanceCard(
+                            icon: Icons.check_circle,
+                            backgroundColor: AppColor.blueverylight,
+                            iconBackgroundColor: AppColor.bluelight,
+                            iconColor: AppColor.blue,
+                            valueColor: AppColor.black,
+                            textColor: AppColor.gey,
+                            value: '12',
+                            text: 'Total Overtime Hours',
+                            width: Sizes.screenWidth * 0.40,
+                            height: Sizes.screenHeight * 0.065,
                           ),
-                          SizedBox(width: 6),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF6EFFF),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 14,
-                                    backgroundColor: Color(0xFFEBD9FF),
-                                    child: Icon(
-                                      Icons.currency_rupee,
-                                      color: Color(0xFF7916A5),
-                                      size: 17,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '3,600',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF32134D),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Approved Overtime Amount',
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color(0xFF526577),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          SizedBox(width: Sizes.screenWidth * 0.027),
+                          CustomAttendanceCard(
+                            icon: Icons.currency_rupee,
+                            backgroundColor: AppColor.lightpurple,
+                            iconBackgroundColor: AppColor.purple,
+                            iconColor: AppColor.black,
+                            valueColor: AppColor.black,
+                            textColor: AppColor.gey,
+                            value: '360',
+                            text: 'Approved Overtime',
+                            width: Sizes.screenWidth * 0.47,
+                            height: Sizes.screenHeight * 0.065,
                           ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -637,31 +418,31 @@ class _LabourdetailState extends State<Labourdetail> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Color(0xFFF1E7E2)),
+                    border: Border.all(color: AppColor.grey),
                   ),
                   child: Column(
                     children: [
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
+                          horizontal: Sizes.screenWidth * 0.027,
+                          vertical: Sizes.screenHeight * 0.007,
                         ),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFFF0ED),
+                          color: AppColor.lightred,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.account_balance_wallet,
-                              color: Color(0xFF922216),
+                              color: AppColor.stockTitleColor,
                               size: 18,
                             ),
-                            SizedBox(width: 10),
+                            SizedBox(width: Sizes.screenWidth * 0.027),
                             Text(
                               'Payout Summary',
                               style: GoogleFonts.poppins(
-                                color: Color(0xFF922216),
+                                color: AppColor.stockTitleColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                               ),
@@ -669,289 +450,95 @@ class _LabourdetailState extends State<Labourdetail> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: Sizes.screenHeight * 0.012),
                       Row(
                         children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF0FAF3),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 13,
-                                    backgroundColor: Color(0xFFD5F4DE),
-                                    child: Icon(
-                                      Icons.currency_rupee,
-                                      color: Color(0xFF08783B),
-                                      size: 16,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '18,600',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF12652C),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Total Earned',
-                                          maxLines: 1,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 9,
-                                            color: Color(0xFF526577),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CustomAttendanceCard(
+                            icon: Icons.currency_rupee,
+                            backgroundColor: AppColor.lightgreen,
+                            iconBackgroundColor: AppColor.iconbggreen,
+                            iconColor: AppColor.green,
+                            valueColor: AppColor.green,
+                            textColor: AppColor.gey,
+                            value: '18,600',
+                            text: 'Total Earned',
+                            width: Sizes.screenWidth * 0.29,
+                            height: Sizes.screenHeight * 0.060,
                           ),
-                          SizedBox(width: 5),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFEEF7FD),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 13,
-                                    backgroundColor: Color(0xFFD4EDFF),
-                                    child: Icon(
-                                      Icons.currency_rupee,
-                                      color: Color(0xFF07599C),
-                                      size: 16,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '12,000',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF172B4D),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Total Paid',
-                                          maxLines: 1,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 9,
-                                            color: Color(0xFF526577),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          SizedBox(width: Sizes.screenWidth * 0.015),
+                          CustomAttendanceCard(
+                            icon: Icons.currency_rupee,
+                            backgroundColor: AppColor.blueverylight,
+                            iconBackgroundColor: AppColor.bluelight,
+                            iconColor: AppColor.blue,
+                            valueColor: AppColor.blue,
+                            textColor: AppColor.gey,
+                            value: '12000',
+                            text: 'Total Paid',
+                            width: Sizes.screenWidth * 0.29,
+                            height: Sizes.screenHeight * 0.060,
                           ),
-                          SizedBox(width: 5),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFFF0F0),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 13,
-                                    backgroundColor: Color(0xFFFFDADA),
-                                    child: Icon(
-                                      Icons.currency_rupee,
-                                      color: Color(0xFFBD1717),
-                                      size: 16,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '6,600',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFFBD1717),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Remaining Amount',
-                                          maxLines: 1,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 9,
-                                            color: Color(0xFF526577),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+
+                          SizedBox(width: Sizes.screenWidth * 0.015),
+
+                          CustomAttendanceCard(
+                            icon: Icons.currency_rupee,
+                            backgroundColor: AppColor.lightred,
+                            iconBackgroundColor: AppColor.lightredbg,
+                            iconColor: AppColor.stockUnitColor,
+                            valueColor: AppColor.stockUnitColor,
+                            textColor: AppColor.gey,
+                            value: '6600',
+                            text: 'Remaining',
+                            width: Sizes.screenWidth * 0.29,
+                            height: Sizes.screenHeight * 0.060,
                           ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: Sizes.screenHeight * 0.012),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027),
             child: Column(
               children: [
+                SizedBox(height: Sizes.screenHeight * 0.006),
                 Row(
                   children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Color(0xFF9B2618),
-                          side: BorderSide(
-                            color: Color(0xFFB9362C),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.call, size: 20),
-                            SizedBox(width: 12),
-                            Text(
-                              'Call Labour',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    CustomButton(
+                      padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.015,
+                        vertical: Sizes.screenHeight * 0.005,),
+                      height: Sizes.screenHeight * 0.052,
+                      width: Sizes.screenWidth * 0.410,
+                      text: 'Mark Attendence',
+                      fontSize:  14,
+                      fontWeight: .w500,
+                      onPressed: () {
+                      },
+                      iconOnLeft: true,
+                      icon: Icons.calendar_month_rounded,
+                      iconSize: 18,
+                      iconSpacing: 5,
                     ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Color(0xFF9B2618),
-                          side: BorderSide(
-                            color: Color(0xFFB9362C),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.edit, size: 20),
-                            SizedBox(width: 10),
-                            Flexible(
-                              child: Text(
-                                'Edit Labour Details',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 5),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF982714),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.calendar_month, size: 21),
-                            SizedBox(width: 12),
-                            Text(
-                              'Mark Attendance',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF982714),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.account_balance_wallet, size: 21),
-                            SizedBox(width: 10),
-                            Text(
-                              'Add Payout',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    SizedBox(width: Sizes.screenWidth * 0.025),
+                    CustomButton(
+                      padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.011,
+                        vertical: Sizes.screenHeight * 0.005,),
+                      height: Sizes.screenHeight * 0.052,
+                      width: Sizes.screenWidth * 0.475,
+                      text: 'Add Payout',
+                      fontSize:  14,
+                      fontWeight: .w500,
+                      onPressed: () {
+                      },
+                      iconOnLeft: true,
+                      icon: Icons.account_balance_wallet_rounded,
+                      iconSize: 18,
+                      iconSpacing: 5,
                     ),
                   ],
                 ),
@@ -960,6 +547,48 @@ class _LabourdetailState extends State<Labourdetail> {
           )
 
         ],
+      ),
+    );
+  }
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: Sizes.screenHeight * 0.010,
+          vertical: Sizes.screenHeight * 0.010
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Labour Details',
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.stockAmountColor,
+                  ),
+                ),
+                Text(
+                  'View labour information and summary',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.gey,
+                  ),
+                ),
+              ],
+            ),
+
+          ],
+        ),
       ),
     );
   }

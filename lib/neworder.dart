@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mahindra_bricks/Constant_Color.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 
 import 'Constant/Constantbutton.dart';
 import 'Constant/Sizes.dart';
@@ -50,8 +50,8 @@ class _NeworderState extends State<Neworder> {
                     ),
                     SizedBox(width: 20),
                     Container(
-                      height: 42,
-                      width: 42,
+                      height: Sizes.screenWidth * 0.112,
+                      width: Sizes.screenWidth * 0.112,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
@@ -132,38 +132,6 @@ class _NeworderState extends State<Neworder> {
                     ),
 
                     SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () {
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.stockTitleColor,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 9,
-                          vertical: 9,
-                        ),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.add, size: 15),
-                          SizedBox(width: 3),
-                          Text(
-                            'New Order',
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),

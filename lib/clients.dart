@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
-import 'package:mahindra_bricks/Constant_Color.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 
 import 'Constant/ConstantClientcard.dart';
 import 'Constant/Constantheader.dart';

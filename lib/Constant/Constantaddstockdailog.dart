@@ -1,23 +1,19 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:provider/provider.dart';
+
+import '../addcementstock.dart';
+import '../utils/utils.dart';
+import '../viewmodel/addcementstock_viewmodel.dart';
+import 'ConstnatTextfield.dart';
+import 'Constnat_Appbutton.dart';
 
 class CustomAddStockDialog extends StatefulWidget {
-  final String title;
-  final String quantityLabel;
-  final String buttonText;
-  final String quantityUnit;
-  final Function(DateTime date, String quantity)? onSubmit;
-
-  CustomAddStockDialog({
-    super.key,
-    required this.title,
-    required this.quantityLabel,
-    required this.buttonText,
-    this.quantityUnit = 'Bags',
-    this.onSubmit,
-  });
+  const CustomAddStockDialog({super.key});
 
   @override
   State<CustomAddStockDialog> createState() =>
@@ -26,11 +22,11 @@ class CustomAddStockDialog extends StatefulWidget {
 
 class _CustomAddStockDialogState
     extends State<CustomAddStockDialog> {
+
   DateTime selectedDate = DateTime.now();
+
   final TextEditingController quantityController =
   TextEditingController();
-
-  bool showCalendar = true;
 
   @override
   void dispose() {
@@ -38,52 +34,137 @@ class _CustomAddStockDialogState
     super.dispose();
   }
 
+  Future<void> handleCementStock() async {
+
+    if (quantityController.text.trim().isEmpty) {
+      Utils.showErrorMessage(
+        context,
+        'Please enter number of bags',
+      );
+      return;
+    }
+
+    if (int.tryParse(quantityController.text.trim()) == null ||
+        int.parse(quantityController.text.trim()) <= 0) {
+      Utils.showErrorMessage(
+        context,
+        'Please enter a valid quantity',
+      );
+      return;
+    }
+
+    final viewModel =
+    context.read<AddcementstockViewmodel>();
+
+    if (viewModel.loading) return;
+
+    final success = await viewModel.addCementStockApi(
+      quantityController.text.trim(),
+      DateFormat('yyyy-MM-dd').format(selectedDate),
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+
+      Utils.showSuccessMessage(
+        context,
+        'Add new Stock Successfully!',
+      );
+
+      await Future.delayed(
+        const Duration(milliseconds: 500),
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Addcementstock(),
+        ),
+      );
+
+    } else {
+
+      final message =
+          viewModel.errorMessage ?? 'Stock add failed';
+
+      Utils.showErrorMessage(
+        context,
+        message,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    final addCementViewModel =
+    context.watch<AddcementstockViewmodel>();
+
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 18),
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: 18,
+      ),
+
       child: Container(
-        padding: EdgeInsets.all(18),
+        padding: const EdgeInsets.all(18),
+
         decoration: BoxDecoration(
-          color: Color(0xFFFFFBF8),
+          color: const Color(0xFFFFFBF8),
           borderRadius: BorderRadius.circular(13),
         ),
+
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
+
+              // HEADER
+
               Row(
                 children: [
+
                   Container(
                     height: Sizes.screenHeight * 0.050,
                     width: Sizes.screenWidth * 0.12,
+
                     decoration: BoxDecoration(
-                      color: Color(0xFFFFE9E2),
+                      color: const Color(0xFFFFE9E2),
                       borderRadius: BorderRadius.circular(9),
                     ),
+
                     child: Image.asset(
-                      "assets/bag.jpg",
-                      height: 10,
-                      width: 10,
+                      'assets/bag.jpg',
                       fit: BoxFit.contain,
                     ),
                   ),
-                  SizedBox(width: 10),
+
+                  const SizedBox(width: 10),
+
                   Expanded(
                     child: Text(
-                      widget.title,
+                      'Add new Stock',
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFFB51F16),
+                        color: const Color(0xFFB51F16),
                       ),
                     ),
                   ),
+
                   InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(
+                    onTap: addCementViewModel.loading
+                        ? null
+                        : () => Navigator.pop(context),
+
+                    child: const Icon(
                       Icons.close,
                       color: Color(0xFF737373),
                       size: 23,
@@ -92,7 +173,9 @@ class _CustomAddStockDialogState
                 ],
               ),
 
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
+
+              // DATE LABEL
 
               RichText(
                 text: TextSpan(
@@ -102,7 +185,7 @@ class _CustomAddStockDialogState
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
-                  children: [
+                  children: const [
                     TextSpan(
                       text: '*',
                       style: TextStyle(color: Colors.red),
@@ -111,39 +194,73 @@ class _CustomAddStockDialogState
                 ),
               ),
 
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
+
+              // DATE FIELD
 
               InkWell(
-                onTap: () {
-                  setState(() {
-                    showCalendar = !showCalendar;
-                  });
+                onTap: addCementViewModel.loading
+                    ? null
+                    : () async {
+
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate,
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime(2100),
+
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: Theme.of(context)
+                              .colorScheme
+                              .copyWith(
+                            primary: const Color(0xFFB51F16),
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+
+                  if (date != null && mounted) {
+                    setState(() {
+                      selectedDate = date;
+                    });
+                  }
                 },
+
                 child: Container(
                   height: Sizes.screenHeight * 0.045,
-                  padding: EdgeInsets.symmetric(
+
+                  padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                   ),
+
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(7),
                     border: Border.all(
-                      color: Color(0xFFD8D8D8),
+                      color: const Color(0xFFD8D8D8),
                     ),
                   ),
+
                   child: Row(
                     children: [
+
                       Expanded(
                         child: Text(
                           DateFormat('dd MMM yyyy')
                               .format(selectedDate),
+
                           style: GoogleFonts.poppins(
                             fontSize: 12,
-                            color: Color(0xFF374151),
+                            color: const Color(0xFF374151),
                           ),
                         ),
                       ),
-                      Icon(
+
+                      const Icon(
                         Icons.calendar_month,
                         size: 19,
                         color: Color(0xFF657080),
@@ -153,43 +270,13 @@ class _CustomAddStockDialogState
                 ),
               ),
 
-              if (showCalendar)
-                Container(
-                  margin: EdgeInsets.only(top: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(9),
-                    border: Border.all(
-                      color: Color(0xFFF0E8E3),
-                    ),
-                  ),
-                  child: Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: Theme.of(context)
-                          .colorScheme
-                          .copyWith(
-                        primary: Color(0xFFB51F16),
-                      ),
-                    ),
-                    child: CalendarDatePicker(
-                      initialDate: selectedDate,
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2100),
-                      onDateChanged: (date) {
-                        setState(() {
-                          selectedDate = date;
-                          showCalendar = false;
-                        });
-                      },
-                    ),
-                  ),
-                ),
+              const SizedBox(height: 12),
 
-              SizedBox(height: 12),
+              // QUANTITY LABEL
 
               RichText(
                 text: TextSpan(
-                  text: '${widget.quantityLabel} ',
+                  text: 'Number of Bags',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -198,138 +285,68 @@ class _CustomAddStockDialogState
                   children: [
                     TextSpan(
                       text: '*',
-                      style: TextStyle(color: Colors.red),
+                      style: GoogleFonts.poppins(
+                        color: AppColor.red,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
 
-              Container(
-                height: Sizes.screenHeight * 0.045,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(7),
-                  border: Border.all(
-                    color: Color(0xFFD8D8D8),
+              // QUANTITY FIELD
+
+              AppTextField(
+                suffix: Text(
+                  'Bags',
+                  style: TextStyle(
+                    color: AppColor.gey,
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: quantityController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText:
-                          'Enter ${widget.quantityLabel.toLowerCase()}',
-                          hintStyle: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Color(0xFF9CA3AF),
-                          ),
-                          border: InputBorder.none,
-                          isDense: true,
-                        ),
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      widget.quantityUnit,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Color(0xFF4B5563),
-                      ),
-                    ),
-                  ],
-                ),
+
+                controller: quantityController,
+                keyboardType: TextInputType.number,
+                hintText: 'Enter number of bags',
               ),
 
-              SizedBox(height: 18),
+              const SizedBox(height: 18),
+
+              // BUTTONS
 
               Row(
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: Sizes.screenHeight * 0.045,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor:
-                          Color(0xFFB51F16),
-                          side: BorderSide(
-                            color: Color(0xFFB51F16),
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                        ),
-                        child: Text(
-                          'Cancel',
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
+
+                  CustomButton(
+                    height: Sizes.screenHeight * 0.050,
+                    width: Sizes.screenWidth * 0.39,
+                    text: 'Cancel',
+                    type: CustomButtonType.outlined,
+                    textColor: AppColor.red,
+                    borderColor: AppColor.red,
+
+                    onPressed: addCementViewModel.loading
+                        ? null
+                        : () {
+                      Navigator.pop(context);
+                    },
                   ),
 
-                  SizedBox(width: 12),
+                  const SizedBox(width: 10),
 
-                  Expanded(
-                    child: SizedBox(
-                      height: Sizes.screenHeight * 0.045,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (quantityController.text
-                              .trim()
-                              .isEmpty) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Please enter quantity',
-                                ),
-                              ),
-                            );
-                            return;
-                          }
+                  CustomButton(
+                    height: Sizes.screenHeight * 0.050,
+                    width: Sizes.screenWidth * 0.39,
+                    text: 'Add Stock',
+                    iconOnLeft: false,
 
-                          widget.onSubmit?.call(
-                            selectedDate,
-                            quantityController.text.trim(),
-                          );
+                    isLoading: addCementViewModel.loading,
 
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                          Color(0xFFB51F16),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                        ),
-                        child: Text(
-                          widget.buttonText,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
+                    onPressed: addCementViewModel.loading
+                        ? null
+                        : () async {
+                      await handleCementStock();
+                    },
                   ),
                 ],
               ),

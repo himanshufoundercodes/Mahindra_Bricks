@@ -1,9 +1,15 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:mahindra_bricks/utils/utils.dart';
+import 'package:mahindra_bricks/viewmodel/addvehicleview_model.dart';
+import 'package:provider/provider.dart';
 
 import 'Constant/Constantheader.dart';
+import 'Constant/Constnat_Appbutton.dart';
+import 'model/addvehicle_model.dart';
 
 class Addvihclecategory extends StatefulWidget {
   Addvihclecategory({super.key});
@@ -13,7 +19,55 @@ class Addvihclecategory extends StatefulWidget {
 }
 
 class _AddvihclecategoryState extends State<Addvihclecategory> {
+
   int selectedVehicle = 0;
+  final TextEditingController vehicleNameController =
+  TextEditingController();
+  final TextEditingController vehicleNumberController =
+  TextEditingController();
+  final TextEditingController driverNameController =
+  TextEditingController();
+
+  final TextEditingController driverMobileNumberController =
+  TextEditingController();
+
+  final TextEditingController capacityPiecesController =
+  TextEditingController();
+
+  final TextEditingController notesController =
+  TextEditingController();
+  Future<void> handladdvehiclec() async {
+
+    if (vehicleNameController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, "Please enter vehicle name");
+      return;
+    }
+    final viewModel = context.read<AddvehicleviewModel>();
+    if (viewModel.loading) return;
+    final success = await viewModel.addvehicleApi(
+      vehicleNameController.text,
+      vehicleNumberController.text,
+      driverNameController.text,
+      driverMobileNumberController.text,
+      capacityPiecesController.text,
+    );
+
+    if (!context.mounted) return;
+
+    if (success) {
+      Utils.showSuccessMessage(
+        context,
+        "Add Vehicle Successfully!",
+      );
+
+      Navigator.pop(context, true);
+    } else {
+      Utils.showErrorMessage(
+        context,
+        viewModel.errorMessage ?? "Add vehicle failed",
+      );
+    }
+  }
 
   final List<Map<String, dynamic>> vehicles = [
     {
@@ -33,17 +87,29 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
       'icon': Icons.fire_truck,
     },
   ];
-
   final Color primaryColor = Color(0xFF8E1B12);
+  @override
+  void dispose() {
+    vehicleNameController.dispose();
+    vehicleNumberController.dispose();
+    driverNameController.dispose();
+    driverMobileNumberController.dispose();
+    capacityPiecesController.dispose();
+    notesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final addvehicleviewModel =
+    Provider.of<AddvehicleviewModel>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
+
               SizedBox(height: 15),
 
               CustomHeader(),
@@ -98,6 +164,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     Row(
                       children: [
                         Container(
@@ -113,7 +180,9 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                             size: 23,
                           ),
                         ),
+
                         SizedBox(width: 10),
+
                         Text(
                           'Vehicle Information',
                           style: GoogleFonts.poppins(
@@ -132,6 +201,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                     SizedBox(height: 5),
 
                     _buildTextField(
+                      controller: vehicleNameController,
                       hint: 'Enter vehicle name (e.g. Tata 407)',
                     ),
 
@@ -142,6 +212,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                     SizedBox(height: 5),
 
                     _buildTextField(
+                      controller: vehicleNumberController,
                       hint: 'Enter vehicle number (e.g. UP32 AB 1234)',
                     ),
 
@@ -154,7 +225,8 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                     Row(
                       children: List.generate(
                         vehicles.length,
-                        (index) {
+                            (index) {
+
                           bool isSelected = selectedVehicle == index;
 
                           return Expanded(
@@ -189,6 +261,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                                 ),
                                 child: Column(
                                   children: [
+
                                     Align(
                                       alignment: Alignment.topRight,
                                       child: Icon(
@@ -233,7 +306,6 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
               ),
 
               SizedBox(height: 10),
-
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 padding: EdgeInsets.all(12),
@@ -245,6 +317,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     Row(
                       children: [
                         Container(
@@ -260,7 +333,9 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                             size: 23,
                           ),
                         ),
+
                         SizedBox(width: 10),
+
                         Text(
                           'Driver Details',
                           style: GoogleFonts.poppins(
@@ -277,6 +352,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,8 +365,11 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                                   color: Color(0xFF252525),
                                 ),
                               ),
+
                               SizedBox(height: 5),
+
                               _buildTextField(
+                                controller: driverNameController,
                                 hint: 'Enter driver name',
                               ),
                             ],
@@ -313,8 +392,11 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                                   color: Color(0xFF252525),
                                 ),
                               ),
+
                               SizedBox(height: 5),
+
                               _buildTextField(
+                                controller: driverMobileNumberController,
                                 hint: 'Enter mobile number',
                                 keyboardType: TextInputType.phone,
                                 maxLength: 10,
@@ -333,7 +415,6 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
               ),
 
               SizedBox(height: 10),
-
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 padding: EdgeInsets.all(12),
@@ -345,6 +426,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     Row(
                       children: [
                         Container(
@@ -360,7 +442,9 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                             size: 23,
                           ),
                         ),
+
                         SizedBox(width: 10),
+
                         Text(
                           'Vehicle Capacity',
                           style: GoogleFonts.poppins(
@@ -386,6 +470,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                     SizedBox(height: 5),
 
                     _buildTextField(
+                      controller: capacityPiecesController,
                       hint: 'Enter capacity in pieces (optional)',
                       keyboardType: TextInputType.number,
                       inputFormatters: [
@@ -395,6 +480,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                   ],
                 ),
               ),
+
               SizedBox(height: 10),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
@@ -407,6 +493,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     Row(
                       children: [
                         Container(
@@ -422,7 +509,9 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                             size: 23,
                           ),
                         ),
+
                         SizedBox(width: 10),
+
                         Text(
                           'Aditional Information',
                           style: GoogleFonts.poppins(
@@ -448,16 +537,15 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                     SizedBox(height: 5),
 
                     _buildTextField(
-                      hint: 'Enter capacity in pieces (optional)',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
+                      controller: notesController,
+                      hint: 'Enter notes (optional)',
                     ),
                   ],
                 ),
               ),
+
               SizedBox(height: 15),
+
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 18),
                 child: Row(
@@ -466,25 +554,10 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                       child: SizedBox(
                         height: Sizes.screenHeight * 0.055,
                         child: OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: Color(0xFFFFEFEB),
-                            side: BorderSide(
-                              color: Color(0xFF8E1B12),
-                              width: 1,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Text(
-                            'Cancel',
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF8E1B12),
-                            ),
-                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Cancel'),
                         ),
                       ),
                     ),
@@ -492,32 +565,19 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                     SizedBox(width: 14),
 
                     Expanded(
-                      child: SizedBox(
-                        height: Sizes.screenHeight * 0.055,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFAD1008),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Text(
-                            'Save Vehicle',
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                      child: CustomButton(
+                        text: 'Save Vehicle',
+                        isLoading: addvehicleviewModel.loading,
+                        onPressed: () async {
+                          await handladdvehiclec();
+                        },
+                        iconOnLeft: false,
                       ),
                     ),
                   ],
                 ),
               ),
+
               SizedBox(height: 20),
             ],
           ),
@@ -550,8 +610,8 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
       ),
     );
   }
-
   Widget _buildTextField({
+    required TextEditingController controller,
     required String hint,
     TextInputType? keyboardType,
     int? maxLength,
@@ -560,6 +620,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
     return SizedBox(
       height: Sizes.screenHeight * 0.052,
       child: TextField(
+        controller: controller,
         keyboardType: keyboardType,
         maxLength: maxLength,
         inputFormatters: inputFormatters,

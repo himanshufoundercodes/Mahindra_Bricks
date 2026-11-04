@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 
+import '../viewproductdetails.dart';
+import 'Constnat_Appbutton.dart';
 import 'Sizes.dart';
 
 class CustomOrderCard extends StatelessWidget {
@@ -33,22 +36,22 @@ class CustomOrderCard extends StatelessWidget {
     this.onViewDetails,
     this.backgroundColor = const Color(0xFFFFFCFA),
     this.statusColor = const Color(0xFFFFE7B5),
-    this.statusTextColor = const Color(0xFF98500A),
+    this.statusTextColor = const Color(0xFF98500A), required Null Function() onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
+        horizontal: Sizes.screenWidth * 0.027,
+        vertical: Sizes.screenHeight * 0.006,
       ),
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Color(0xFFEDE3DD),
+          color: AppColor.grey,
         ),
       ),
       child: Column(
@@ -59,11 +62,11 @@ class CustomOrderCard extends StatelessWidget {
               Flexible(
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
+                    horizontal: Sizes.screenWidth * 0.027,
+                    vertical: Sizes.screenHeight * 0.005,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xFF963A20),
+                    color:AppColor.stockTitleColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -72,7 +75,7 @@ class CustomOrderCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
                       fontSize: 10,
-                      color: Colors.white,
+                      color: AppColor.white,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -84,16 +87,16 @@ class CustomOrderCard extends StatelessWidget {
                   Icon(
                     Icons.calendar_month,
                     size: 15,
-                    color: Color(0xFF782A17),
+                    color: AppColor.stockTitleColor,
                   ),
-                  SizedBox(width: 4),
+                  SizedBox(width: Sizes.screenWidth * 0.011,),
                   Text(
                     dateTime,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
-                      color: Color(0xFF514944),
+                      color: AppColor.gey,
                     ),
                   ),
                 ],
@@ -109,7 +112,7 @@ class CustomOrderCard extends StatelessWidget {
                 width: Sizes.screenWidth * 0.203,
                 padding: EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: Color(0xFFF8EFEB),
+                  color: AppColor.imgbg,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Image.asset(
@@ -117,7 +120,7 @@ class CustomOrderCard extends StatelessWidget {
                   fit: BoxFit.contain,
                 ),
               ),
-              SizedBox(width: 10),
+              SizedBox(width: Sizes.screenWidth * 0.022),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,14 +132,14 @@ class CustomOrderCard extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black,
+                        color: AppColor.black,
                       ),
                     ),
                     Text(
                       quantity,
                       style: GoogleFonts.poppins(
                         fontSize: 11,
-                        color: Colors.black,
+                        color: AppColor.black,
                       ),
                     ),
                     Text(
@@ -145,17 +148,17 @@ class CustomOrderCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
                         fontSize: 10,
-                        color: Color(0xFF514944),
+                        color: AppColor.gey,
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(width: 5),
+              SizedBox(width: Sizes.screenWidth * 0.05),
               Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 5,
+                  horizontal: Sizes.screenWidth * 0.021,
+                  vertical: Sizes.screenHeight * 0.006,
                 ),
                 decoration: BoxDecoration(
                   color: statusColor,
@@ -223,39 +226,25 @@ class CustomOrderCard extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: Sizes.screenWidth * 0.086,
-                child: ElevatedButton(
-                  onPressed: onViewDetails,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF963A20),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12,
+              CustomButton(
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                height: 35,
+                width: 100,
+                text: 'View Details',
+                fontSize:  12,
+                fontWeight: .w500,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Viewproductdetails(),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(9),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'View Details',
-                        style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(width: 3),
-                      Icon(
-                        Icons.chevron_right,
-                        size: 17,
-                      ),
-                    ],
-                  ),
-                ),
+                  );
+                },
+                iconOnLeft: false,
+                icon: Icons.arrow_forward_ios_sharp,
+                iconSize: 12,
+                iconSpacing: 2,
               ),
             ],
           ),

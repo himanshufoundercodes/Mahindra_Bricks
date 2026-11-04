@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:mahindra_bricks/core/storage/login_sharedpreferences.dart';
+import 'package:mahindra_bricks/viewmodel/profile_viewmodel.dart';
+import 'package:provider/provider.dart';
+
+import 'Loginpagenew.dart';
 import 'addcementstock.dart';
 import 'addvehicle.dart';
 import 'brickscategory.dart';
@@ -8,13 +13,10 @@ import 'dailyattendence.dart';
 import 'dailypayout.dart';
 
 class MahindraDrawer extends StatefulWidget {
-  final int selectedIndex;
-  final Function(int) onMenuTap;
+
 
   const MahindraDrawer({
     super.key,
-    required this.selectedIndex,
-    required this.onMenuTap,
   });
 
   @override
@@ -22,6 +24,18 @@ class MahindraDrawer extends StatefulWidget {
 }
 
 class _MahindraDrawerState extends State<MahindraDrawer> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProfileViewModel>(
+        context,
+        listen: false,
+      ).profileApi();
+    });
+  }
 
   final Color primaryColor = Color(0xFF8D301B);
   final Color backgroundColor = Color(0xFFFFFBF7);
@@ -35,6 +49,7 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
     {'title': 'Daily Attendance', 'icon': Icons.calendar_month},
     {'title': 'Labour Payout', 'icon': Icons.account_balance_wallet},
     {'title': 'Client List', 'icon': Icons.groups},
+    {'title': 'Add New Product', 'icon': Icons.add_shopping_cart},
     {'title': 'Create Brick/Paver Categories', 'icon': Icons.account_tree},
     {'title': 'Add Vehicle', 'icon': Icons.local_shipping},
     {'title': 'Add Cement Stock', 'icon': Icons.warehouse},
@@ -43,13 +58,14 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
 
   @override
   Widget build(BuildContext context) {
+
+    final profile = Provider.of<ProfileViewModel>(context);
+
     return Drawer(
       width: Sizes.screenWidth * 0.67,
       backgroundColor: backgroundColor,
       elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       child: SafeArea(
         child: Column(
           children: [
@@ -59,16 +75,10 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
               width: Sizes.screenWidth * 0.15,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: Color(0xFFB88A70),
-                  width: 1.5,
-                ),
+                border: Border.all(color: Color(0xFFB88A70), width: 1.5),
               ),
               child: ClipOval(
-                child: Image.asset(
-                  'assets/logo.jpg',
-                  fit: BoxFit.contain,
-                ),
+                child: Image.asset('assets/logo.jpg', fit: BoxFit.contain),
               ),
             ),
 
@@ -104,11 +114,7 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                   CircleAvatar(
                     radius: 21,
                     backgroundColor: Color(0xFFF3D9CD),
-                    child: Icon(
-                      Icons.person,
-                      size: 30,
-                      color: primaryColor,
-                    ),
+                    child: Icon(Icons.person, size: 30, color: primaryColor),
                   ),
                   SizedBox(width: 10),
                   Expanded(
@@ -116,7 +122,7 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Vikash Singh',
+                          profile.profileModel?.name ?? '...',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.poppins(
@@ -126,7 +132,7 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                           ),
                         ),
                         Text(
-                          'vikashsingh@gmail.com',
+                          profile.profileModel?.email ?? "...",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.poppins(
@@ -151,19 +157,19 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                   final item = menuItems[index];
 
                   final bool isSelected;
-                  if (item['title'] == 'Reports') {
-                    isSelected = widget.selectedIndex == 4;
-                  } else if (item['title'] == 'Home') {
-                    isSelected = widget.selectedIndex == 0;
-                  } else if (item['title'] == 'Stock') {
-                    isSelected = widget.selectedIndex == 1;
-                  } else if (item['title'] == 'Orders') {
-                    isSelected = widget.selectedIndex == 2;
-                  } else if (item['title'] == 'Labour') {
-                    isSelected = widget.selectedIndex == 3;
-                  } else {
-                    isSelected = false;
-                  }
+                  // if (item['title'] == 'Reports') {
+                  //   isSelected = widget.selectedIndex == 4;
+                  // } else if (item['title'] == 'Home') {
+                  //   isSelected = widget.selectedIndex == 0;
+                  // } else if (item['title'] == 'Stock') {
+                  //   isSelected = widget.selectedIndex == 1;
+                  // } else if (item['title'] == 'Orders') {
+                  //   isSelected = widget.selectedIndex == 2;
+                  // } else if (item['title'] == 'Labour') {
+                  //   isSelected = widget.selectedIndex == 3;
+                  // } else {
+                  //   isSelected = false;
+                  // }
 
                   return Column(
                     children: [
@@ -181,19 +187,20 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
 
                           Navigator.pop(context);
 
-                          if (item['title'] == 'Reports') {
-                            widget.onMenuTap(4);
-                            return;
-                          }
+                          // if (item['title'] == 'Reports') {
+                          //   widget.onMenuTap(4);
+                          //   return;
+                          // }
 
-                          widget.onMenuTap(index);
+                          // widget.onMenuTap(index);
 
                           if (item['title'] == 'Home' ||
                               item['title'] == 'Stock' ||
                               item['title'] == 'Orders' ||
                               item['title'] == 'Labour') {
                             return;
-                          } else if (item['title'] == 'Create Brick/Paver Categories') {
+                          } else if (item['title'] ==
+                              'Create Brick/Paver Categories') {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -231,14 +238,12 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                           }
                         },
                         child: Container(
-                          height: 40,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 9,
-                          ),
+                          height: Sizes.screenWidth * 0.107,
+                          padding: EdgeInsets.symmetric(horizontal: 9),
                           decoration: BoxDecoration(
-                            color: isSelected
-                                ? selectedColor
-                                : Colors.transparent,
+                            // color: isSelected
+                            //     ? selectedColor
+                            //     : Colors.transparent,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -246,9 +251,11 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                               Icon(
                                 item['icon'] as IconData,
                                 size: 22,
-                                color: isSelected
-                                    ? primaryColor
-                                    : Color(0xFF484848),
+                                color:
+                                    // isSelected
+                                    //     ? primaryColor
+                                    // :
+                                    Color(0xFF484848),
                               ),
 
                               SizedBox(width: 14),
@@ -260,12 +267,16 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
-                                    fontWeight: isSelected
-                                        ? FontWeight.w600
-                                        : FontWeight.w400,
-                                    color: isSelected
-                                        ? primaryColor
-                                        : Color(0xFF242424),
+                                    fontWeight:
+                                        // isSelected
+                                        //     ? FontWeight.w600
+                                        //     :
+                                        FontWeight.w400,
+                                    color:
+                                        // isSelected
+                                        //     ? primaryColor
+                                        //     :
+                                        Color(0xFF242424),
                                   ),
                                 ),
                               ),
@@ -273,9 +284,11 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                               Icon(
                                 Icons.chevron_right,
                                 size: 22,
-                                color: isSelected
-                                    ? primaryColor
-                                    : Color(0xFF666666),
+                                color:
+                                    // isSelected
+                                    //     ? primaryColor
+                                    //     :
+                                    Color(0xFF666666),
                               ),
                             ],
                           ),
@@ -292,7 +305,8 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(8),
                 onTap: () {
-                  Navigator.pop(context);
+                  PreferenceService.clearSession();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Loginpagenew()));
                 },
                 child: Container(
                   height: Sizes.screenHeight * 0.054,
@@ -303,11 +317,7 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.logout,
-                        size: 20,
-                        color: primaryColor,
-                      ),
+                      Icon(Icons.logout, size: 20, color: primaryColor),
                       SizedBox(width: 12),
                       Text(
                         'Logout',

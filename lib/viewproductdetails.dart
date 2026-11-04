@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'Constant/Constant_Appbar.dart';
+import 'Constant/Constant_Color.dart';
 import 'Constant/Constantpaymentcard.dart';
+import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
 
 class Viewproductdetails extends StatefulWidget {
@@ -17,141 +20,55 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0XFFfef6f3),
+      backgroundColor: AppColor.bodybackgroundColor,
+      appBar: const ConstantAppBar(
+        title: 'Dashboard',
+        showBranding: true,
+        showBackButton: true,
+        logoAsset: 'assets/logo.jpg',
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 35),
             Container(
-              height: Sizes.screenWidth * 0.12,
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.021,
+                vertical: Sizes.screenHeight * 0.012),
+              color: AppColor.lightredbg,
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: Color(0xFF702B1C),
-                      size: 27,
-                    ),
-                  ),
-
-                  SizedBox(width: 40),
+                  _buildHeader(),
+                  Spacer(),
                   Container(
-                    height: Sizes.screenWidth * 0.094,
-                    width: Sizes.screenWidth * 0.094,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Color(0xFFB58B76)),
-                    ),
-                    child: ClipOval(
-                      child: Image.asset('assets/logo.jpg', fit: BoxFit.cover),
-                    ),
-                  ),
-
-                  SizedBox(width: 8),
-
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'MAHINDRA BRICKS',
-                            style: GoogleFonts.poppins(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF702B1C),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          'P A V E R   B L O C K S',
-                          style: GoogleFonts.poppins(
-                            fontSize: 9,
-                            color: Color(0xFF702B1C),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              color: Color(0xFFfef6f3),
-              child: Row(
-                children: [
-                  // Left side
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Order Details',
-                            style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF702B1C),
-                            ),
-                          ),
-                          Text(
-                            'Order information and status',
-                            style: GoogleFonts.poppins(
-                              fontSize: 10,
-                              color: Colors.grey.shade700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 13,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFFFDF9),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColor.white,
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           'ORD-2026-0010',
                           style: GoogleFonts.poppins(
-                            fontSize: 10,
+                            fontSize: 9,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF263238),
+                            color: AppColor.black,
                           ),
                         ),
                         Text(
                           '16 Oct 2026, 10:30 AM',
                           style: GoogleFonts.poppins(
                             fontSize: 8,
-                            color: Colors.grey.shade600,
+                            color: AppColor.gey,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        SizedBox(height: Sizes.screenHeight * 0.005,),
 
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 5,
-                          ),
+                            horizontal: Sizes.screenWidth * 0.021,
+                                vertical: Sizes.screenHeight * 0.012),
                           decoration: BoxDecoration(
-                            color: Color(0xFFFFF3E0),
+                            color: AppColor.lightyellow,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Row(
@@ -160,22 +77,22 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                               Icon(
                                 Icons.access_time,
                                 size: 12,
-                                color: Color(0xFFF59E0B),
+                                color: AppColor.yellow,
                               ),
-                              SizedBox(width: 4),
+                              SizedBox(width: Sizes.screenWidth * 0.011,),
                               Text(
                                 'Pending',
                                 style: GoogleFonts.poppins(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFFF59E0B),
+                                  color: AppColor.yellow,
                                 ),
                               ),
-                              SizedBox(width: 5),
+                              SizedBox(width: Sizes.screenWidth * 0.013,),
                               Icon(
                                 Icons.keyboard_arrow_down,
                                 size: 15,
-                                color: Color(0xFF702B1C),
+                                color: AppColor.black,
                               ),
                             ],
                           ),
@@ -186,36 +103,35 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                 ],
               ),
             ),
-            SizedBox(height: 5),
+            SizedBox(height: Sizes.screenHeight * 0.01,),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.021,),
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFCF9),
+                  color: AppColor.white38,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Color(0xFFF5EDE7)),
+                  border: Border.all(color: AppColor.grey),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Profile Icon
                     Container(
                       height: Sizes.screenHeight * 0.049,
                       width: Sizes.screenWidth * 0.105,
                       decoration: BoxDecoration(
-                        color: Color(0XFFfbf8f3),
+                        color:AppColor.lightredbg,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.person,
                         size: 30,
-                        color: Color(0xFF8B251D),
+                        color: AppColor.stockUnitColor,
                       ),
                     ),
 
-                    SizedBox(width: 14),
+                    SizedBox(width: Sizes.screenWidth * 0.037),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,56 +141,53 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF702B1C),
+                              color: AppColor.stockTitleColor,
                             ),
                           ),
 
-                          SizedBox(height: 5),
+                          SizedBox(height: Sizes.screenHeight * 0.006),
 
                           Text(
                             'ROYAL BROTHERS GROUP OF COMPANY',
                             style: GoogleFonts.poppins(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: Color(0xFF17212B),
+                              color: AppColor.gey,
                             ),
                           ),
 
-                          SizedBox(height: 5),
-
+                          SizedBox(height: Sizes.screenHeight * 0.006),
                           Row(
                             children: [
                               Icon(
                                 Icons.call,
                                 size: 18,
-                                color: Color(0xFF737B83),
+                                color: AppColor.gey,
                               ),
-                              SizedBox(width: 12),
+                              SizedBox(width: Sizes.screenWidth * 0.032,),
                               Text(
                                 '9685538768',
                                 style: GoogleFonts.poppins(
                                   fontSize: 13,
-                                  color: Color(0xFF17212B),
+                                  color: AppColor.black,
                                 ),
                               ),
                             ],
                           ),
-
-                          SizedBox(height: 4),
-
+                          SizedBox(height: Sizes.screenHeight * 0.005,),
                           Row(
                             children: [
                               Icon(
                                 Icons.location_on,
                                 size: 19,
-                                color: Color(0xFF737B83),
+                                color: AppColor.gey,
                               ),
-                              SizedBox(width: 12),
+                              SizedBox(width: Sizes.screenWidth * 0.032,),
                               Text(
                                 'kolgarh',
                                 style: GoogleFonts.poppins(
                                   fontSize: 13,
-                                  color: Color(0xFF17212B),
+                                  color: AppColor.black,
                                 ),
                               ),
                             ],
@@ -287,14 +200,15 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027,
+                vertical: Sizes.screenHeight * 0.010,),
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFBF7), // Light cream
+                  color: AppColor.white38,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Color(0xFFF5EDE6), width: 1),
+                  border: Border.all(color: AppColor.grey, width: Sizes.screenWidth * 0.003,),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,24 +219,24 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                           height: Sizes.screenHeight * 0.047,
                           width: Sizes.screenWidth * 0.095,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFCEAE5),
+                            color: AppColor.lightredbg,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.local_shipping,
-                            color: Color(0xFF702B1C),
+                            color: AppColor.stockUnitColor,
                             size: 23,
                           ),
                         ),
 
-                        SizedBox(width: 10),
+                        SizedBox(width: Sizes.screenWidth * 0.027,),
 
                         Text(
                           'Delivery Details',
                           style: GoogleFonts.poppins(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF702B1C),
+                            color: AppColor.stockUnitColor,
                           ),
                         ),
                       ],
@@ -340,7 +254,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                   'Vehicle Number',
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
-                                    color: Color(0xFF737B83),
+                                    color: AppColor.gey,
                                   ),
                                 ),
                                 Text(
@@ -348,15 +262,15 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                   style: GoogleFonts.poppins(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF17212B),
+                                    color: AppColor.black,
                                   ),
                                 ),
-                                SizedBox(height: 2),
+                                SizedBox(height: Sizes.screenHeight * 0.0025,),
                                 Text(
                                   'Delivery Date',
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
-                                    color: Color(0xFF737B83),
+                                    color: AppColor.gey,
                                   ),
                                 ),
                                 Text(
@@ -364,7 +278,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                   style: GoogleFonts.poppins(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
-                                    color: Color(0xFF17212B),
+                                    color: AppColor.black,
                                   ),
                                 ),
                               ],
@@ -372,12 +286,12 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                           ),
                         ),
                         Container(
-                          height: 72,
-                          width: 1,
-                          color: Color(0xFFE8DED5),
+                          height: Sizes.screenHeight * 0.089,
+                          width: Sizes.screenWidth * 0.003,
+                          color: AppColor.grey,
                         ),
 
-                        SizedBox(width: 20),
+                        SizedBox(width: Sizes.screenWidth * 0.053,),
 
                         Expanded(
                           child: Row(
@@ -385,10 +299,10 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                             children: [
                               Icon(
                                 Icons.location_on,
-                                color: Color(0xFF737B83),
+                                color: AppColor.gey,
                                 size: 20,
                               ),
-                              SizedBox(width: 8),
+                              SizedBox(width: Sizes.screenWidth * 0.021,),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +311,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                       'Delivery Location',
                                       style: GoogleFonts.poppins(
                                         fontSize: 12,
-                                        color: Color(0xFF737B83),
+                                        color: AppColor.gey,
                                       ),
                                     ),
                                     Text(
@@ -405,7 +319,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                       style: GoogleFonts.poppins(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFF17212B),
+                                        color: AppColor.black,
                                       ),
                                     ),
                                   ],
@@ -422,221 +336,209 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
             ),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027,),
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFBF7),
+                  color: AppColor.white38,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Color(0xFFF5EDE6), width: 1),
+                  border: Border.all(color: AppColor.grey, width: Sizes.screenWidth * 0.003,),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     Row(
                       children: [
                         Container(
                           height: Sizes.screenHeight * 0.043,
                           width: Sizes.screenWidth * 0.095,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFCEAE5),
+                            color: AppColor.bgback,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.receipt_long,
-                            color: Color(0xFF702B1C),
+                            color: AppColor.stockTitleColor,
                             size: 23,
                           ),
                         ),
-                        SizedBox(width: 10),
+                        SizedBox(width: Sizes.screenWidth * 0.027,),
                         Text(
                           'Invoice Details',
                           style: GoogleFonts.poppins(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF702B1C),
+                            color: AppColor.stockTitleColor,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    SizedBox(height: Sizes.screenHeight * 0.004,),
 
-                    // Details
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Invoice Number
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 48),
-                            child: Column(
+                        Padding(
+                          padding: EdgeInsets.only(left: 48),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Invoice No.',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: AppColor.gey,
+                                ),
+                              ),
+                              Text(
+                                '10',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: Sizes.screenWidth * 0.027,),
+                        Container(
+                          height: Sizes.screenHeight * 0.039,
+                          width: Sizes.screenWidth * 0.003,
+                          color: AppColor.grey,
+                        ),
+
+                        SizedBox(width: Sizes.screenWidth * 0.030),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.calendar_month,
+                              size: 19,
+                              color: AppColor.gey,
+                            ),
+                            SizedBox(width: Sizes.screenWidth * 0.022),
+
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Invoice No.',
+                                  'Order Date',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: Color(0xFF737B83),
+                                    color: AppColor.gey,
                                   ),
                                 ),
                                 Text(
-                                  '10',
+                                  '16 Oct 2026',
                                   style: GoogleFonts.poppins(
-                                    fontSize: 13,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF17212B),
+                                    color: AppColor.black,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
+                          ],
                         ),
-
-                        // Divider
+                        SizedBox(width: Sizes.screenWidth * 0.013),
                         Container(
-                          height: 32,
-                          width: 1,
-                          color: Color(0xFFE8DED5),
+                          height: Sizes.screenHeight * 0.039,
+                          width: Sizes.screenWidth * 0.003,
+                          color: AppColor.grey,
                         ),
+                        SizedBox(width: Sizes.screenWidth * 0.020),
 
-                        SizedBox(width: 16),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.point_of_sale,
+                              size: 19,
+                              color: AppColor.gey,
+                            ),
+                            SizedBox(width: 6),
 
-                        // Order Date
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.calendar_month,
-                                size: 19,
-                                color: Color(0xFF737B83),
-                              ),
-                              SizedBox(width: 7),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Order Date',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 11,
-                                        color: Color(0xFF737B83),
-                                      ),
-                                    ),
-                                    Text(
-                                      '16 Oct 2026',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF17212B),
-                                      ),
-                                    ),
-                                  ],
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Order Type',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    color: AppColor.gey,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(width: 10),
-
-                        // Order Type
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.point_of_sale,
-                                size: 19,
-                                color: Color(0xFF737B83),
-                              ),
-                              SizedBox(width: 6),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Order Type',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 11,
-                                        color: Color(0xFF737B83),
-                                      ),
-                                    ),
-                                    Text(
-                                      'Sales Order',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF17212B),
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  'Sales Order',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColor.black,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
-                    ),
+                    )
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: Sizes.screenHeight * 0.01),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027),
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFBF7),
+                  color: AppColor.white38,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Color(0xFFF5EDE6)),
+                  border: Border.all(color: AppColor.grey),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     Row(
                       children: [
                         Container(
                           height: Sizes.screenHeight * 0.047,
                           width: Sizes.screenWidth * 0.095,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFCEAE5),
+                            color: AppColor.bgback,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.view_in_ar,
-                            color: Color(0xFF702B1C),
+                            color: AppColor.stockTitleColor,
                             size: 24,
                           ),
                         ),
-                        SizedBox(width: 10),
+                        SizedBox(width: Sizes.screenWidth * 0.027),
                         Text(
                           'Product Details',
                           style: GoogleFonts.poppins(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF702B1C),
+                            color: AppColor.stockTitleColor,
                           ),
                         ),
                       ],
                     ),
 
-                    SizedBox(height: 10),
-
-                    // Table
+                    SizedBox(height: Sizes.screenHeight * 0.012,),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Table(
                         defaultVerticalAlignment:
                             TableCellVerticalAlignment.middle,
                         border: TableBorder.all(
-                          color: Color(0xFFF0E6DF),
-                          width: 0.7,
+                          color: AppColor.grey,
+                            width: Sizes.screenWidth * 0.0019,
                         ),
                         columnWidths: {
                           0: FixedColumnWidth(30),
@@ -648,10 +550,9 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                           6: FixedColumnWidth(75),
                         },
                         children: [
-                          // Table heading
                           TableRow(
                             decoration: BoxDecoration(
-                              color: Color(0xFFFFEFEB),
+                              color: AppColor.bgbacklight,
                             ),
                             children:
                                 [
@@ -665,8 +566,8 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                 ].map((heading) {
                                   return Padding(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                      vertical: 8,
+                                      horizontal: Sizes.screenWidth * 0.011,
+                                      vertical: Sizes.screenHeight * 0.010,
                                     ),
                                     child: Text(
                                       heading,
@@ -674,20 +575,15 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                       style: GoogleFonts.poppins(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFF702B1C),
+                                        color: AppColor.stockTitleColor,
                                       ),
                                     ),
                                   );
                                 }).toList(),
                           ),
-
-                          // Product row
                           TableRow(
                             children: [
-                              // Number
                               _productCell('1'),
-
-                              // Image and name
                               Padding(
                                 padding: EdgeInsets.all(5),
                                 child: Row(
@@ -702,12 +598,12 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                           return Icon(
                                             Icons.image_outlined,
                                             size: 30,
-                                            color: Color(0xFFB58B76),
+                                            color: AppColor.red,
                                           );
                                         },
                                       ),
                                     ),
-                                    SizedBox(width: 5),
+                                    SizedBox(width: Sizes.screenWidth * 0.013),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -718,7 +614,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                             style: GoogleFonts.poppins(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w600,
-                                              color: Color(0xFF17212B),
+                                              color: AppColor.black,
                                             ),
                                           ),
                                           Text(
@@ -749,7 +645,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: Sizes.screenHeight * 0.01),
             CustomAmountPaymentCard(
               icon: Icons.calculate,
               title: 'Amount Details',
@@ -785,12 +681,13 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
 
             Container(
               width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              margin: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027,
+                vertical: Sizes.screenHeight * 0.006,),
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Color(0xFFFFFBF7),
+                color: AppColor.white38,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xFFF5EDE6)),
+                border: Border.all(color: AppColor.grey),
               ),
               child: Column(
                 children: [
@@ -800,16 +697,16 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                         height: Sizes.screenHeight * 0.044,
                         width: Sizes.screenWidth * 0.09,
                         decoration: BoxDecoration(
-                          color: Color(0xFFFCEAE5),
+                          color: AppColor.bgback,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.receipt_long,
-                          color: Color(0xFF702B1C),
+                          color: AppColor.stockTitleColor,
                           size: 22,
                         ),
                       ),
-                      SizedBox(width: 9),
+                      SizedBox(width: Sizes.screenWidth * 0.024,),
 
                       Expanded(
                         child: Text(
@@ -817,16 +714,16 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF702B1C),
+                            color: AppColor.stockTitleColor,
                           ),
                         ),
                       ),
 
                       Container(
                         height: Sizes.screenHeight * 0.047,
-                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.021),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Color(0xFFE8BD72)),
+                          border: Border.all(color: AppColor.grey),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: DropdownButtonHideUnderline(
@@ -834,7 +731,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                             value: selectedStatus,
                             icon: Icon(
                               Icons.keyboard_arrow_down,
-                              color: Color(0xFF702B1C),
+                              color: AppColor.black,
                               size: 20,
                             ),
                             items:
@@ -850,15 +747,15 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                       children: [
                                         Icon(
                                           Icons.access_time,
-                                          color: Color(0xFFE99A20),
+                                          color: AppColor.yellow,
                                           size: 17,
                                         ),
-                                        SizedBox(width: 7),
+                                        SizedBox(width: Sizes.screenWidth * 0.019),
                                         Text(
                                           status,
                                           style: GoogleFonts.poppins(
                                             fontSize: 12,
-                                            color: Color(0xFFE99A20),
+                                            color: AppColor.yellow,
                                           ),
                                         ),
                                       ],
@@ -877,34 +774,14 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                       ),
                     ],
                   ),
-
-                  SizedBox(height: 10),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: Sizes.screenHeight * 0.045,
-                    child: ElevatedButton(
-                      onPressed: () {
-
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF8D2B17),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                      child: Text(
-                        'Update Status',
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
+                  SizedBox(height: Sizes.screenHeight * 0.012),
+                  CustomButton(
+                    text: 'Update Status',
+                    height: Sizes.screenHeight * 0.049,
+                    fontWeight: .w500,
+                    onPressed: () {
+                  },),
+                  SizedBox(height: Sizes.screenHeight * 0.025),
                 ],
               ),
             ),
@@ -913,18 +790,60 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
       ),
     );
   }
-
   Widget _productCell(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.008,
+        vertical: Sizes.screenHeight * 0.012,),
       child: Center(
         child: Text(
           text,
           textAlign: TextAlign.center,
           style: GoogleFonts.poppins(
             fontSize: 10,
-            color: Color(0xFF17212B),
+            color: AppColor.black,
           ),
+        ),
+      ),
+    );
+  }
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: Sizes.screenHeight * 0.010,
+          vertical: Sizes.screenHeight * 0.010
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Order Details',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.stockAmountColor,
+                  ),
+                ),
+                Text(
+                  'Order information and status',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.gey,
+                  ),
+                ),
+              ],
+            ),
+
+          ],
         ),
       ),
     );

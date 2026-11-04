@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 
+import 'Constant/Constant_Appbar.dart';
+import 'Constant/Constant_Color.dart';
 import 'Constant/Constantcustomecalender.dart';
 
 class AddProduction extends StatefulWidget {
@@ -19,185 +21,74 @@ class _AddProductionState extends State<AddProduction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColor.bodybackgroundColor,
+      appBar:  ConstantAppBar(
+        title: 'Dashboard',
+        showBranding: true,
+        showBackButton: true,
+        logoAsset: 'assets/logo.jpg',
+      ),
+
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
             children: [
+              _buildHeader(),
               Container(
-                height: Sizes.screenHeight * 0.095,
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: brown.withOpacity(0.10),
-                      width: 1,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: brown,
-                        size: 24,
-                      ),
-                    ),
-
-                    SizedBox(width: 35),
-
-                    Container(
-                      height: 35,
-                      width: 35,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: brown.withOpacity(0.65),
-                          width: 1.2,
-                        ),
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/logo.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 7),
-
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'MAHINDRA BRICKS',
-                              style: TextStyle(
-                                color: brown,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.3,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'P A V E R   B L O C K S',
-                            style: TextStyle(
-                              color: Color(0xFF84301D),
-                              fontSize: 9,
-                              letterSpacing: 1.1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 12,
-                  bottom: 10,
-                ),
-                color: Color(0xFFFFF8F1),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Add Production',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF7D1F12),
-                      ),
-                    ),
-
-                    SizedBox(height: 2),
-
-                    Text(
-                      "Record today's brick or paver block production",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF757575),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                margin: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027,
+                  vertical: Sizes.screenHeight * 0.006,),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Color(0xFFF1E8E2),
+                    color: AppColor.grey,
                   ),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Container(
-                          height: 40,
-                          width: 40,
+                          height: Sizes.screenHeight * 0.049,
+                          width: Sizes.screenWidth * 0.107,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFFF0EA),
+                            color: AppColor.lightred,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.calendar_month_outlined,
-                            color: Color(0xFF842719),
+                            color: AppColor.stockUnitColor,
                             size: 22,
                           ),
                         ),
 
-                        SizedBox(width: 12),
-
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '1. Production Date',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF7D2015),
-                                ),
+                        SizedBox(width: Sizes.screenWidth * 0.032),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '1. Production Date',
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF7D2015),
                               ),
-                              SizedBox(height: 2),
-                              Text(
-                                'Select the date of production',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  color: Color(0xFF757575),
-                                ),
+                            ),
+                            SizedBox(height: Sizes.screenHeight * 0.0025),
+                            Text(
+                              'Select the date of production',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: AppColor.gey,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
 
-                    SizedBox(height: 10),
-
+                    SizedBox(height: Sizes.screenHeight * 0.012),
                     InkWell(
                       onTap: () {
                         showDialog(
@@ -221,12 +112,14 @@ class _AddProductionState extends State<AddProduction> {
                       child: Container(
                         height: Sizes.screenHeight * 0.052,
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Sizes.screenWidth * 0.027,
+                        ),
                         decoration: BoxDecoration(
-                          color: Color(0xFFFFFCFA),
+                          color: AppColor.lightred,
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                            color: Color(0xFFE5DDD7),
+                            color: AppColor.grey,
                           ),
                         ),
                         child: Row(
@@ -234,25 +127,23 @@ class _AddProductionState extends State<AddProduction> {
                             Icon(
                               Icons.calendar_today_outlined,
                               size: 17,
-                              color: Color(0xFF666666),
+                              color: AppColor.gey,
                             ),
-                            SizedBox(width: 20),
-                            Expanded(
-                              child: Text(
-                                selectedPaymentDate == null
-                                    ? 'Select date'
-                                    : '${selectedPaymentDate!.day.toString().padLeft(2, '0')} '
-                                    '${[
-                                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                                ][selectedPaymentDate!.month - 1]} '
-                                    '${selectedPaymentDate!.year}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF292929),
-                                ),
+                            SizedBox(width: Sizes.screenWidth * 0.053),                            Text(
+                              selectedPaymentDate == null
+                                  ? 'Select date'
+                                  : '${selectedPaymentDate!.day.toString().padLeft(2, '0')} '
+                                  '${[
+                                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                              ][selectedPaymentDate!.month - 1]} '
+                                  '${selectedPaymentDate!.year}',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: AppColor.gey,
                               ),
                             ),
+                            Spacer(),
                             Icon(
                               Icons.keyboard_arrow_down,
                               size: 22,
@@ -265,19 +156,17 @@ class _AddProductionState extends State<AddProduction> {
                   ],
                 ),
               ),
-
               Container(
-                width: double.infinity,
                 margin: EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
+                  horizontal: Sizes.screenWidth * 0.027,
+                  vertical: Sizes.screenHeight * 0.006,
                 ),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Color(0xFFF1E8E2),
+                    color: AppColor.grey,
                   ),
                 ),
                 child: Column(
@@ -286,66 +175,58 @@ class _AddProductionState extends State<AddProduction> {
                     Row(
                       children: [
                         Container(
-                          height: 42,
-                          width: 42,
+                          height: Sizes.screenHeight * 0.052,
+                          width: Sizes.screenWidth * 0.112,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFFF0EA),
+                            color:AppColor.lightred,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.inventory_2_outlined,
-                            color: Color(0xFF842719),
+                            color: AppColor.stockUnitColor,
                             size: 23,
                           ),
                         ),
-
-                        SizedBox(width: 12),
-
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '2. Select Product',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF7D2015),
-                                ),
+                        SizedBox(width: Sizes.screenWidth * 0.032),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '2. Select Product',
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color:AppColor.stockUnitColor,
                               ),
-                              SizedBox(height: 2),
-                              Text(
-                                'Choose the brick or paver block',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF666666),
-                                ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Choose the brick or paver block',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: AppColor.gey,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-
-                    SizedBox(height: 8),
-
+                    SizedBox(height: Sizes.screenHeight * 0.01),
                     Container(
-                      height: 57,
-                      width: double.infinity,
+                      height: Sizes.screenHeight * 0.07,                      width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFFCFA),
+                        color: AppColor.lightred,
                         borderRadius: BorderRadius.circular(7),
                         border: Border.all(
-                          color: Color(0xFFE5DDD7),
+                          color:AppColor.grey,
                         ),
                       ),
                       child: Row(
                         children: [
                           Container(
-                            height: 55,
-                            width: 68,
+                            height: Sizes.screenHeight * 0.068,
+                            width: Sizes.screenWidth * 0.181,
                             decoration: BoxDecoration(
-                              color: Color(0xFFFFF0E8),
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(6),
                                 bottomLeft: Radius.circular(6),
@@ -362,46 +243,40 @@ class _AddProductionState extends State<AddProduction> {
                               ),
                             ),
                           ),
-
-                          SizedBox(width: 12),
-
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Red Bricks (Standard)',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
+                          SizedBox(width: Sizes.screenWidth * 0.032),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Red Bricks (Standard)',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
                                 ),
-                                SizedBox(height: 3),
-                                Text(
-                                  'Code: RB-001 | Size: 230 × 110 × 70 mm',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Color(0xFF666666),
-                                  ),
+                              ),
+                              SizedBox(height: Sizes.screenHeight * 0.004),
+                              Text(
+                                'Code: RB-001 | Size: 230 × 110 × 70 mm',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: AppColor.gey,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-
-                          SizedBox(width: 5),
-
+                          Spacer(),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            padding:  EdgeInsets.only(right: 8),
                             child: Icon(
                               Icons.keyboard_arrow_down,
                               size: 23,
-                              color: Colors.black,
+                              color: AppColor.black,
                             ),
                           ),
                         ],
@@ -410,12 +285,14 @@ class _AddProductionState extends State<AddProduction> {
                   ],
                 ),
               ),
-
               Container(
                 padding: EdgeInsets.all(14),
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                margin: EdgeInsets.symmetric(
+                  horizontal: Sizes.screenWidth * 0.027,
+                  vertical: Sizes.screenHeight * 0.006,
+                ),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFBF9),
+                  color: AppColor.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -424,58 +301,52 @@ class _AddProductionState extends State<AddProduction> {
                     Row(
                       children: [
                         Container(
-                          height: 56,
-                          width: 56,
+                          height: Sizes.screenHeight * 0.069,
+                          width: Sizes.screenWidth * 0.149,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFCE9E4),
+                            color: AppColor.lightred,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.business,
-                            color: Color(0xFF8B2116),
+                            color: AppColor.stockUnitColor,
                             size: 30,
                           ),
                         ),
-
-                        SizedBox(width: 12),
-
+                        SizedBox(width: Sizes.screenWidth * 0.032),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               '3. Production Quantity',
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                 fontSize: 19,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF702016),
+                                color: AppColor.stockUnitColor,
                               ),
                             ),
-
-                            SizedBox(height: 3),
-
+                            SizedBox(height: Sizes.screenHeight * 0.004),
                             Text(
                               'Enter total pieces produced today',
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                 fontSize: 14,
-                                color: Color(0xFF687078),
+                                color: AppColor.gey,
                               ),
                             ),
                           ],
                         ),
                       ],
                     ),
-
-                    SizedBox(height: 10),
-
+                    SizedBox(height: Sizes.screenHeight * 0.012),
                     Row(
                       children: [
                         Container(
-                          height: 42,
-                          width: 50,
+                          height: Sizes.screenHeight * 0.052,
+                          width: Sizes.screenWidth * 0.133,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFFFAF7),
+                            color: AppColor.white,
                             border: Border.all(
-                              color: Color(0xFFD8D8D8),
+                              color: AppColor.grey,
                             ),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(8),
@@ -484,21 +355,21 @@ class _AddProductionState extends State<AddProduction> {
                           ),
                           child: Icon(
                             Icons.inventory_2,
-                            color: Color(0xFF62666A),
+                            color: AppColor.stockUnitColor,
                             size: 20,
                           ),
                         ),
 
                         Expanded(
                           child: Container(
-                            height: 42,
+                            height: Sizes.screenHeight * 0.052,
                             padding: EdgeInsets.symmetric(
-                              horizontal: 12,
+                              horizontal: Sizes.screenWidth * 0.032,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color:AppColor.white,
                               border: Border.all(
-                                color: Color(0xFFD8D8D8),
+                                color: AppColor.grey ,
                               ),
                             ),
                             alignment: Alignment.centerLeft,
@@ -511,21 +382,21 @@ class _AddProductionState extends State<AddProduction> {
                               ),
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
-                                color: Colors.black,
+                                color: AppColor.black,
                               ),
                             ),
                           ),
                         ),
 
                         Container(
-                          height: 42,
+                          height: Sizes.screenHeight * 0.052,
                           padding: EdgeInsets.symmetric(
-                            horizontal: 14,
+                            horizontal: Sizes.screenWidth * 0.037,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFFF3F3F3),
+                            color: AppColor.grey,
                             border: Border.all(
-                              color: Color(0xFFD8D8D8),
+                              color: AppColor.grey,
                             ),
                             borderRadius: BorderRadius.only(
                               topRight: Radius.circular(8),
@@ -537,7 +408,7 @@ class _AddProductionState extends State<AddProduction> {
                             'Pieces',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
-                              color: Color(0xFF707078),
+                              color: AppColor.gey,
                             ),
                           ),
                         ),
@@ -548,223 +419,163 @@ class _AddProductionState extends State<AddProduction> {
               ),
 
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                margin: EdgeInsets.symmetric(
+                  horizontal: Sizes.screenWidth * 0.027,
+                  vertical: Sizes.screenHeight * 0.007,
+                ),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFBF7),
+                  color: AppColor.white,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: Color(0xFFF3ECE6),
-                  ),
+                  border: Border.all(color: AppColor.grey),
                 ),
-                child: IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        flex: 12,
-                        child: Row(
+                child: Row(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          height: Sizes.screenHeight * 0.069,
+                          width: Sizes.screenWidth * 0.149,
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFF7ECE5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Image.asset(
+                              'assets/bricks.jpg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: 56,
-                              height: 56,
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF7ECE5),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: Image.asset(
-                                  'assets/bricks.jpg',
-                                  fit: BoxFit.cover,
-                                ),
+                            Text(
+                              'Red Bricks (Standard)',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF731209),
                               ),
                             ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Red Bricks (Standard)',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF731209),
-                                    ),
-                                  ),
-                                  SizedBox(height: 3),
-                                  Text(
-                                    'Code: RB-001',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFF757575),
-                                    ),
-                                  ),
-                                  SizedBox(height: 2),
-                                  Text(
-                                    'Size: 230 × 110 × 70 mm',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFF757575),
-                                    ),
-                                  ),
-                                  SizedBox(height: 2),
-                                  Text(
-                                    'Colour: Red',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Color(0xFF757575),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            SizedBox(height: 3),
+                            Text('Code: RB-001',
+                                style: TextStyle(fontSize: 11)),
+                            SizedBox(height: 2),
+                            Text('Size: 230 × 110 × 70 mm',
+                                style: TextStyle(fontSize: 11)),
+                            SizedBox(height: 2),
+                            Text('Colour: Red',
+                                style: TextStyle(fontSize: 11)),
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 6),
-                        child: Container(
-                          width: 1,
-                          color: Color(0xFFEBE3DD),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 10,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      ],
+                    ),
+
+                    SizedBox(width: 8),
+
+                    // Divider
+                    Container(
+                      height: 120,
+                      width: 1,
+                      color: Color(0xFFEBE3DD),
+                    ),
+
+                    SizedBox(width: 8),
+
+                    // Stock Details
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Row(
+                            Container(
+                              height: 34,
+                              width: 34,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFCE9E4),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.inventory_2,
+                                color: Color(0xFF731209),
+                                size: 18,
+                              ),
+                            ),
+                            SizedBox(width: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  height: 34,
-                                  width: 34,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFFCE9E4),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.inventory_2,
-                                    color: Color(0xFF731209),
-                                    size: 18,
+                                Text('Current Stock',
+                                    style: TextStyle(fontSize: 10)),
+                                Text(
+                                  '15,000',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(width: 6),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Current Stock',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Color(0xFF757575),
-                                        ),
-                                      ),
-                                      Text(
-                                        '15,000',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Pieces',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Color(0xFF757575),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                Text('Pieces',
+                                    style: TextStyle(fontSize: 10)),
                               ],
                             ),
-                            SizedBox(height: 6),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFEAF5EE),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 32,
-                                    width: 32,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFD6F0E0),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.settings,
-                                      color: Color(0xFF0F7D41),
-                                      size: 18,
-                                    ),
-                                  ),
-                                  SizedBox(width: 6),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'After Production',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w500,
-                                            color: Color(0xFF0F7D41),
-                                          ),
-                                        ),
-                                        Text(
-                                          '20,000',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF0F7D41),
-                                          ),
-                                        ),
-                                        Text(
-                                          'Pieces',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color(0xFF0F7D41),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
+
+                        SizedBox(height: 6),
+
+                        // After Production
+                        Container(
+                          padding: EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFEAF5EE),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 32,
+                                width: 32,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFD6F0E0),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.settings,
+                                  color: Color(0xFF0F7D41),
+                                  size: 18,
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('After Production',
+                                      style: TextStyle(fontSize: 10)),
+                                  Text(
+                                    '20,000',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF0F7D41),
+                                    ),
+                                  ),
+                                  Text('Pieces',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Color(0xFF0F7D41),
+                                      )),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 10),
@@ -780,8 +591,8 @@ class _AddProductionState extends State<AddProduction> {
 
                           },
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF7B2117),
-                            side: const BorderSide(
+                            foregroundColor:  Color(0xFF7B2117),
+                            side:  BorderSide(
                               color: Color(0xFF7B2117),
                               width: 1.2,
                             ),
@@ -800,9 +611,7 @@ class _AddProductionState extends State<AddProduction> {
                       ),
                     ),
 
-                    const SizedBox(width: 12),
-
-                    // Save Production Button
+                     SizedBox(width: 12),
                     Expanded(
                       child: SizedBox(
                         height: 45,
@@ -811,7 +620,7 @@ class _AddProductionState extends State<AddProduction> {
 
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF91321D),
+                            backgroundColor:  Color(0xFF91321D),
                             foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -844,6 +653,48 @@ class _AddProductionState extends State<AddProduction> {
 
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: Sizes.screenHeight * 0.010,
+          vertical: Sizes.screenHeight * 0.010
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  ' Add Production ',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.stockAmountColor,
+                  ),
+                ),
+                Text(
+                  "Record today's brick or paver block production",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.gey,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

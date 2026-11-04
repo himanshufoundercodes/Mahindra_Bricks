@@ -20,6 +20,7 @@ class DashboardCardWidget extends StatelessWidget {
   final Widget? rightWidget;
   final String? rightImage;
   final VoidCallback? onTap;
+  final bool showArrow;
 
   const DashboardCardWidget({
     super.key,
@@ -35,6 +36,7 @@ class DashboardCardWidget extends StatelessWidget {
     this.rightWidget,
     this.rightImage,
     this.onTap,
+    this.showArrow = false,
 
     // Individual text colors
     this.titleColor,
@@ -157,8 +159,12 @@ class DashboardCardWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                Icon(Icons.chevron_right, size: 22, color: color),
+                if (showArrow)
+                  Icon(
+                    Icons.chevron_right,
+                    size: 22,
+                    color: color,
+                  ),
               ],
             ),
           ],

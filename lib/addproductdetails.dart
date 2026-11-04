@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
-import 'package:mahindra_bricks/Constant_Color.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 
 class AddProductPage extends StatefulWidget {
   AddProductPage({super.key});
@@ -1129,43 +1129,6 @@ class _AddProductPageState extends State<AddProductPage> {
                           color: activeBottomButton == 1 ? Colors.white : Color(0xFF702B1C),
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(width: 8),
-
-              Expanded(
-                child: SizedBox(
-                  height: Sizes.screenHeight * 0.048,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        activeBottomButton = 2;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: activeBottomButton == 2 ? Color(0xFF702B1C) : Colors.white,
-                      elevation: 0,
-                      side: activeBottomButton == 2 ? BorderSide.none : BorderSide(color: Color(0xFF702B1C)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: FittedBox(
-                      child: Text(
-                        'Save & Add Another',
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
-                          color: activeBottomButton == 2
-                              ? Colors.white
-                              : const Color(0xFF702B1C),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
                         ),
                       ),
                     ),

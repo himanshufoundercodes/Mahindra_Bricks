@@ -1,391 +1,495 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'Constant/Constantheader.dart';
+import 'package:mahindra_bricks/viewmodel/vehicle_viewmodel.dart';
+import 'package:provider/provider.dart';
+
+import 'Constant/Constant_Appbar.dart';
+import 'Constant/Constant_Color.dart';
+import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
 import 'addvihclecategory.dart';
+import 'circularprogressindicator.dart';
 
 class Addvehicle extends StatefulWidget {
-  Addvehicle({super.key});
+  const Addvehicle({super.key});
 
   @override
   State<Addvehicle> createState() => _AddvehicleState();
 }
 
 class _AddvehicleState extends State<Addvehicle> {
-  final TextEditingController searchController = TextEditingController();
-
-  final List<Map<String, String>> vehicles = [
-    {
-      'name': 'Truck',
-      'number': 'UP32 AB 1234',
-      'driver': 'Ramesh Kumar',
-      'capacity': 'Capacity: 5,000 Pieces',
-      'image': 'assets/Tru.jpg',
-    },
-    {
-      'name': 'Tractor',
-      'number': 'UP32 CD 5678',
-      'driver': 'Suresh Yadav',
-      'capacity': 'Capacity: 3,000 Pieces',
-      'image': 'assets/tractor.jpg',
-    },
-    {
-      'name': 'Pickup',
-      'number': 'UP32 EF 9012',
-      'driver': 'Amit Singh',
-      'capacity': 'Capacity: 2,000 Pieces',
-      'image': 'assets/trucstyle.jpg',
-    },
-    {
-      'name': 'Mini Truck',
-      'number': 'UP32 GH 3456',
-      'driver': 'Rahul Kumar',
-      'capacity': 'Capacity: 1,000 Pieces',
-      'image': 'assets/Tru.jpg',
-    },
-    {
-      'name': 'Pickup',
-      'number': 'UP32 EF 9012',
-      'driver': 'Amit Singh',
-      'capacity': 'Capacity: 2,000 Pieces',
-      'image': 'assets/trucstyle.jpg',
-    },
-  ];
-
-  String searchText = '';
 
   @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<VehicleViewmodel>(
+        context,
+        listen: false,
+      ).vehicleApi();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredVehicles = vehicles.where((vehicle) {
-      return vehicle.values.any(
-        (value) => value.toLowerCase().contains(searchText.toLowerCase()),
-      );
-    }).toList();
+
+    final vehicleProvider = Provider.of<VehicleViewmodel>(context);
 
     return Scaffold(
-      backgroundColor: Color(0xFFFFFCFA),
-      body: Column(
-        children: [
-          SizedBox(height: 35),
+      backgroundColor: AppColor.bodybackgroundColor,
 
-          CustomHeader(),
+      appBar: const ConstantAppBar(
+        title: 'Dashboard',
+        showBranding: true,
+        showBackButton: true,
+        logoAsset: 'assets/logo.jpg',
+      ),
 
-          SizedBox(height: 10),
+      body: RefreshIndicator(
+        color: AppColor.stockAmountColor,
+        backgroundColor: Colors.white,
+        displacement: 50,
 
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
+        onRefresh: () async {
+          await Provider.of<VehicleViewmodel>(
+            context,
+            listen: false,
+          ).vehicleApi();
+        },
+
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+
+          child: SafeArea(
+            child: Column(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                SizedBox(height: Sizes.screenHeight * 0.006),
+
+                _buildHeader(),
+
+                SizedBox(height: Sizes.screenHeight * 0.018),
+                Container(
+                  height: Sizes.screenHeight * 0.048,
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+
+                  decoration: BoxDecoration(
+                    color: AppColor.bglighttext,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: AppColor.grey,
+                      width: Sizes.screenWidth * 0.0025,
+                    ),
+                  ),
+
+                  child: Row(
                     children: [
-                      Text(
-                        'Vehicle',
-                        maxLines: 1,
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          color: Color(0xFF8E1B12),
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.7,
-                        ),
+
+                      Icon(
+                        Icons.search,
+                        color: AppColor.gey,
+                        size: 26,
                       ),
-                      Text(
-                        'manage your factory vehicle',
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: Color(0xFF687078),
-                          fontSize: 13,
+
+                      SizedBox(width: 12),
+
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Search vehicles...',
+                            hintStyle: GoogleFonts.poppins(
+                              color: AppColor.gey,
+                              fontSize: 15,
+                            ),
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                SizedBox(width: 8),
+                SizedBox(height: 15),
+                if (vehicleProvider.loading)
+                  Center(
+                    child: Circularprogressindicator(),
+                  )
 
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>  Addvihclecategory()));
-                  },
-                  child: Container(
-                    height: Sizes.screenHeight * 0.039,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF860D05),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                else if (vehicleProvider.errorMessage != null)
+                  Center(
+                    child: Column(
                       children: [
-                        Icon(Icons.add, color: Colors.white, size: 16),
-                        SizedBox(width: 3),
-                        Text(
-                          'Add Vehicle',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                          ),
+
+                        Text(vehicleProvider.errorMessage!),
+
+                        CustomButton(
+                          text: 'Retry',
+                          onPressed: vehicleProvider.vehicleApi,
                         ),
                       ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                  )
+                else if (vehicleProvider.vehicleList.isEmpty)
+                    Center(
+                      child: Text('No Vehicles Found'),
+                    )
 
-          SizedBox(height: 15),
-
-          Container(
-            height: Sizes.screenHeight * 0.048,
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            padding: EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: Color(0xFFFAF5F2),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Color(0xFFD5D0CC), width: 1),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.search, color: Color(0xFF183342), size: 26),
-
-                SizedBox(width: 12),
-
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: (value) {
-                      setState(() {
-                        searchText = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Search categories...',
-                      hintStyle: TextStyle(
-                        color: Color(0xFF858A90),
-                        fontSize: 15,
-                      ),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 15),
-
-          Expanded(
-            child: filteredVehicles.isEmpty
-                ? Center(child: Text('No vehicles found'))
-                : ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: filteredVehicles.length,
-                    itemBuilder: (context, index) {
-                      final vehicle = filteredVehicles[index];
-
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 12),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Color(0xFFF1E8E2)),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: Sizes.screenHeight * 0.070,
-                              width: Sizes.screenWidth * 0.17,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFFF1E8),
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              padding: EdgeInsets.all(7),
-                              child: Image.asset(
-                                vehicle['image']!,
-                                fit: BoxFit.contain,
-                              ),
+                  else
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: vehicleProvider.vehicleList.length,
+                      itemBuilder: (context, index) {
+                        final item = vehicleProvider.vehicleList[index];
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 12),
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Color(0xFFF1E8E2),
                             ),
+                          ),
 
-                            SizedBox(width: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
 
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    vehicle['name']!,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      color: Color(0xFFB32616),
-                                      fontWeight: FontWeight.bold,
+                            children: [
+                              Container(
+                                height: Sizes.screenHeight * 0.070,
+                                width: Sizes.screenWidth * 0.17,
+
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFFF1E8),
+                                  borderRadius: BorderRadius.circular(9),
+                                ),
+
+                                padding: EdgeInsets.all(7),
+
+                                child: Image.asset(
+                                  'assets/Tru.jpg',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+
+                                  children: [
+
+                                    Text(
+                                      item.vehicle_name?.toString() ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        color: Color(0xFFB32616),
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
 
-                                  SizedBox(height: 3),
+                                    SizedBox(height: 3),
 
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.dns_outlined,
-                                        size: 13,
-                                        color: Color(0xFF9B351F),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Expanded(
-                                        child: Text(
-                                          vehicle['number']!,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Color(0xFF687078),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  SizedBox(height: 3),
-
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.person,
-                                        size: 13,
-                                        color: Color(0xFF9B351F),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Expanded(
-                                        child: Text(
-                                          vehicle['driver']!,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  SizedBox(height: 3),
-
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.inventory_2,
-                                        size: 12,
-                                        color: Color(0xFF9B351F),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Expanded(
-                                        child: Text(
-                                          vehicle['capacity']!,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            SizedBox(width: 6),
-
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(top: 8, right: 2),
-                                  child: GestureDetector(
-                                    onTap: () {},
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
+                                    // Vehicle Number
+                                    Row(
                                       children: [
-                                        Container(
-                                          height: Sizes.screenHeight * 0.040,
-                                          width: Sizes.screenWidth * 0.12,
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFFFEAE3),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Icon(
-                                            Icons.call,
-                                            color: Color(0xFFB32616),
-                                            size: 18,
-                                          ),
+
+                                        Icon(
+                                          Icons.dns_outlined,
+                                          size: 13,
+                                          color: Color(0xFF9B351F),
                                         ),
-                                        SizedBox(height: 3),
-                                        Text(
-                                          'Call',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 10,
-                                            color: Color(0xFFB32616),
+
+                                        SizedBox(width: 5),
+
+                                        Expanded(
+                                          child: Text(
+                                            item.vehicle_number?.toString() ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Color(0xFF687078),
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ),
 
-                                SizedBox(
-                                  width: Sizes.screenWidth * 0.040,
-                                  height: Sizes.screenHeight * 0.035,
-                                  child: PopupMenuButton<String>(
-                                    padding: EdgeInsets.zero,
-                                    iconSize: 22,
-                                    icon: Icon(
-                                      Icons.more_vert,
-                                      color: Color(0xFF7D838B),
+                                    SizedBox(height: 3),
+
+                                    Row(
+                                      children: [
+
+                                        Icon(
+                                          Icons.person,
+                                          size: 13,
+                                          color: Color(0xFF9B351F),
+                                        ),
+
+                                        SizedBox(width: 5),
+
+                                        Expanded(
+                                          child: Text(
+                                            item.driver_name?.toString() ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    onSelected: (value) {},
-                                    itemBuilder: (context) => [
-                                      PopupMenuItem(
-                                        value: 'edit',
-                                        child: Text('Edit'),
-                                      ),
-                                      PopupMenuItem(
-                                        value: 'delete',
-                                        child: Text('Delete'),
-                                      ),
-                                    ],
-                                  ),
+                                    SizedBox(height: 3),
+
+                                    Row(
+                                      children: [
+
+                                        Icon(
+                                          Icons.call,
+                                          size: 13,
+                                          color: Color(0xFF9B351F),
+                                        ),
+
+                                        SizedBox(width: 5),
+
+                                        Expanded(
+                                          child: Text(
+                                            item.driver_mobile?.toString() ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 11,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(height: 3),
+
+
+                                    Row(
+                                      children: [
+
+                                        Icon(
+                                          Icons.inventory_2,
+                                          size: 12,
+                                          color: Color(0xFF9B351F),
+                                        ),
+
+                                        SizedBox(width: 5),
+
+                                        Expanded(
+                                          child: Text(
+                                            'Capacity: ${item.capacity_pieces ?? 0} Pieces',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                              ),
+
+                              SizedBox(width: 6),
+
+                              // Call and More Options
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+
+                                children: [
+
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 8, right: 2),
+
+                                    child: GestureDetector(
+                                      onTap: () {
+
+                                      },
+
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+
+                                        children: [
+
+                                          Container(
+                                            height: Sizes.screenHeight * 0.040,
+                                            width: Sizes.screenWidth * 0.12,
+
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFFFEAE3),
+                                              shape: BoxShape.circle,
+                                            ),
+
+                                            child: Icon(
+                                              Icons.call,
+                                              color: Color(0xFFB32616),
+                                              size: 18,
+                                            ),
+                                          ),
+
+                                          SizedBox(height: 3),
+
+                                          Text(
+                                            'Call',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 10,
+                                              color: Color(0xFFB32616),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    width: Sizes.screenWidth * 0.040,
+                                    height: Sizes.screenHeight * 0.035,
+
+                                    child: PopupMenuButton<String>(
+                                      padding: EdgeInsets.zero,
+                                      iconSize: 22,
+
+                                      icon: Icon(
+                                        Icons.more_vert,
+                                        color: Color(0xFF7D838B),
+                                      ),
+
+                                      onSelected: (value) {},
+
+                                      itemBuilder: (context) => [
+
+                                        PopupMenuItem(
+                                          value: 'edit',
+                                          child: Text('Edit'),
+                                        ),
+
+                                        PopupMenuItem(
+                                          value: 'delete',
+                                          child: Text('Delete'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+
+                SizedBox(height: 10),
+              ],
+            ),
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildHeader() {
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: Sizes.screenHeight * 0.010,
+        vertical: Sizes.screenHeight * 0.010,
+      ),
+
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: Sizes.screenWidth * 0.010,
+        ),
+
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+          children: [
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+
+              children: [
+
+                Text(
+                  'Vehicle',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.stockAmountColor,
+                  ),
+                ),
+
+                Text(
+                  'Manage your factory vehicle',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+
+                  style: GoogleFonts.poppins(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.gey,
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(width: 8),
+
+            CustomButton(
+              padding: EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 4,
+              ),
+
+              height: 35,
+              width: 100,
+              text: 'Add Vehicle',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+
+              onPressed: () {
+               Navigator.push(context, MaterialPageRoute(builder: (context) => Addvihclecategory()));
+              },
+              iconOnLeft: true,
+              icon: Icons.add,
+              iconSize: 15,
+              iconSpacing: 2,
+            ),
+          ],
+        ),
       ),
     );
   }
