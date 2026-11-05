@@ -29,7 +29,7 @@ class AddcementstockViewmodel with ChangeNotifier {
 
     try {
 
-      debugPrint("========== ADD STOCK API ==========");
+      debugPrint("Add Stock");
       debugPrint("Quantity: $quantity");
       debugPrint("Date: $date");
 
@@ -41,7 +41,7 @@ class AddcementstockViewmodel with ChangeNotifier {
 
       _addCementModel = response;
 
-      debugPrint("========== SUCCESS ==========");
+      debugPrint(" SUCCESS");
       debugPrint("ID: ${response.id}");
       debugPrint("Bags: ${response.bags}");
       debugPrint("Activity Date: ${response.activity_date}");
@@ -52,8 +52,6 @@ class AddcementstockViewmodel with ChangeNotifier {
     } catch (e, stackTrace) {
 
       _errorMessage = e.toString();
-
-      debugPrint("========== ADD STOCK ERROR ==========");
       debugPrint("Error: $e");
       debugPrint("Error Type: ${e.runtimeType}");
       debugPrint("Stack Trace: $stackTrace");

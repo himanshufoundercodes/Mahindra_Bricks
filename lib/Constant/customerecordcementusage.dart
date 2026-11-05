@@ -3,6 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:provider/provider.dart';
+import '../addcementstock.dart';
+import '../utils/utils.dart';
+import '../viewmodel/recordcementview_model.dart';
 import 'ConstnatTextfield.dart';
 import 'Constnat_Appbutton.dart';
 class Customerecordcementusage extends StatefulWidget {
@@ -25,8 +29,74 @@ class _CustomerecordcementusageState extends State<Customerecordcementusage> {
     quantityController.dispose();
     super.dispose();
   }
+
+  Future<void> handleRecordCementStock() async {
+
+    if (quantityController.text.trim().isEmpty) {
+      Utils.showErrorMessage(
+        context,
+        'Please enter number of bags',
+      );
+      return;
+    }
+
+    if (int.tryParse(quantityController.text.trim()) == null ||
+        int.parse(quantityController.text.trim()) <= 0) {
+      Utils.showErrorMessage(
+        context,
+        'Please enter a valid quantity',
+      );
+      return;
+    }
+
+    final viewModel =
+    context.read<RecordCementViewModel>();
+
+    if (viewModel.loading) return;
+
+    final success = await viewModel.recordCementStockApi(
+      quantityController.text.trim(),
+      DateFormat('yyyy-MM-dd').format(selectedDate),
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+
+      Utils.showSuccessMessage(
+        context,
+        'Add New Usages Successfully!',
+      );
+
+      await Future.delayed(
+        const Duration(milliseconds: 500),
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Addcementstock(),
+        ),
+      );
+
+    } else {
+
+      final message =
+          viewModel.errorMessage ?? 'Stock record failed';
+
+      Utils.showErrorMessage(
+        context,
+        message,
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
+    final addRecordCementViewModel =
+    context.watch<RecordCementViewModel>();
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.symmetric(horizontal: 18),
@@ -185,7 +255,6 @@ class _CustomerecordcementusageState extends State<Customerecordcementusage> {
 
               SizedBox(height: 12),
 
-              // QUANTITY LABEL
               RichText(
                 text: TextSpan(
                   text: 'Number of Bags',
@@ -220,7 +289,11 @@ class _CustomerecordcementusageState extends State<Customerecordcementusage> {
                     type: CustomButtonType.outlined,
                     textColor: AppColor.red,
                     borderColor: AppColor.red,
-                    onPressed: () {  },
+                    onPressed: addRecordCementViewModel.loading
+                        ? null
+                        : () {
+                      Navigator.pop(context);
+                    },
                   ),
                   SizedBox(width: 10),
                   CustomButton(
@@ -228,7 +301,12 @@ class _CustomerecordcementusageState extends State<Customerecordcementusage> {
                     width: Sizes.screenWidth * 0.39,
                     text: 'Add Stock',
                     iconOnLeft: false,
-                    onPressed: () {  },
+                    isLoading: addRecordCementViewModel.loading,
+                    onPressed: addRecordCementViewModel.loading
+                        ? null
+                        : () async {
+                      await handleRecordCementStock();
+                    },
                   )
                 ],
               ),

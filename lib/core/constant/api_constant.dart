@@ -9,6 +9,9 @@ class ApiConstants {
   static const String addvehicleUrl = '${baseUrl}createVehicles';
   static const String cementStockUrl = '${baseUrl}cement/summary';
   static const String addCementStockUrl = '${baseUrl}cement/stock-in';
+  static const String recordCementUrl = '${baseUrl}cement/usage';
+  static const String clientListUrl = '${baseUrl}clients';
+  static const String addClientUrl = '${baseUrl}createClients';
   // static const String profileUrl = '/auth/me';
   // static const String productListUrl = '/products';
 }

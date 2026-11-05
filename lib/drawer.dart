@@ -9,6 +9,7 @@ import 'Loginpagenew.dart';
 import 'addcementstock.dart';
 import 'addvehicle.dart';
 import 'brickscategory.dart';
+import 'clients.dart';
 import 'dailyattendence.dart';
 import 'dailypayout.dart';
 
@@ -233,6 +234,13 @@ class _MahindraDrawerState extends State<MahindraDrawer> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => Dailypayout(),
+                              ),
+                            );
+                          } else if (item['title'] == 'Client List') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Clients(),
                               ),
                             );
                           }

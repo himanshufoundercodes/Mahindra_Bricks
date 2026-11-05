@@ -341,7 +341,6 @@ class _CustomAddStockDialogState
                     iconOnLeft: false,
 
                     isLoading: addCementViewModel.loading,
-
                     onPressed: addCementViewModel.loading
                         ? null
                         : () async {

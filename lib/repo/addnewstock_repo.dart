@@ -22,8 +22,6 @@ class AddnewstockRepo {
         "activity_date": date,
       },
     );
-
-    debugPrint("========== ADD STOCK RESPONSE ==========");
     debugPrint("Response: $response");
     debugPrint("Response Type: ${response.runtimeType}");
     debugPrint("Activity Type: ${response['activity'].runtimeType}");

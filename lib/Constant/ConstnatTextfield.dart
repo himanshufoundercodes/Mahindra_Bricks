@@ -28,6 +28,8 @@ class AppTextField extends StatefulWidget {
   final TextAlign textAlign;
   final TextInputAction? textInputAction;
   final FocusNode? focusNode;
+  final double? height;
+  final double? hintTextHeight;
 
   const AppTextField({
     super.key,
@@ -53,6 +55,8 @@ class AppTextField extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.textInputAction,
     this.focusNode,
+    this.height,
+    this.hintTextHeight,
   });
 
   @override
@@ -85,110 +89,116 @@ class _AppTextFieldState extends State<AppTextField> {
           ),
           AppSpacing.h8,
         ],
-        TextFormField(
-          controller: widget.controller,
-          obscureText: _obscure,
-          enabled: widget.enabled,
-          readOnly: widget.readOnly,
-          autofocus: widget.autofocus,
-          maxLines: widget.obscureText ? 1 : widget.maxLines,
-          maxLength: widget.maxLength,
-          keyboardType: widget.keyboardType,
-          inputFormatters: widget.inputFormatters,
-          validator: widget.validator,
-          onChanged: widget.onChanged,
-          onTap: widget.onTap,
-          textAlign: widget.textAlign,
-          textInputAction: widget.textInputAction,
-          focusNode: widget.focusNode,
-          cursorColor: AppColor.primary,
-          style: TextStyle(
-           // fontFamily: AppFonts.urbanistMed,
-            fontSize: AppFontSize.lg,
-            color: textColor,
-          ),
-          decoration: InputDecoration(
-            counterText: '',
-            hintText: widget.hintText,
-            hintStyle: TextStyle(
-             // fontFamily: AppFonts.urbanistReg,
-              fontSize: AppFontSize.lg,
-              color: hintColor,
-            ),
-            filled: true,
-            fillColor: fillColor,
-            prefixIcon: widget.prefix != null
-                ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: widget.prefix,
-            )
-                : widget.prefixIcon != null
-                ? Icon(
-              widget.prefixIcon,
-              color: hintColor,
-              size: AppSizes.iconMd,
-            )
-                : null,
-
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: 48,
-              minHeight: 48,
-            ),
-            suffixIcon: widget.obscureText
-                ? IconButton(
-              icon: Icon(
-                _obscure
-                    ? Icons.visibility_off_rounded
-                    : Icons.visibility_rounded,
-                color: hintColor,
-                size: AppSizes.iconMd,
-              ),
-              onPressed: () => setState(() => _obscure = !_obscure),
-            )
-                : widget.suffixIcon != null
-                ? IconButton(
-              icon: Icon(
-                widget.suffixIcon,
-                color: hintColor,
-                size: AppSizes.iconMd,
-              ),
-              onPressed: widget.onSuffixTap,
-            )
-                : widget.suffix != null
-                ? Padding(
-              padding: const EdgeInsets.only(right: 12,top: 12),
-              child: widget.suffix,
-            )
-                : null,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-            border: OutlineInputBorder(
-              borderRadius: AppRadius.sl,
-              borderSide: BorderSide(color: AppColor.grey),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: AppRadius.sl,
-              borderSide: BorderSide(color: AppColor.grey),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: AppRadius.sl,
-              borderSide: BorderSide(color: borderColor.withValues(alpha: 0.5)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: AppRadius.sl,
-              borderSide:  BorderSide(color: AppColor.stockTitleColor, width: 1),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: AppRadius.sl,
-              borderSide: BorderSide(color: AppColor.error, width: 1),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: AppRadius.sl,
-              borderSide:  BorderSide(color: AppColor.error, width: 1),
-            ),
-            errorStyle:  TextStyle(
+        Container(
+          height: widget.height,
+          child: TextFormField(
+            controller: widget.controller,
+            obscureText: _obscure,
+            enabled: widget.enabled,
+            readOnly: widget.readOnly,
+            autofocus: widget.autofocus,
+            maxLines: widget.obscureText ? 1 : widget.maxLines,
+            maxLength: widget.maxLength,
+            keyboardType: widget.keyboardType,
+            inputFormatters: widget.inputFormatters,
+            validator: widget.validator,
+            onChanged: widget.onChanged,
+            onTap: widget.onTap,
+            textAlign: widget.textAlign,
+            textInputAction: widget.textInputAction,
+            focusNode: widget.focusNode,
+            cursorColor: AppColor.primary,
+            style: TextStyle(
              // fontFamily: AppFonts.urbanistMed,
-              fontSize: AppFontSize.xs,
-              color: AppColor.error,
+              fontSize: AppFontSize.lg,
+              color: textColor,
+            ),
+            decoration: InputDecoration(
+              counterText: '',
+              hintText: widget.hintText,
+              hintStyle: TextStyle(
+               // fontFamily: AppFonts.urbanistReg,
+                fontSize: AppFontSize.lg,
+                color: hintColor,
+              ),
+              filled: true,
+              fillColor: fillColor,
+              prefixIcon: widget.prefix != null
+                  ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: widget.prefix,
+              )
+                  : widget.prefixIcon != null
+                  ? Icon(
+                widget.prefixIcon,
+                color: hintColor,
+                size: AppSizes.iconMd,
+              )
+                  : null,
+
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 48,
+                minHeight: 48,
+              ),
+              suffixIcon: widget.obscureText
+                  ? IconButton(
+                icon: Icon(
+                  _obscure
+                      ? Icons.visibility_off_rounded
+                      : Icons.visibility_rounded,
+                  color: hintColor,
+                  size: AppSizes.iconMd,
+                ),
+                onPressed: () => setState(() => _obscure = !_obscure),
+              )
+                  : widget.suffixIcon != null
+                  ? IconButton(
+                icon: Icon(
+                  widget.suffixIcon,
+                  color: hintColor,
+                  size: AppSizes.iconMd,
+                ),
+                onPressed: widget.onSuffixTap,
+              )
+                  : widget.suffix != null
+                  ? Padding(
+                padding: const EdgeInsets.only(right: 12,top: 12),
+                child: widget.suffix,
+              )
+                  : null,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: widget.hintTextHeight ?? 16,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: AppRadius.sl,
+                borderSide: BorderSide(color: AppColor.grey),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: AppRadius.sl,
+                borderSide: BorderSide(color: AppColor.grey),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderRadius: AppRadius.sl,
+                borderSide: BorderSide(color: borderColor.withValues(alpha: 0.5)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: AppRadius.sl,
+                borderSide:  BorderSide(color: AppColor.stockTitleColor, width: 1),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: AppRadius.sl,
+                borderSide: BorderSide(color: AppColor.error, width: 1),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: AppRadius.sl,
+                borderSide:  BorderSide(color: AppColor.error, width: 1),
+              ),
+              errorStyle:  TextStyle(
+               // fontFamily: AppFonts.urbanistMed,
+                fontSize: AppFontSize.xs,
+                color: AppColor.error,
+              ),
             ),
           ),
         ),

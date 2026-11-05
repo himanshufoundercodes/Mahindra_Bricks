@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 
 class ClientCard extends StatelessWidget {
@@ -38,9 +39,9 @@ class ClientCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Color(0xFFFFFCFA),
+        color: AppColor.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Color(0xFFF3EAE5)),
+        border: Border.all(color: AppColor.grey),
       ),
       child: Column(
         children: [
@@ -51,17 +52,17 @@ class ClientCard extends StatelessWidget {
                 height: Sizes.screenHeight * 0.032,
                 width: Sizes.screenWidth * 0.070,
                 decoration: BoxDecoration(
-                  color: Color(0xFFFBEAE5),
+                  color: AppColor.bgbacklight,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.apartment,
-                  color: Color(0xFF963025),
+                  color: AppColor.stockUnitColor,
                   size: 16,
                 ),
               ),
 
-              SizedBox(width: 9),
+              SizedBox(width: Sizes.screenWidth * 0.0225),
 
               Expanded(
                 child: Column(
@@ -78,15 +79,15 @@ class ClientCard extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF172033),
+                              color: AppColor.black,
                             ),
                           ),
                         ),
-                        SizedBox(width: 3),
+                        SizedBox(width: Sizes.screenWidth * 0.0075),
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 2,
+                            horizontal: Sizes.screenWidth * 0.0125,
+                            vertical: Sizes.screenHeight * 0.0025,
                           ),
                           decoration: BoxDecoration(
                             color: statusBgColor,
@@ -101,20 +102,20 @@ class ClientCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 4),
+                        SizedBox(width: Sizes.screenWidth * 0.01),
                         GestureDetector(
                           onTap: onCall,
                           child: Container(
                             height: Sizes.screenHeight * 0.036,
                             width: Sizes.screenWidth * 0.065,
                             decoration: BoxDecoration(
-                              color: Color(0xFFFBEAE5),
+                              color: AppColor.bgbacklight,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.call,
                               size: 15,
-                              color: Color(0xFF963025),
+                              color: AppColor.stockUnitColor,
                             ),
                           ),
                         ),
@@ -130,14 +131,14 @@ class ClientCard extends StatelessWidget {
                               Icon(
                                 Icons.call,
                                 size: 12,
-                                color: Color(0xFF626262),
+                                color: AppColor.gey,
                               ),
-                              SizedBox(width: 4),
+                              SizedBox(width: Sizes.screenWidth * 0.01),
                               Text(
                                 mobileNumber,
                                 style: GoogleFonts.poppins(
                                   fontSize: 10.5,
-                                  color: Color(0xFF333333),
+                                  color: AppColor.gey,
                                 ),
                               ),
                             ],
@@ -147,14 +148,14 @@ class ClientCard extends StatelessWidget {
                               Icon(
                                 Icons.location_on,
                                 size: 12,
-                                color: Color(0xFF777777),
+                                color: AppColor.gey,
                               ),
-                              SizedBox(width: 4),
+                              SizedBox(width: Sizes.screenWidth * 0.01),
                               Text(
                                 location,
                                 style: GoogleFonts.poppins(
                                   fontSize: 10,
-                                  color: Color(0xFF555555),
+                                  color: AppColor.gey,
                                 ),
                               ),
                             ],
@@ -168,7 +169,7 @@ class ClientCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 8),
+          SizedBox(height: Sizes.screenHeight * 0.01),
           Divider(height: 1, color: Color(0xFFEFE7E2)),
           SizedBox(height: 8),
 
@@ -179,14 +180,14 @@ class ClientCard extends StatelessWidget {
                   icon: Icons.receipt,
                   title: 'Total Orders',
                   value: totalOrders,
-                  valueColor: Color(0xFF172033),
+                  valueColor: AppColor.black,
                 ),
               ),
 
               Container(
                 height: Sizes.screenHeight * 0.032,
                 width: 1,
-                color: Color(0xFFE8E1DC),
+                color: AppColor.grey,
               ),
 
               Expanded(
@@ -194,14 +195,14 @@ class ClientCard extends StatelessWidget {
                   icon: Icons.inventory_2,
                   title: 'Total Purchase',
                   value: totalPurchase,
-                  valueColor: Color(0xFF172033),
+                  valueColor: AppColor.gey,
                 ),
               ),
 
               Container(
-                height: 32,
-                width: 1,
-                color: Color(0xFFE8E1DC),
+                height: Sizes.screenHeight * 0.04,
+                width: Sizes.screenWidth * 0.0025,
+                color: AppColor.grey,
               ),
 
               Expanded(
@@ -220,12 +221,12 @@ class ClientCard extends StatelessWidget {
                   width: Sizes.screenWidth * 0.06,
                   margin: EdgeInsets.only(left: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFBEAE5),
+                    color:AppColor.bgbacklight,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.chevron_right,
-                    color: Color(0xFF963025),
+                    color: AppColor.stockTitleColor,
                     size: 19,
                   ),
                 ),
@@ -250,10 +251,10 @@ class ClientCard extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: Color(0xFF963025),
+            color: AppColor.stockTitleColor,
             size: 17,
           ),
-          SizedBox(width: 4),
+          SizedBox(width: Sizes.screenWidth * 0.01),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,10 +266,10 @@ class ClientCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
                     fontSize: 8.5,
-                    color: Color(0xFF777777),
+                    color: AppColor.gey,
                   ),
                 ),
-                SizedBox(height: 1),
+                SizedBox(height: Sizes.screenHeight * 0.0012),
                 Text(
                   value,
                   maxLines: 1,
@@ -276,7 +277,7 @@ class ClientCard extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: valueColor,
+                    color: AppColor.black,
                   ),
                 ),
               ],

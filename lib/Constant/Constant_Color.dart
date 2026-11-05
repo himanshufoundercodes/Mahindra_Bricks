@@ -11,11 +11,13 @@ class AppColor {
   static const Color white38 =  Colors.white38;
   static const Color gey = Color(0XFF636464);
   static const Color black54 = Colors.black54;
+  static const Color black87 = Colors.black87;
   static const Color grey = Color(0xFFE5DFDA);
   static const Color bgback = Color(0xFFF4E3D8);
   static const Color lineBackground = Color(0xFFE2D3C9);
   static const Color pagebackground = Color(0xFFf6efe9);
   static const Color btnpagebackground = Color(0xFF963A20);
+  static const Color searchbarbackcolor = Color(0xFFF8F8F8);
 
 
 
