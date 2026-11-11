@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
+import 'package:mahindra_bricks/viewmodel/dailyattendenceview_model.dart';
+import 'package:provider/provider.dart';
+import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constantcustomecalender.dart';
 import 'Constant/Constantheader.dart';
+import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
+import 'circularprogressindicator.dart';
+import 'model/dailyattendence.dart';
 
 class Dailyattendence extends StatefulWidget {
   Dailyattendence({super.key});
@@ -11,63 +19,74 @@ class Dailyattendence extends StatefulWidget {
   @override
   State<Dailyattendence> createState() => _DailyattendenceState();
 }
+
 class _DailyattendenceState extends State<Dailyattendence> {
   DateTime? selectedPaymentDate = DateTime(2026, 10, 17);
   DateTime selectedDate = DateTime(2026, 10, 16);
+  final TextEditingController searchController = TextEditingController();
+  final Map<int, String> _attendanceStatus = {};
 
-  final List<Map<String, String>> labourList = [
-    {'name': 'Rajesh Kumar', 'mobile': '9876543210', 'rate': '600'},
-    {'name': 'Suresh Kumar', 'mobile': '9123456789', 'rate': '550'},
-    {'name': 'Amit Singh', 'mobile': '9988776655', 'rate': '650'},
-    {'name': 'Manoj Verma', 'mobile': '9811223344', 'rate': '580'},
-    {'name': 'Rahul Sharma', 'mobile': '9722334455', 'rate': '620'},
-    {'name': 'Pradeep Verma', 'mobile': '9811223344', 'rate': '580'},
-    {'name': 'Akash Sharma', 'mobile': '9722334455', 'rate': '920'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DailyattendenceViewModel>(
+        context,
+        listen: false,
+      ).AttendenceApi();
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  List<Workers> getFilteredWorkers(List<Workers>? apiWorkers) {
+    if (apiWorkers == null) return [];
+    String query = searchController.text.toLowerCase();
+    if (query.isEmpty) return apiWorkers;
+    return apiWorkers.where((worker) {
+      final name = worker.name.toLowerCase();
+      final mobile = worker.mobile.toLowerCase();
+      return name.contains(query) || mobile.contains(query);
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 30),
-            CustomHeader(),
-            SizedBox(height: 12),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 13),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Daily Attendence',
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF782A17),
-                          ),
-                        ),
-                        Text(
-                          'Mark labour attendence for the selected date',
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF66615D),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 13),
+    final Attendencelist = Provider.of<DailyattendenceViewModel>(context);
+    final summary = Attendencelist.dailyattendenceModel?.summary;
+    final workers = getFilteredWorkers(Attendencelist.dailyattendenceModel?.workers);
 
+    return Scaffold(
+      backgroundColor: AppColor.bodybackgroundColor,
+      appBar: ConstantAppBar(
+        title: 'Dashboard',
+        showBranding: true,
+        showBackButton: true,
+        logoAsset: 'assets/logo.jpg',
+      ),
+      body: RefreshIndicator(
+        color: AppColor.stockAmountColor,
+        backgroundColor: Colors.white,
+        displacement: 50,
+        onRefresh: () async {
+          await Provider.of<DailyattendenceViewModel>(
+            context,
+            listen: false,
+          ).AttendenceApi();
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+          children: [
+            _buildHeader(),
+            SizedBox(height: Sizes.screenHeight * 0.016),
 
             Container(
               height: Sizes.screenHeight * 0.062,
@@ -155,7 +174,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
                     ),
                   ),
 
-                  SizedBox(width: 6),
+                  SizedBox(width: Sizes.screenWidth * 0.015),
 
                   InkWell(
                     onTap: () {
@@ -165,7 +184,9 @@ class _DailyattendenceState extends State<Dailyattendence> {
                           return Dialog(
                             backgroundColor: Colors.transparent,
                             insetPadding:
-                            EdgeInsets.symmetric(horizontal: 20),
+                            EdgeInsets.symmetric(
+                              horizontal: Sizes.screenWidth * 0.05,
+                            ),
                             child: CustomCalendar(
                               isRange: false,
                               selectedDate: selectedDate,
@@ -183,12 +204,14 @@ class _DailyattendenceState extends State<Dailyattendence> {
                     },
                     child: Container(
                       height: Sizes.screenHeight * 0.040,
-                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Sizes.screenWidth * 0.02,
+                      ),
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFF5F1),
+                        color: AppColor.bgbacklight,
                         borderRadius: BorderRadius.circular(7),
                         border: Border.all(
-                          color: Color(0xFFF0D5CA),
+                          color: AppColor.bgbacklight,
                         ),
                       ),
                       child: Row(
@@ -197,15 +220,15 @@ class _DailyattendenceState extends State<Dailyattendence> {
                           Icon(
                             Icons.calendar_month,
                             size: 14,
-                            color: Color(0xFF9E2424),
+                            color: AppColor.stockUnitColor,
                           ),
-                          SizedBox(width: 4),
+                          SizedBox(width: Sizes.screenWidth * 0.01),
                           Text(
                             'Select Date',
                             style: GoogleFonts.poppins(
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
-                              color: Color(0xFF9E2424),
+                              color: AppColor.stockUnitColor,
                             ),
                           ),
                         ],
@@ -215,9 +238,11 @@ class _DailyattendenceState extends State<Dailyattendence> {
                 ],
               ),
             ),
-            SizedBox(height: 13),
+            SizedBox(height: Sizes.screenHeight * 0.016),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(
+                horizontal: Sizes.screenWidth * 0.025,
+              ),
               child: Column(
                 children: [
                   SingleChildScrollView(
@@ -228,71 +253,72 @@ class _DailyattendenceState extends State<Dailyattendence> {
                           width: Sizes.screenWidth * 0.25,
                           child: _attendanceCard(
                             icon: Icons.groups,
-                            count: labourList.length.toString(),
+                            count: summary?.totalLabour?.toString() ?? '0',
                             title: 'Total Labour',
-                            iconColor: Color(0xFF963025),
-                            bgColor: Color(0xFFFFF0ED),
+                            iconColor: AppColor.stockUnitColor,
+                            bgColor: AppColor.bgbacklight,
                           ),
                         ),
-                        SizedBox(width: 6),
+                        SizedBox(width: Sizes.screenWidth * 0.015),
                         SizedBox(
                           width: Sizes.screenWidth * 0.25,
                           child: _attendanceCard(
                             icon: Icons.check_circle,
-                            count: '0',
+                            count: summary?.present?.toString() ?? '0',
                             title: 'Present',
-                            iconColor: Color(0xFF159447),
-                            bgColor: Color(0xFFE8F8EC),
+                            iconColor: AppColor.green,
+                            bgColor: AppColor.lightgreenbg,
                           ),
                         ),
-                        SizedBox(width: 6),
+                        SizedBox(width: Sizes.screenWidth * 0.015),
                         SizedBox(
                           width: Sizes.screenWidth * 0.25,
                           child: _attendanceCard(
                             icon: Icons.watch_later,
-                            count: '0',
+                            count: summary?.halfDay?.toString() ?? '0',
                             title: 'Half Day',
-                            iconColor: Color(0xFFC87512),
-                            bgColor: Color(0xFFFFF4E5),
+                            iconColor:AppColor.yellow,
+                            bgColor: AppColor.lightyellow,
                           ),
                         ),
-                        SizedBox(width: 6),
+                        SizedBox(width: Sizes.screenWidth * 0.015),
                         SizedBox(
                           width: Sizes.screenWidth * 0.25,
                           child: _attendanceCard(
                             icon: Icons.cancel,
-                            count: '0',
+                            count: summary?.absent?.toString() ?? '0',
                             title: 'Absent',
-                            iconColor: Color(0xFFE53935),
-                            bgColor: Color(0xFFFFEEEE),
+                            iconColor: AppColor.red2,
+                            bgColor: AppColor.verylightredbg,
                           ),
                         ),
-                        SizedBox(width: 6),
+                        SizedBox(width: Sizes.screenWidth * 0.015),
                         SizedBox(
                           width: Sizes.screenWidth * 0.25,
                           child: _attendanceCard(
                             icon: Icons.remove_circle,
-                            count: labourList.length.toString(),
+                            count: summary?.notMarked?.toString() ?? '0',
                             title: 'Not Marked',
-                            iconColor: Color(0xFF8A939E),
-                            bgColor: Color(0xFFF0F2F5),
+                            iconColor: AppColor.bggrey,
+                            bgColor: AppColor.darkgrey,
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  SizedBox(height: 10),
+                  SizedBox(height: Sizes.screenHeight * 0.012),
 
                   Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 6,
+                      horizontal: Sizes.screenWidth * 0.02,
+                      vertical: Sizes.screenHeight * 0.0075,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xFFFFF4ED),
+                      color: AppColor.lightyellow,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Color(0xFFFCE2D4)),
+                      border: Border.all(
+                          color: AppColor.borderyellow),
                     ),
                     child: Row(
                       children: [
@@ -300,18 +326,16 @@ class _DailyattendenceState extends State<Dailyattendence> {
                           height: Sizes.screenHeight * 0.034,
                           width: Sizes.screenWidth * 0.07,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFFE8DB),
+                            color: AppColor.bgbacklight,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
                             Icons.access_time,
-                            color: Color(0xFF963025),
+                            color: AppColor.stockUnitColor,
                             size: 18,
                           ),
                         ),
-
-                        SizedBox(width: 8),
-
+                        SizedBox(width: Sizes.screenWidth * 0.02),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,32 +347,32 @@ class _DailyattendenceState extends State<Dailyattendence> {
                                 style: GoogleFonts.poppins(
                                   fontSize: 9.5,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF963025),
+                                  color: AppColor.stockUnitColor,
                                 ),
                               ),
                               SizedBox(height: 1),
                               Text(
-                                'You can mark or update attendance for this date only after 6:00 PM.',
+                                'You can mark or update attendance for this date',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.poppins(
-                                  fontSize: 8.5,
-                                  color: Color(0xFF4F5661),
+                                  fontSize: 8,
+                                  color: AppColor.gey,
                                 ),
                               ),
                             ],
                           ),
                         ),
 
-                        SizedBox(width: 5),
+                        SizedBox(width: Sizes.screenWidth * 0.0125),
 
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 5,
+                            horizontal: Sizes.screenWidth * 0.02,
+                            vertical: Sizes.screenHeight * 0.006,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFFFFD9D6),
+                            color: AppColor.bgmedium,
                             borderRadius: BorderRadius.circular(9),
                           ),
                           child: Row(
@@ -356,9 +380,9 @@ class _DailyattendenceState extends State<Dailyattendence> {
                               Icon(
                                 Icons.access_time_filled,
                                 size: 16,
-                                color: Color(0xFFE53935),
+                                color: AppColor.red2,
                               ),
-                              SizedBox(width: 5),
+                              SizedBox(width: Sizes.screenWidth * 0.0125),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -366,7 +390,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
                                     'Current Time',
                                     style: GoogleFonts.poppins(
                                       fontSize: 8,
-                                      color: Colors.black87,
+                                      color: AppColor.black87,
                                     ),
                                   ),
                                   Text(
@@ -374,7 +398,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
                                     style: GoogleFonts.poppins(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
-                                      color: Color(0xFF963025),
+                                      color: AppColor.stockUnitColor,
                                     ),
                                   ),
                                 ],
@@ -388,17 +412,17 @@ class _DailyattendenceState extends State<Dailyattendence> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: Sizes.screenHeight * 0.012),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Container(
                 height: Sizes.screenHeight * 0.052,
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColor.white,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: Color(0xFFE0E0E0),
+                    color: AppColor.grey,
                   ),
                 ),
                 child: Row(
@@ -406,16 +430,17 @@ class _DailyattendenceState extends State<Dailyattendence> {
                     Icon(
                       Icons.search,
                       size: 22,
-                      color: Color(0xFF172033),
+                      color: AppColor.gey,
                     ),
-                    SizedBox(width: 12),
+                    SizedBox(width: Sizes.screenWidth * 0.03),
                     Expanded(
                       child: TextField(
+                        controller: searchController,
                         decoration: InputDecoration(
                           hintText: 'Search labour name or mobile number...',
                           hintStyle: GoogleFonts.poppins(
                             fontSize: 11,
-                            color: Color(0xFF777777),
+                            color: AppColor.gey,
                           ),
                           border: InputBorder.none,
                           isDense: true,
@@ -423,7 +448,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
                         ),
                         style: GoogleFonts.poppins(
                           fontSize: 11,
-                          color: Colors.black87,
+                          color: AppColor.black87,
                         ),
                       ),
                     ),
@@ -431,292 +456,386 @@ class _DailyattendenceState extends State<Dailyattendence> {
                 ),
               ),
             ),
-            SizedBox(height: 2),
-            ListView.builder(
-              itemCount: labourList.length,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final labour = labourList[index];
-                return Transform.translate(
-                  offset: Offset(0, -18),
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 5, left: 10, right: 10),
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(9),
-                      border: Border.all(color: Color(0xFFF0E8E3)),
+            SizedBox(height: Sizes.screenHeight * 0.012),
+            Column(
+              children: [
+                 SizedBox(height: Sizes.screenHeight * 0.005),
+
+                if (Attendencelist.loading)
+                  Transform.translate(
+                    offset: Offset(0, -80),
+                    child: Center(
+                      child: Circularprogressindicator(),
                     ),
+                  )
+
+                else if (Attendencelist.errorMessage != null)
+                  Center(
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        Text(Attendencelist.errorMessage!),
+                        SizedBox(height: Sizes.screenHeight * 0.012),
+                        CustomButton(
+                          text: 'Retry',
+                          onPressed: Attendencelist.AttendenceApi,
+                        ),
+                      ],
+                    ),
+                  )
+                else if (workers.isEmpty)
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: Sizes.screenHeight * 0.025,
+                      ),
+                      child: Text(
+                        'No labour attendance records found.',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Color(0xFF777777),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  ListView.builder(
+                    itemCount: workers.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final labour = workers[index];
+                      final labourId = labour.labourId;
+                      final currentStatus = _attendanceStatus[labourId] ?? labour.status?.toString() ?? '';
+
+                      return Transform.translate(
+                        offset: Offset(0, -20),
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 5, left: 10, right: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppColor.white,
+                            borderRadius: BorderRadius.circular(9),
+                            border: Border.all(
+                                color: AppColor.grey),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
                                 children: [
-                                  Text(
-                                    labour['name']!,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF172033),
-                                    ),
-                                  ),
-                                  SizedBox(height: 2),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.call,
-                                        size: 11,
-                                        color: Color(0xFF687386),
-                                      ),
-                                      SizedBox(width: 3),
-                                      Expanded(
-                                        child: Text(
-                                          labour['mobile']!,
+                                  Expanded(
+                                    flex: 3,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          labour.name,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.poppins(
-                                            fontSize: 9.5,
-                                            color: Color(0xFF687386),
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColor.black,
                                           ),
                                         ),
+                                        SizedBox(height: 2),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.call,
+                                              size: 11,
+                                              color: AppColor.gey,
+                                            ),
+                                            SizedBox(width: 3),
+                                            Expanded(
+                                              child: Text(
+                                                labour.mobile,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 9.5,
+                                                  color: AppColor.gey,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: Sizes.screenHeight * 0.0325,
+                                    width: Sizes.screenWidth * 0.0025,
+                                    color: AppColor.grey,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: Sizes.screenWidth * 0.01,
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Daily Rate',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 8,
+                                          color: AppColor.gey,
+                                        ),
+                                      ),
+                                      Text(
+                                        '₹ ${labour.dailyRate ?? 0}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColor.stockUnitColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(width: Sizes.screenWidth * 0.015),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _attendanceOption(
+                                        'Present',
+                                        AppColor.lightgreen,
+                                        AppColor.green,
+                                        isSelected: currentStatus == 'Present',
+                                        onTap: () {
+                                          setState(() {
+                                            if (_attendanceStatus[labourId] == 'Present') {
+                                              _attendanceStatus[labourId] = '';
+                                            } else {
+                                              _attendanceStatus[labourId] = 'Present';
+                                            }
+                                          });
+                                        },
+                                      ),
+                                      SizedBox(width: 3),
+                                      _attendanceOption(
+                                        'Half',
+                                        AppColor.bghalf,
+                                        AppColor.texthalf,
+                                        isSelected: currentStatus == 'Half Day',
+                                        onTap: () {
+                                          setState(() {
+                                            if (_attendanceStatus[labourId] == 'Half Day') {
+                                              _attendanceStatus[labourId] = '';
+                                            } else {
+                                              _attendanceStatus[labourId] = 'Half Day';
+                                            }
+                                          });
+                                        },
+                                      ),
+                                      SizedBox(width: 3),
+                                      _attendanceOption(
+                                        'Absent',
+                                        AppColor.bgbacklight,
+                                        AppColor.red,
+                                        isSelected: currentStatus == 'Absent',
+                                        onTap: () {
+                                          setState(() {
+                                            if (_attendanceStatus[labourId] == 'Absent') {
+                                              _attendanceStatus[labourId] = '';
+                                            } else {
+                                              _attendanceStatus[labourId] = 'Absent';
+                                            }
+                                          });
+                                        },
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                            ),
-                            Container(
-                              height: 26,
-                              width: 1,
-                              color: Color(0xFFE6E6E6),
-                              margin: EdgeInsets.symmetric(horizontal: 4),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Daily Rate',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 8,
-                                    color: Color(0xFF687386),
-                                  ),
-                                ),
-                                Text(
-                                  '₹ ${labour['rate']}',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFFB3261E),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 6),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _attendanceOption(
-                                  'Present',
-                                  Color(0xFFE5F8E9),
-                                  Color(0xFF267A40),
-                                  isSelected: labour['attendance'] == 'Present',
-                                  onTap: () {
-                                    setState(() {
-                                      if (labour['attendance'] == 'Present') {
-                                        labourList[index]['attendance'] = '';
-                                      } else {
-                                        labourList[index]['attendance'] = 'Present';
-                                      }
-                                    });
-                                  },
-                                ),
-                                SizedBox(width: 3),
-                                _attendanceOption(
-                                  'Half',
-                                  Color(0xFFFFF1E5),
-                                  Color(0xFFAD5428),
-                                  isSelected: labour['attendance'] == 'Half Day',
-                                  onTap: () {
-                                    setState(() {
-                                      if (labour['attendance'] == 'Half Day') {
-                                        labourList[index]['attendance'] = '';
-                                      } else {
-                                        labourList[index]['attendance'] = 'Half Day';
-                                      }
-                                    });
-                                  },
-                                ),
-                                SizedBox(width: 3),
-                                _attendanceOption(
-                                  'Absent',
-                                  Color(0xFFFFE9E9),
-                                  Color(0xFFC62828),
-                                  isSelected: labour['attendance'] == 'Absent',
-                                  onTap: () {
-                                    setState(() {
-                                      if (labour['attendance'] == 'Absent') {
-                                        labourList[index]['attendance'] = '';
-                                      } else {
-                                        labourList[index]['attendance'] = 'Absent';
-                                      }
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
 
-                        SizedBox(height: 6),
+                              SizedBox(height: Sizes.screenHeight * 0.0075),
 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Overtime',
-                              style: GoogleFonts.poppins(
-                                fontSize: 9,
-                                color: Color(0xFF687386),
-                              ),
-                            ),
-                            SizedBox(width: 6),
-                            SizedBox(
-                              width: Sizes.screenWidth * 0.09,
-                              height: Sizes.screenHeight * 0.027,
-                              child: TextField(
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  hintText: '0',
-                                  hintStyle: GoogleFonts.poppins(fontSize: 10),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 0,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide: BorderSide(
-                                      color: Color(0xFFDADADA),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Overtime',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 9,
+                                      color: Color(0xFF687386),
                                     ),
                                   ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide: BorderSide(
-                                      color: Color(0xFFDADADA),
+                                  SizedBox(width: Sizes.screenWidth * 0.015),
+                                  SizedBox(
+                                    width: Sizes.screenWidth * 0.14,
+                                    height: Sizes.screenHeight * 0.027,
+                                    child: TextField(
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(4),
+                                      ],
+                                      decoration: InputDecoration(
+                                        hintText: labour.overtimeHours?.toString() ?? '0',
+                                        hintStyle: GoogleFonts.poppins(fontSize: 10),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: Sizes.screenWidth * 0.015,
+                                          vertical: 0,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(4),
+                                          borderSide: BorderSide(
+                                            color: Color(0xFFDADADA),
+                                          ),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(4),
+                                          borderSide: BorderSide(
+                                            color: Color(0xFFDADADA),
+                                          ),
+                                        ),
+                                      ),
+                                      style: GoogleFonts.poppins(fontSize: 10),
                                     ),
                                   ),
-                                ),
-                                style: GoogleFonts.poppins(fontSize: 10),
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'hrs',
-                              style: GoogleFonts.poppins(
-                                fontSize: 9,
-                                color: Color(0xFF687386),
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            SizedBox(
-                              width: Sizes.screenWidth * 0.09,
-                              height: Sizes.screenHeight * 0.027,
-                              child: TextField(
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  hintText: '0',
-                                  hintStyle: GoogleFonts.poppins(fontSize: 10),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 0,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide: BorderSide(
-                                      color: Color(0xFFDADADA),
+                                  SizedBox(width: Sizes.screenWidth * 0.01),
+                                  Text(
+                                    'hrs',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 9,
+                                      color: Color(0xFF687386),
                                     ),
                                   ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide: BorderSide(
-                                      color: Color(0xFFDADADA),
+                                  SizedBox(width: Sizes.screenWidth * 0.02),
+                                  SizedBox(
+                                    width: Sizes.screenWidth * 0.14,
+                                    height: Sizes.screenHeight * 0.027,
+                                    child: TextField(
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(4),
+                                      ],
+                                      decoration: InputDecoration(
+                                        hintText: labour.overtimeRate?.toString() ?? '0',
+                                        hintStyle: GoogleFonts.poppins(fontSize: 10),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: Sizes.screenWidth * 0.015,
+                                          vertical: 0,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(4),
+                                          borderSide: BorderSide(
+                                            color: Color(0xFFDADADA),
+                                          ),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(4),
+                                          borderSide: BorderSide(
+                                            color: Color(0xFFDADADA),
+                                          ),
+                                        ),
+                                      ),
+                                      style: GoogleFonts.poppins(fontSize: 10),
                                     ),
                                   ),
-                                ),
-                                style: GoogleFonts.poppins(fontSize: 10),
+                                  SizedBox(width: Sizes.screenWidth * 0.01),
+                                  Text(
+                                    '₹ / hr',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 9,
+                                      color: Color(0xFF687386),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              '₹ / hr',
-                              style: GoogleFonts.poppins(
-                                fontSize: 9,
-                                color: Color(0xFF687386),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
+              ],
             ),
             Transform.translate(
-              offset: Offset(0, -24),
-              child: Container(
-                width: double.infinity,
-                height: Sizes.screenHeight * 0.050,
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Color(0xFF963025),
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                child: InkWell(
-                  onTap: () {},
-                  borderRadius: BorderRadius.circular(7),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.save,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      SizedBox(width: 8),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Save Attendance',
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            'Will be enabled after 6:00 PM',
-                            style: GoogleFonts.poppins(
-                              fontSize: 8.5,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+              offset: Offset(0, 10),
+            child:CustomButton(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                height: Sizes.screenHeight * 0.055,
+                width: Sizes.screenWidth * 0.95,
+                type: CustomButtonType.filled,
+                text: 'Save Attendance',
+                textColor: AppColor.white,
+                borderColor: AppColor.stockTitleColor,
+                fontSize: 15,
+                fontWeight: .w500,
+                onPressed: () {
+                 // Navigator.pop(context);
+                },
+                iconOnLeft: true,
+                icon: Icons.save,
+                iconSize: 18,
+                iconSpacing: 2,
               ),
             ),
             SizedBox(height: 10),
+          ],
+        ),
+      ),
+    ),
+  );
+  }
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: Sizes.screenHeight * 0.010,
+        vertical: Sizes.screenHeight * 0.010,
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    ' Daily Attendance',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.stockAmountColor,
+                    ),
+                  ),
+                  Text(
+                    'Mark labour attendence for the selected date',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.gey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(width: 8),
+
+            // CustomButton(
+            //   padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            //   height: 35,
+            //   width: 100,
+            //   text: 'Add Client',
+            //   fontSize:  12,
+            //   fontWeight: .w500,
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => Addclient()),
+            //     );
+            //   },
+            //   iconOnLeft: true,
+            //   icon: Icons.add,
+            //   iconSize: 15,
+            //   iconSpacing: 2,
+            // ),
           ],
         ),
       ),
@@ -818,4 +937,5 @@ Widget _attendanceOption(
       ),
     ),
   );
+
 }

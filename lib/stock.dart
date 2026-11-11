@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
+import 'package:mahindra_bricks/viewmodel/stocklist_viewmodel.dart';
+import 'package:provider/provider.dart';
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/customeproductcard.dart';
 import 'addproduct.dart';
-import 'addproductdetails.dart';
+import 'viewproductdetails.dart';
+import 'circularprogressindicator.dart';
 
 class Stock extends StatefulWidget {
   Stock({super.key});
@@ -16,61 +19,22 @@ class Stock extends StatefulWidget {
 }
 
 class _StockState extends State<Stock> {
-  int selectedCategory = 0;
-  List<Map<String, dynamic>> productList = [
-    {
-      'image': 'assets/bricks.jpg',
-      'name': 'Red Bricks (Standard)',
-      'size': '230 × 110 × 70 mm',
-      'code': 'RB-001',
-      'price': '15,000',
-      'stockStatus': 'In Stock',
-    },
-    {
-      'image': 'assets/bricks2.jpg',
-      'name': 'Premium Bricks',
-      'size': '230 × 110 × 70 mm',
-      'code': 'RB-002',
-      'price': '18,000',
-      'stockStatus': 'In Stock',
-    },
-    {
-      'image': 'assets/bricls3.jpg',
-      'name': 'Paver Block (Red)',
-      'size': '300 × 110 × 70 mm',
-      'code': 'RB-003',
-      'price': '18,000',
-      'stockStatus': 'In Stock',
-    },
-    {
-      'image': 'assets/bricks4.jpg',
-      'name': 'Hollow Bricks',
-      'size': '300 × 110 × 70 mm',
-      'code': 'RB-003',
-      'price': '18,000',
-      'stockStatus': 'In Stock',
-    },
-    {
-      'image': 'assets/bricks5.jpg',
-      'name': 'Zigzag Pavan',
-      'size': '300 × 110 × 70 mm',
-      'code': 'RB-003',
-      'price': '18,000',
-      'stockStatus': 'In Stock',
-    },
-    {
-      'image': 'assets/bricks6.jpg',
-      'name': 'Cemented Bricks',
-      'size': '300 × 110 × 70 mm',
-      'code': 'RB-003',
-      'price': '18,000',
-      'stockStatus': 'In Stock',
-    },
-  ];
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<StocklistViewmodel>(
+        context,
+        listen: false,
+      ).StockListApi();
+    });
+  }
+  int selectedCategory = 0;
+  @override
+  Widget build(BuildContext context) {
+    final stockList = Provider.of<StocklistViewmodel>(context);
     return Scaffold(
       backgroundColor: AppColor.bodybackgroundColor,
       appBar: const ConstantAppBar(
@@ -82,7 +46,7 @@ class _StockState extends State<Stock> {
         child: Column(
           children: [
             _buildHeader(),
-            StockContente(),
+            StockContente(stockList),
           ],
         ),
       ),
@@ -127,33 +91,13 @@ class _StockState extends State<Stock> {
             ),
 
             SizedBox(width: 8),
-
-            CustomButton(
-              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-              height: 35,
-              width: 100,
-              text: 'Add Product',
-              fontSize:  12,
-              fontWeight: .w500,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddProductPage()),
-                );
-              },
-              iconOnLeft: true,
-              icon: Icons.add,
-              iconSize: 15,
-              iconSpacing: 2,
-            ),
-
           ],
         ),
       ),
     );
   }
 
-  Widget StockContente(){
+  Widget StockContente(dynamic stockList){
     return Container(
       child: Column(
         children: [
@@ -231,29 +175,50 @@ class _StockState extends State<Stock> {
           ),
           Column(
             children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: productList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return  CustomProductCard(
-                      image: productList[index]['image'],
-                      name: productList[index]['name'],
-                  size: productList[index]['size'],
-                  code: productList[index]['code'],
-                  price: productList[index]['price'],
-                  stockStatus: productList[index]['stockStatus'],
+              SizedBox(height: 15),
+
+              if (stockList.loading)
+                Center(
+                  child: Circularprogressindicator(),
+                )
+              else if (stockList.stockList.isEmpty)
+                Center(
+                  child: Text('No Stock Found'),
+                )
+              else
+                ListView.builder(
+                  itemCount: stockList.stockList.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final stock = stockList.stockList[index];
+                    return CustomProductCard(
+                      image: stock.image,
+                      name: stock.name?.toString() ?? '',
+                      size: stock.size,
+                      code: stock.code,
+                      price: stock.price,
+                      stockStatus: stock.stockStatus,
                       backgroundColor: AppColor.tilesColor,
-                    onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Addproduct(
-                          image:  productList[index]['image'],
-                          name: productList[index]['name'], size: productList[index]['size'],
-                          code: productList[index]['code'],
-                          price:  productList[index]['price'],
-                          stockStatus: productList[index]['stockStatus'],)));
-                     },
-                  );
-                },
-              )
+                      onArrowTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Viewproductdetails(),
+                          ),
+                        );
+                      },
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Viewproductdetails(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                )
             ],
           ),
           SizedBox(height: Sizes.screenHeight * 0.006),

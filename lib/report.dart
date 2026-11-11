@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:mahindra_bricks/viewmodel/reportsview_model.dart';
+import 'package:provider/provider.dart';
 
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
 import 'Constant/Constantcustomecalender.dart';
 import 'Constant/Constantreportcard.dart';
 import 'Constant/Constnat_Appbutton.dart';
+import 'circularprogressindicator.dart';
 
 class Report extends StatefulWidget {
   Report({super.key});
@@ -16,6 +19,18 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ReportsviewModel>(
+        context,
+        listen: false,
+      ).ReportsApi();
+    });
+  }
 
   List<Map<String, dynamic>> reportList = [
     {
@@ -30,6 +45,7 @@ class _ReportState extends State<Report> {
         {"label": "Paver Stock", "value": "8,000 Pcs", "color": "FFAD2018"},
       ],
     },
+
     {
       "title": "Dispatch Report",
       "subtitle": "View total dispatch and date-wise records",
@@ -102,26 +118,22 @@ class _ReportState extends State<Report> {
   @override
   String formatDate(DateTime? date) {
     if (date == null) return 'Select date';
-
     const months = [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
-
     return '${date.day.toString().padLeft(2, '0')} '
         '${months[date.month - 1]} ${date.year}';
   }
-
   Widget build(BuildContext context) {
+    final reportslist = Provider.of<ReportsviewModel>(context);
     return Scaffold(
-
       backgroundColor: AppColor.bodybackgroundColor,
       appBar:  ConstantAppBar(
         title: 'Dashboard',
         showBranding: true,
         logoAsset: 'assets/logo.jpg',
       ),
-
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -186,6 +198,23 @@ class _ReportState extends State<Report> {
               ),
             ),
             SizedBox(height: Sizes.screenHeight * 0.012),
+            if (reportslist.loading)
+              Center(
+                child: Circularprogressindicator(),
+              )
+            else if (reportslist.errorMessage != null)
+              Center(
+                child: Column(
+                  children: [
+                    Text(reportslist.errorMessage!),
+                    CustomButton(
+                      text: 'Retry',
+                      onPressed: reportslist.ReportsApi,
+                    ),
+                  ],
+                ),
+              )
+              else
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

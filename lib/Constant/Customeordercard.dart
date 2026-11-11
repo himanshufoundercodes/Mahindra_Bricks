@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
-
+import 'package:intl/intl.dart';
 import '../viewproductdetails.dart';
 import 'Constnat_Appbutton.dart';
 import 'Sizes.dart';
+import 'constant_dateformatter.dart';
 
 class CustomOrderCard extends StatelessWidget {
   final String orderId;
@@ -91,11 +92,11 @@ class CustomOrderCard extends StatelessWidget {
                   ),
                   SizedBox(width: Sizes.screenWidth * 0.011,),
                   Text(
-                    dateTime,
+                    DataFormatter.dateTime(dateTime),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
-                      fontSize: 12,
+                      fontSize: 10,
                       color: AppColor.gey,
                     ),
                   ),
@@ -103,7 +104,7 @@ class CustomOrderCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 7),
+          SizedBox(height: Sizes.screenHeight * 0.0095),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

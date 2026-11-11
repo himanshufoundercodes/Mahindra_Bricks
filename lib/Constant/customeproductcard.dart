@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
@@ -16,6 +15,7 @@ class CustomProductCard extends StatelessWidget {
   final Color stockColor;
 
   final VoidCallback? onTap;
+  final VoidCallback? onArrowTap;
 
   const CustomProductCard({
     super.key,
@@ -28,7 +28,52 @@ class CustomProductCard extends StatelessWidget {
     this.backgroundColor = const Color(0xFFFFFCFA),
     this.stockColor = const Color(0xFF2E9B59),
     this.onTap,
+    this.onArrowTap,
   });
+
+  Widget _buildImage() {
+    if (image.startsWith('http://') || image.startsWith('https://')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: Image.network(
+          image,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Image.asset(
+              'assets/bricks.jpg',
+              fit: BoxFit.contain,
+            );
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(
+              child: SizedBox(
+                height: 18,
+                width: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColor.stockAmountColor,
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: Image.asset(
+        image.isNotEmpty ? image : 'assets/bricks.jpg',
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/bricks.jpg',
+            fit: BoxFit.contain,
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +83,11 @@ class CustomProductCard extends StatelessWidget {
       child: Container(
         height: Sizes.screenHeight * 0.094,
         width: double.infinity,
-        margin:  EdgeInsets.symmetric(
+        margin: EdgeInsets.symmetric(
           horizontal: Sizes.screenWidth * 0.027,
           vertical: Sizes.screenHeight * 0.005,
         ),
-        padding:  EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
@@ -50,7 +95,7 @@ class CustomProductCard extends StatelessWidget {
             BoxShadow(
               color: Colors.brown.withOpacity(0.05),
               blurRadius: 6,
-              offset:  Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -59,18 +104,15 @@ class CustomProductCard extends StatelessWidget {
             Container(
               height: Sizes.screenHeight * 0.079,
               width: Sizes.screenWidth * 0.203,
-              padding:  EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color:  AppColor.imgbg,
+                color: AppColor.imgbg,
                 borderRadius: BorderRadius.circular(9),
               ),
-              child: Image.asset(
-                image,
-                fit: BoxFit.contain,
-              ),
+              child: _buildImage(),
             ),
 
-             SizedBox(width: Sizes.screenWidth * 0.027,),
+            SizedBox(width: Sizes.screenWidth * 0.027),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -80,31 +122,31 @@ class CustomProductCard extends StatelessWidget {
                     name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style:  GoogleFonts.poppins(
+                    style: GoogleFonts.poppins(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: AppColor.black
+                      color: AppColor.black,
                     ),
                   ),
 
-                  SizedBox(height: Sizes.screenHeight * 0.004,),
+                  SizedBox(height: Sizes.screenHeight * 0.004),
 
                   Text(
                     'Size: $size',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style:  GoogleFonts.poppins(
+                    style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: AppColor.gey,
                     ),
                   ),
-                  SizedBox(height: Sizes.screenHeight * 0.0025,),
+                  SizedBox(height: Sizes.screenHeight * 0.0025),
 
                   Text(
                     'Code: $code',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style:  GoogleFonts.poppins(
+                    style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: AppColor.gey,
                     ),
@@ -112,7 +154,7 @@ class CustomProductCard extends StatelessWidget {
                 ],
               ),
             ),
-             SizedBox(width: Sizes.screenWidth * 0.016,),
+            SizedBox(width: Sizes.screenWidth * 0.016),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,13 +163,14 @@ class CustomProductCard extends StatelessWidget {
                 Text(
                   price,
                   maxLines: 1,
-                  style:  GoogleFonts.poppins(
+                  style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: AppColor.black,
                   ),
-                ),SizedBox(height: Sizes.screenHeight * 0.0012,),
-                 Text(
+                ),
+                SizedBox(height: Sizes.screenHeight * 0.0012),
+                Text(
                   'Pieces',
                   style: GoogleFonts.poppins(
                     fontSize: 11,
@@ -135,9 +178,9 @@ class CustomProductCard extends StatelessWidget {
                   ),
                 ),
 
-                 SizedBox(height: Sizes.screenHeight * 0.0025,),
+                SizedBox(height: Sizes.screenHeight * 0.0025),
                 Container(
-                  padding:  EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                     horizontal: Sizes.screenWidth * 0.024,
                     vertical: Sizes.screenHeight * 0.004,
                   ),
@@ -158,11 +201,14 @@ class CustomProductCard extends StatelessWidget {
               ],
             ),
 
-             SizedBox(width: Sizes.screenWidth * 0.013,),
-            Icon(
-              Icons.chevron_right,
-              size: 22,
-              color: AppColor.gey,
+            SizedBox(width: Sizes.screenWidth * 0.013),
+            GestureDetector(
+              onTap: onArrowTap ?? onTap,
+              child: const Icon(
+                Icons.chevron_right,
+                size: 22,
+                color: AppColor.gey,
+              ),
             ),
           ],
         ),

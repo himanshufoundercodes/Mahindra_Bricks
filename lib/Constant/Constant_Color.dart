@@ -18,6 +18,14 @@ class AppColor {
   static const Color pagebackground = Color(0xFFf6efe9);
   static const Color btnpagebackground = Color(0xFF963A20);
   static const Color searchbarbackcolor = Color(0xFFF8F8F8);
+  static const Color bgmedium = Color(0xFFFFD9D6);
+  static const Color lightgreenbg = Color(0xFFE8F8EC);
+  static const Color verylightredbg = Color(0xFFFFEEEE);
+  static const Color bggrey = Color(0xFF8A939E);
+  static const Color darkgrey = Color(0xFFF0F2F5);
+  static const Color borderyellow = Color(0xFFFCE2D4);
+  static const Color bghalf = Color(0xFFFFF1E5);
+  static const Color texthalf = Color(0xFFAD5428);
 
 
 

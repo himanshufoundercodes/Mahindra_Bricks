@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:mahindra_bricks/utils/utils.dart';
+import 'package:mahindra_bricks/viewmodel/addproductionview_model.dart';
+import 'package:provider/provider.dart';
 
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
+import 'Constant/Constant_bottomnav.dart';
 import 'Constant/Constantcustomecalender.dart';
+import 'Constant/Constnat_Appbutton.dart';
+import 'model/addproduction_model.dart';
 
 class AddProduction extends StatefulWidget {
   AddProduction({super.key});
@@ -14,12 +20,51 @@ class AddProduction extends StatefulWidget {
 }
 
 class _AddProductionState extends State<AddProduction> {
+  final TextEditingController quanityController = TextEditingController();
+
+  Future<void> handleAddprduction() async {
+    final success = await context.read<AddproductionviewModel>().addproductionApi(
+      1,
+      quanityController.text,
+    );
+
+    if (!context.mounted) return;
+
+    if (success) {
+      Utils.showSuccessMessage(
+        context,
+        "Save Production Successfully!",
+      );
+
+      await Future.delayed(Duration(milliseconds: 500));
+
+      if (!context.mounted) return;
+
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => CustomBottomNavBar(),
+      //   ),
+      // );
+
+    } else {
+      final message =
+          context.read<AddproductionviewModel>().errorMessage ?? 'Login failed';
+      Utils.showErrorMessage(
+        context,
+        message,
+      );
+    }
+  }
+
+
   DateTime? selectedPaymentDate = DateTime(2026, 10, 17);
   final Color brown = Color(0xFF84301D);
   final Color backgroundColor = Color(0xFFFFF8F1);
 
   @override
   Widget build(BuildContext context) {
+    final AddprocuctionViewModel = Provider.of<AddproductionviewModel>(context);
     return Scaffold(
       backgroundColor: AppColor.bodybackgroundColor,
       appBar:  ConstantAppBar(
@@ -374,6 +419,7 @@ class _AddProductionState extends State<AddProduction> {
                             ),
                             alignment: Alignment.centerLeft,
                             child: TextField(
+                              controller: quanityController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 hintText: '5000',
@@ -579,77 +625,51 @@ class _AddProductionState extends State<AddProduction> {
                 ),
               ),
               SizedBox(height: 10),
-              Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 10),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Sizes.screenWidth * 0.04,
+                  vertical: Sizes.screenHeight * 0.015,
+                ),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 45,
-                        child: OutlinedButton(
-                          onPressed: () {
-
-                          },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor:  Color(0xFF7B2117),
-                            side:  BorderSide(
-                              color: Color(0xFF7B2117),
-                              width: 1.2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                          ),
-                          child:  Text(
-                            'Cancel',
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
+                    CustomButton(
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      height: Sizes.screenHeight * 0.060,
+                      width: Sizes.screenWidth * 0.425,
+                      type: CustomButtonType.outlined,
+                      text: 'Cancel',
+                      textColor: Colors.red.shade600,
+                      borderColor: AppColor.stockTitleColor,
+                      fontSize: 18,
+                      fontWeight: .w500,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      iconOnLeft: true,
+                      icon: Icons.close,
+                      iconSize: 18,
+                      iconSpacing: 2,
                     ),
-
-                     SizedBox(width: 12),
-                    Expanded(
-                      child: SizedBox(
-                        height: 45,
-                        child: ElevatedButton(
-                          onPressed: () {
-
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:  Color(0xFF91321D),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                          ),
-                          child:  Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.save,
-                                size: 20,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                'Save Production',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    SizedBox(width: 12),
+                    CustomButton(
+                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                      height: Sizes.screenHeight * 0.060,
+                      width: Sizes.screenWidth * 0.425,
+                      text: 'Save Production',
+                      isLoading: context.watch<AddproductionviewModel>().loading,
+                      onPressed: () async {
+                        await handleAddprduction();
+                      },
+                      fontSize: 18,
+                      fontWeight: .w500,
+                      iconOnLeft: true,
+                      icon: Icons.save,
+                      iconSize: 18,
+                      iconSpacing: 4,
                     ),
                   ],
                 ),
-              )
+              ),
 
             ],
           ),

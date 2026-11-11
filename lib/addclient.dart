@@ -46,7 +46,7 @@ class _AddclientState extends State<Addclient> {
     if (!context.mounted) return;
 
     if (success) {
-      Utils.showSuccessMessage(context, "Add Vehicle Successfully!");
+      Utils.showSuccessMessage(context, "Add Client Successfully!");
 
       Navigator.pop(context, true);
     } else {

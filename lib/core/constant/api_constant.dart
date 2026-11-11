@@ -12,6 +12,13 @@ class ApiConstants {
   static const String recordCementUrl = '${baseUrl}cement/usage';
   static const String clientListUrl = '${baseUrl}clients';
   static const String addClientUrl = '${baseUrl}createClients';
-  // static const String profileUrl = '/auth/me';
-  // static const String productListUrl = '/products';
+  static const String ordersUrl = '${baseUrl}orders';
+  static const String labourUrl = '${baseUrl}labour';
+  static const String stockUrl = '${baseUrl}products';
+  static const String attendenceUrl = '${baseUrl}attendance';
+  static const String addlabourUrl = '${baseUrl}createLabour';
+  static const String labourpayoutUrl = '${baseUrl}labour-payouts';
+  static const String reportsUrl = '${baseUrl}reports';
+  static const String addproductionUrl = '${baseUrl}createProduction';
+
 }
