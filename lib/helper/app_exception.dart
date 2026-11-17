@@ -9,16 +9,16 @@ class AppException implements Exception {
   }
 }
 class FetchDataException extends AppException {
-  FetchDataException([String? massage]) : super(massage, 'Error During Communication');
+  FetchDataException([String? massage]) : super(massage, 'Error During Communication: ');
 }
 class BadRequestException extends AppException {
-  BadRequestException([String? massage]) : super(massage, 'Invalid Request');
+  BadRequestException([String? massage]) : super(massage, 'Invalid Request: ');
 }
 class UnauthorisedException extends AppException {
-  UnauthorisedException([String? massage]) : super(massage, 'Unauthorised Request');
+  UnauthorisedException([String? massage]) : super(massage, 'Unauthorised Request: ');
 }
 class InvalidInputException extends AppException {
-  InvalidInputException([String? massage]) : super(massage, 'Invalid Input');
+  InvalidInputException([String? massage]) : super(massage, 'Invalid Input: ');
 }
 class UnauthorisedExceptions extends AppException {
   UnauthorisedExceptions([String? message])

@@ -1,3 +1,15 @@
+import 'package:mahindra_bricks/core/constant/api_constant.dart';
+
+int _toInt(dynamic value) {
+  if (value == null) return 0;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  if (value is num) return value.toInt();
+  if (value is String) {
+    return int.tryParse(value) ?? double.tryParse(value)?.toInt() ?? 0;
+  }
+  return 0;
+}
 
 class OrderdsListModel {
   final int count;
@@ -10,7 +22,7 @@ class OrderdsListModel {
 
   factory OrderdsListModel.fromJson(Map<String, dynamic> json) {
     return OrderdsListModel(
-      count: json['count'] is int ? json['count'] : int.tryParse(json['count']?.toString() ?? '0') ?? 0,
+      count: _toInt(json['count']),
       data: (json['data'] as List? ?? [])
           .map((e) => OrderdsDataModel.fromJson(e))
           .toList(),
@@ -48,6 +60,7 @@ class OrderdsDataModel {
   final String payment_status;
   final String total_pieces;
   final String amount_in_words;
+  final String invoice_url;
   final List<OrderItemsModel> items;
   final OrderItemsModel? primary_item;
 
@@ -81,20 +94,64 @@ class OrderdsDataModel {
     required this.payment_status,
     required this.total_pieces,
     required this.amount_in_words,
+    required this.invoice_url,
     required this.items,
     this.primary_item,
   });
 
   factory OrderdsDataModel.fromJson(Map<String, dynamic> json) {
+    String extractKey(List<String> keys) {
+      for (String k in keys) {
+        if (json[k] != null) {
+          String s = json[k].toString().trim();
+          if (s.isNotEmpty && s.toLowerCase() != 'null') return s;
+        }
+      }
+      if (json['client'] is Map) {
+        Map c = json['client'] as Map;
+        for (String k in keys) {
+          if (c[k] != null) {
+            String s = c[k].toString().trim();
+            if (s.isNotEmpty && s.toLowerCase() != 'null') return s;
+          }
+        }
+      }
+      return '';
+    }
+
+    // Client Address (Client Details Card): Prioritize client_address -> address -> delivery_address
+    String addressVal = extractKey([
+      'client_address',
+      'address',
+      'delivery_address',
+      'client_location',
+    ]);
+
+    // Delivery Location (Delivery Details Card): Prioritize delivery_location -> location -> site_location -> delivery_address
+    String locationVal = extractKey([
+      'delivery_location',
+      'location',
+      'site_location',
+      'delivery_address',
+    ]);
+
+    // Fallbacks if one is missing
+    if (addressVal.isEmpty) {
+      addressVal = locationVal;
+    }
+    if (locationVal.isEmpty) {
+      locationVal = addressVal;
+    }
+
     return OrderdsDataModel(
-      id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      id: _toInt(json['id']),
       order_number: json['order_number']?.toString() ?? '',
       invoice_no: json['invoice_no']?.toString() ?? '',
       client_id: json['client_id']?.toString() ?? '',
       client_name: json['client_name']?.toString() ?? '',
       client_mobile: json['client_mobile']?.toString() ?? '',
-      delivery_address: json['delivery_address']?.toString() ?? '',
-      delivery_location: json['delivery_location']?.toString() ?? '',
+      delivery_address: addressVal,
+      delivery_location: locationVal,
       delivery_date: json['delivery_date']?.toString() ?? '',
       vehicle_number: json['vehicle_number']?.toString() ?? '',
       order_type: json['order_type']?.toString() ?? '',
@@ -116,6 +173,32 @@ class OrderdsDataModel {
       payment_status: json['payment_status']?.toString() ?? '',
       total_pieces: json['total_pieces']?.toString() ?? '',
       amount_in_words: json['amount_in_words']?.toString() ?? '',
+      invoice_url: () {
+        List<String> keys = [
+          'invoice_url',
+          'invoice_pdf',
+          'invoice_file',
+          'invoice_link',
+          'pdf_url',
+          'download_url',
+          'invoice_path',
+        ];
+        for (String k in keys) {
+          if (json[k] != null && json[k].toString().trim().isNotEmpty) {
+            String val = json[k].toString().trim();
+            if (val.toLowerCase() != 'null') return val;
+          }
+        }
+        if (json['invoice'] != null && json['invoice'] is String) {
+          String val = json['invoice'].toString().trim();
+          if (val.startsWith('http')) return val;
+        }
+        final int orderId = _toInt(json['id']);
+        if (orderId > 0) {
+          return '${ApiConstants.baseUrl}orders/$orderId/invoice';
+        }
+        return '';
+      }(),
       items: (json['items'] as List? ?? [])
           .map((e) => OrderItemsModel.fromJson(e))
           .toList(),
@@ -157,7 +240,7 @@ class OrderItemsModel {
 
   factory OrderItemsModel.fromJson(Map<String, dynamic> json) {
     return OrderItemsModel(
-      id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      id: _toInt(json['id']),
       order_id: json['order_id']?.toString() ?? '',
       product_id: json['product_id']?.toString() ?? '',
       product_name: json['product_name']?.toString() ?? '',

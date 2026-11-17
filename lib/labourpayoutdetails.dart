@@ -3,27 +3,89 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:mahindra_bricks/model/labourpayout_model.dart';
 import 'package:mahindra_bricks/paymenthistory.dart';
+import 'package:mahindra_bricks/utils/utils.dart';
+import 'package:mahindra_bricks/viewmodel/savepaymentview_model.dart';
+import 'package:provider/provider.dart';
 
 import 'Constant/Constantadvancepaymnet.dart';
 import 'Constant/Constantcustomecalender.dart';
 import 'Constant/Constantheader.dart';
 
 class Labourpayoutdetails extends StatefulWidget {
-  Labourpayoutdetails({super.key});
+  final Workers data;
+
+  const Labourpayoutdetails({
+    super.key,
+    required this.data,
+  });
 
   @override
   State<Labourpayoutdetails> createState() => _LabourpayoutdetailsState();
 }
 
 class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
-  final TextEditingController amountController =
-  TextEditingController( text: "1200");
+  late TextEditingController amountController;
+  final TextEditingController notesController = TextEditingController();
   String selectedPayment = 'Cash';
   String selectedPaymentbtn = 'Save Payment';
-  DateTime? selectedPaymentDate = DateTime(2026, 10, 17);
-  DateTime? selectedStartDate = DateTime(2026, 10, 15);
-  DateTime? selectedEndDate = DateTime(2026, 10, 17);
+  DateTime? selectedPaymentDate = DateTime.now();
+  DateTime? selectedStartDate = DateTime.now();
+  DateTime? selectedEndDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    amountController = TextEditingController(
+      text: widget.data.remainingAmount.toString(),
+    );
+  }
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    notesController.dispose();
+    super.dispose();
+  }
+
+  Future<void> handleSavePayment() async {
+    if (amountController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, "Please enter payment amount");
+      return;
+    }
+
+    final dateStr = selectedPaymentDate != null
+        ? "${selectedPaymentDate!.year}-${selectedPaymentDate!.month.toString().padLeft(2, '0')}-${selectedPaymentDate!.day.toString().padLeft(2, '0')}"
+        : "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}";
+
+    final savePaymentVM =
+        Provider.of<SavePaymentViewModel>(context, listen: false);
+
+    final success = await savePaymentVM.savePaymentApi(
+      widget.data.labourId.toString(),
+      amountController.text.trim(),
+      dateStr,
+      selectedPayment.toLowerCase(),
+      "wage",
+      notesController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      Utils.showSuccessMessage(context, "Payment saved successfully!");
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } else {
+      Utils.showErrorMessage(
+        context,
+        savePaymentVM.errorMessage ?? "Failed to save payment",
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +129,14 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                   SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> Paymenthistory()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Paymenthistory(
+                            labourId: widget.data.labourId,
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF963A20),
@@ -139,7 +208,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Rajesh Kumar',
+                        widget.data.name.isEmpty ? 'Labour Name' : widget.data.name,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -148,14 +217,14 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       ),
                       SizedBox(height: 2),
                       Text(
-                        'Labour ID: LAB-001',
+                        'Labour ID: ${widget.data.labourCode}',
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           color: Color(0xFF687386),
                         ),
                       ),
                       Text(
-                        'Mobile: 9876543210',
+                        'Mobile: ${widget.data.mobile}',
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           color: Color(0xFF687386),
@@ -185,7 +254,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       ),
                     ),
                     Text(
-                      '₹ 600',
+                      '₹ ${widget.data.dailyRate}',
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -349,7 +418,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                                 ),
                                 SizedBox(height: 3),
                                 Text(
-                                  "12 days",
+                                  "${widget.data.breakdown.present} days",
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -401,7 +470,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                                 ),
                                 SizedBox(height: 3),
                                 Text(
-                                  "3 days",
+                                  "${widget.data.breakdown.halfDay} days",
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -455,7 +524,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                                 ),
                                 SizedBox(height: 3),
                                 Text(
-                                  "4 hrs",
+                                  "${widget.data.breakdown.overtimeHours} hrs",
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -504,14 +573,14 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Attendance Amount (3 × 600)',
+                          'Attendance Amount (${widget.data.breakdown.present} × ₹${widget.data.dailyRate})',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: Color(0xFF687386),
                           ),
                         ),
                         Text(
-                          '₹ 1,800',
+                          '₹ ${widget.data.breakdown.present * widget.data.dailyRate}',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -530,14 +599,14 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Half Day (1 × 300)',
+                          'Half Day (${widget.data.breakdown.halfDay} × ₹${(widget.data.dailyRate / 2).toStringAsFixed(0)})',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: Color(0xFF687386),
                           ),
                         ),
                         Text(
-                          '₹ 300',
+                          '₹ ${(widget.data.breakdown.halfDay * (widget.data.dailyRate / 2)).toStringAsFixed(0)}',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -556,14 +625,14 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Overtime (2 hrs × 150)',
+                          'Overtime (${widget.data.breakdown.overtimeHours} hrs)',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: Color(0xFF687386),
                           ),
                         ),
                         Text(
-                          '₹ 300',
+                          '₹ ${widget.data.payableAmount - (widget.data.breakdown.present * widget.data.dailyRate) - (widget.data.breakdown.halfDay * (widget.data.dailyRate / 2)).toInt()}',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -595,7 +664,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                           ),
                         ),
                         Text(
-                          '₹ 2,400',
+                          '₹ ${widget.data.payableAmount}',
                           style: GoogleFonts.poppins(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
@@ -612,40 +681,16 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Less: Advance Paid (Outstanding)',
+                          'Less: Advance / Paid',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: Color(0xFF687386),
                           ),
                         ),
                         Text(
-                          '− ₹ 500',
+                          '− ₹ ${widget.data.paidAmount}',
                           style: GoogleFonts.poppins(
                             fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Less: Previous Payments',
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            color: Color(0xFF687386),
-                          ),
-                        ),
-                        Text(
-                          '− ₹ 0',
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: AppColor.red,
                           ),
@@ -675,7 +720,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                           ),
                         ),
                         Text(
-                          '₹ 1,900',
+                          '₹ ${widget.data.remainingAmount}',
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -1024,46 +1069,46 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                     ],
                   ),
                   SizedBox(height: 11),
-                  Text(
-                    'Notes (Optional)',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: Color(0xFF172033),
-                    ),
-                  ),
-
-                  SizedBox(height: 10),
-
-                  Container(
-                    height: Sizes.screenHeight * 0.045,
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Color(0xFFDADADA),
-                      ),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Add payment notes...',
-                        hintStyle: GoogleFonts.poppins(
-                          fontSize: 11,
-                          color: Color(0xFF8993A1),
-                        ),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Color(0xFF172033),
-                      ),
-                    ),
-                  ),
-
+                  // Text(
+                  //   'Notes (Optional)',
+                  //   style: GoogleFonts.poppins(
+                  //     fontSize: 12,
+                  //     color: Color(0xFF172033),
+                  //   ),
+                  // ),
+                  //
+                  // SizedBox(height: 10),
+                  //
+                  // Container(
+                  //   height: Sizes.screenHeight * 0.045,
+                  //   width: double.infinity,
+                  //   padding: EdgeInsets.symmetric(horizontal: 10),
+                  //   alignment: Alignment.centerLeft,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     border: Border.all(
+                  //       color: Color(0xFFDADADA),
+                  //     ),
+                  //     borderRadius: BorderRadius.circular(7),
+                  //   ),
+                  //   child: TextField(
+                  //     controller: notesController,
+                  //     decoration: InputDecoration(
+                  //       hintText: 'Add payment notes...',
+                  //       hintStyle: GoogleFonts.poppins(
+                  //         fontSize: 11,
+                  //         color: Color(0xFF8993A1),
+                  //       ),
+                  //       border: InputBorder.none,
+                  //       isDense: true,
+                  //       contentPadding: EdgeInsets.zero,
+                  //     ),
+                  //     style: GoogleFonts.poppins(
+                  //       fontSize: 12,
+                  //       color: Color(0xFF172033),
+                  //     ),
+                  //   ),
+                  // ),
                   SizedBox(height: 15),
 
                   Row(
@@ -1079,7 +1124,10 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                               context: context,
                               barrierDismissible: false,
                               builder: (context) {
-                                return GiveAdvancePopup();
+                                return GiveAdvancePopup(
+                                  labourId: widget.data.labourId.toString(),
+                                  labourName: widget.data.name,
+                                );
                               },
                             );
                           },
@@ -1124,10 +1172,11 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                       SizedBox(width: 8),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             setState(() {
                               selectedPaymentbtn = 'Save Payment';
                             });
+                            await handleSavePayment();
                           },
                           child: Container(
                             height: Sizes.screenHeight * 0.050,
@@ -1143,24 +1192,35 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
-                                  Icons.save,
-                                  size: 20,
-                                  color: selectedPaymentbtn == 'Save Payment'
-                                      ? Colors.white
-                                      : Color(0xFF963025),
-                                ),
-                                SizedBox(width: 6),
-                                Text(
-                                  'Save Payment',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
+                                if (context.watch<SavePaymentViewModel>().loading)
+                                  SizedBox(
+                                    height: 18,
+                                    width: 18,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                else ...[
+                                  Icon(
+                                    Icons.save,
+                                    size: 20,
                                     color: selectedPaymentbtn == 'Save Payment'
                                         ? Colors.white
                                         : Color(0xFF963025),
                                   ),
-                                ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    'Save Payment',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: selectedPaymentbtn == 'Save Payment'
+                                          ? Colors.white
+                                          : Color(0xFF963025),
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),

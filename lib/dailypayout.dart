@@ -20,8 +20,8 @@ class Dailypayout extends StatefulWidget {
 }
 
 class _DailypayoutState extends State<Dailypayout> {
-  DateTime? selectedStartDate = DateTime(2026, 10, 15);
-  DateTime? selectedEndDate = DateTime(2026, 10, 17);
+  DateTime? selectedStartDate = DateTime.now();
+  DateTime? selectedEndDate = DateTime.now();
   final TextEditingController searchController =
   TextEditingController();
 
@@ -54,7 +54,6 @@ class _DailypayoutState extends State<Dailypayout> {
     final model = payoutVm.labourpayoutModel;
     final summary = model?.summary;
     final workers = model?.workers ?? [];
-
     final filteredWorkers = workers.where((worker) {
       final name = (worker.name).toLowerCase();
       final mobile = (worker.mobile).toLowerCase();
@@ -259,9 +258,8 @@ class _DailypayoutState extends State<Dailypayout> {
                                   Text(
                                     "Total Payout Amount",
                                     maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.poppins(
-                                      fontSize: 9,
+                                      fontSize: 8,
                                       color: AppColor.red,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -670,18 +668,37 @@ class _DailypayoutState extends State<Dailypayout> {
                   physics:  NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final worker = filteredWorkers[index];
-                    return CustomLabourCard(
-                      name: worker.name,
-                      dailyRate: worker.dailyRate,
-                      presentDays: worker.breakdown.present,
-                      halfDays: worker.breakdown.halfDay,
-                      amount: worker.payableAmount,
-                      advance: worker.paidAmount,
-                      isNoAdvance: worker.paidAmount == 0,
-                      icon: Icons.person,
+                    return GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Labourpayoutdetails()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Labourpayoutdetails(
+                              data: worker,
+                            ),
+                          ),
+                        );
                       },
+                      child: CustomLabourCard(
+                        name: worker.name,
+                        dailyRate: worker.dailyRate,
+                        presentDays: worker.breakdown.present,
+                        halfDays: worker.breakdown.halfDay,
+                        amount: worker.payableAmount,
+                        advance: worker.paidAmount,
+                        isNoAdvance: worker.paidAmount == 0,
+                        icon: Icons.person,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Labourpayoutdetails(
+                                data: worker,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     );
                   },
                 ),

@@ -20,5 +20,15 @@ class ApiConstants {
   static const String labourpayoutUrl = '${baseUrl}labour-payouts';
   static const String reportsUrl = '${baseUrl}reports';
   static const String addproductionUrl = '${baseUrl}createProduction';
+  static const String createProductUrl = '${baseUrl}createProducts';
+  static const String productDetailsUrl = '${baseUrl}products';
+  static const String saveAttendanceUrl = '${baseUrl}saveDailyAttendance';
+  static const String newOrderUrl = '${baseUrl}createOrders';
+  static const String homeUrl = '${baseUrl}home';
+  static const String savePaymentUrl = '${baseUrl}labour-payouts/pay';
+  static const String labourPayoutDetailUrl = '${baseUrl}labour/';
+  static const String labourPayoutHistoryUrl = '${baseUrl}labour/1/payments';
+  static const String updateOrderUrl = '${baseUrl}updateOrders';
+  static const String reportsListUrl = '${baseUrl}reports';
 
 }

@@ -30,6 +30,7 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
     final success = await viewModel.addcategoryApi(
       categoryController.text,
       descriptionController.text,
+      context,
     );
     if (!context.mounted) return;
     if (success) {
@@ -55,8 +56,6 @@ class _AddCategorySheetState extends State<AddCategorySheet> {
 
   @override
   Widget build(BuildContext context) {
-  //  final Color brown = Color(0xFF941008);
-
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,

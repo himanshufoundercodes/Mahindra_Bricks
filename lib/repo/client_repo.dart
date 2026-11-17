@@ -3,14 +3,13 @@ import 'package:flutter/foundation.dart';
 import 'package:mahindra_bricks/core/constant/api_constant.dart';
 import 'package:mahindra_bricks/helper/network/base_api_services.dart';
 import 'package:mahindra_bricks/helper/network/network_api_services.dart';
-import '../model/category_model.dart';
 import '../model/clistlist_model.dart';
 
 class ClientRepo {
 
   final BaseApiServices _apiServices = NetworkApiServices();
 
-  Future<List<ClientListModel>> clintApi() async {
+  Future<ClientListModel> clintApi() async {
 
     try {
 
@@ -18,18 +17,12 @@ class ClientRepo {
         ApiConstants.clientListUrl,
       );
 
-      List<ClientListModel> clientList = [];
-
-      for (var item in response['data']) {
-        clientList.add(ClientListModel.fromJson(item));
-      }
-
-      return clientList;
+      return ClientListModel.fromJson(response);
 
     } catch (e) {
 
       if (kDebugMode) {
-        print('Category API Error: $e');
+        print('Client API Error: $e');
       }
 
       rethrow;

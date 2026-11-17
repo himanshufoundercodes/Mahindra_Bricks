@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../model/addcategory_model.dart';
 import '../repo/addcategory_repo.dart';
+import 'categoryview_model.dart';
 
 class AddcategoryviewModel with ChangeNotifier {
 
@@ -15,7 +17,11 @@ class AddcategoryviewModel with ChangeNotifier {
   AddCategoryModel? _addCategoryModel;
   AddCategoryModel? get addCategoryModel => _addCategoryModel;
 
-  Future<bool> addcategoryApi(String category, String description) async {
+  Future<bool> addcategoryApi(
+      String category,
+      String description,
+      BuildContext context,
+      ) async {
 
     _loading = true;
     _errorMessage = null;
@@ -34,6 +40,10 @@ class AddcategoryviewModel with ChangeNotifier {
 
       _addCategoryModel = response;
 
+      Provider.of<CategoryViewModel>(
+        context,
+        listen: false,
+      ).categoryApi();
       debugPrint("Category Added Successfully");
       debugPrint("Category ID: ${response.id}");
 

@@ -43,7 +43,7 @@ class _BrickscategoryState extends State<Brickscategory> {
     final category23 = Provider.of<CategoryViewModel>(context);
     return Scaffold(
       backgroundColor: AppColor.bodybackgroundColor,
-      appBar: const ConstantAppBar(
+      appBar:  ConstantAppBar(
         title: 'Dashboard',
         showBranding: true,
         showBackButton: true,
@@ -53,7 +53,6 @@ class _BrickscategoryState extends State<Brickscategory> {
         color: AppColor.stockAmountColor,
         backgroundColor: Colors.white,
         displacement: 50,
-
         onRefresh: () async {
           await Provider.of<CategoryViewModel>(
             context,
@@ -66,6 +65,7 @@ class _BrickscategoryState extends State<Brickscategory> {
             child: Column(
               children: [
                 _buildHeader(),
+                SizedBox(height: Sizes.screenHeight * 0.005),
                 Container(
                   height: Sizes.screenHeight * 0.048,
                   margin: EdgeInsets.symmetric(horizontal: 20),
@@ -86,7 +86,7 @@ class _BrickscategoryState extends State<Brickscategory> {
                         size: 26,
                       ),
 
-                      SizedBox(width: 12),
+                      SizedBox(height: Sizes.screenHeight * 0.005),
 
                       Expanded(
                         child: TextField(
@@ -109,7 +109,7 @@ class _BrickscategoryState extends State<Brickscategory> {
                     ],
                   ),
                 ),
-          SizedBox(height: 15),
+                SizedBox(height: Sizes.screenHeight * 0.009),
                 if (category23.loading)
                   Center(
                     child: Circularprogressindicator(),

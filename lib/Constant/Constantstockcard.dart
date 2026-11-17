@@ -64,49 +64,53 @@ class StockCard extends StatelessWidget {
             ),
             const SizedBox(width: 8),
 
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Title
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 10.5,
-                      fontWeight: .w500,
-                      color: titleColor ?? const Color(0xFF555555),
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: Sizes.screenWidth * 0.30,
+                      child: Text(
+                        title,
+                        softWrap: false,
+                       // overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: titleColor ?? const Color(0xFF555555),
+                        ),
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 1),
+                    const SizedBox(height: 1),
 
-                  // Amount
-                  Text(
-                    value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: valueColor,
+                    // Amount
+                    Text(
+                      value,
+                      maxLines: 1,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: valueColor,
+                      ),
                     ),
-                  ),
 
-                  // Subtitle
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 10,
-                      color: subtitleColor ?? const Color(0xFF666666),
+                    // Subtitle
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        color: subtitleColor ?? const Color(0xFF666666),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

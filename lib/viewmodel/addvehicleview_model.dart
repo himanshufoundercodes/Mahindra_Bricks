@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mahindra_bricks/repo/addvehicle_repo.dart';
+import 'package:mahindra_bricks/viewmodel/vehicle_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 import '../model/addcategory_model.dart';
 import '../model/addvehicle_model.dart';
@@ -23,6 +25,7 @@ class AddvehicleviewModel with ChangeNotifier {
     String driverName,
     String driverMobile,
     String text,
+      BuildContext context,
   ) async {
     _loading = true;
     _errorMessage = null;
@@ -44,6 +47,11 @@ class AddvehicleviewModel with ChangeNotifier {
       final response = await _addCategoryRepo.addvehicleApi(data);
 
       _addVehicleModel = response;
+
+      Provider.of<VehicleViewmodel>(
+        context,
+        listen: false,
+      ).vehicleApi();
 
       debugPrint("Category Added Successfully");
       debugPrint("Category ID: ${response.id}");

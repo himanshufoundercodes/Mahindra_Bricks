@@ -1,3 +1,14 @@
+int _toIntNonNull(dynamic value, [int defaultValue = 0]) {
+  if (value == null) return defaultValue;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  if (value is num) return value.toInt();
+  if (value is String) {
+    return int.tryParse(value) ?? double.tryParse(value)?.toInt() ?? defaultValue;
+  }
+  return defaultValue;
+}
+
 class LabourpayoutModel {
   final DateRange dateRange;
   final Summary summary;
@@ -10,8 +21,8 @@ class LabourpayoutModel {
   });
 
   factory LabourpayoutModel.fromJson(Map<String, dynamic> json) => LabourpayoutModel(
-    dateRange: DateRange.fromJson(json['date_range'] as Map<String, dynamic>),
-    summary: Summary.fromJson(json['summary'] as Map<String, dynamic>),
+    dateRange: DateRange.fromJson(json['date_range'] as Map<String, dynamic>? ?? {}),
+    summary: Summary.fromJson(json['summary'] as Map<String, dynamic>? ?? {}),
     workers: (json['workers'] as List<dynamic>? ?? []).map((e) => Workers.fromJson(e as Map<String, dynamic>)).toList(),
   );
 
@@ -46,15 +57,15 @@ class Workers {
   });
 
   factory Workers.fromJson(Map<String, dynamic> json) => Workers(
-    labourId: json['labour_id'],
-    labourCode: json['labour_code'],
-    name: json['name'],
-    mobile: json['mobile'],
-    dailyRate: json['daily_rate'],
-    breakdown: Breakdown.fromJson(json['breakdown'] as Map<String, dynamic>),
-    payableAmount: json['payable_amount'],
-    paidAmount: json['paid_amount'],
-    remainingAmount: json['remaining_amount'],
+    labourId: _toIntNonNull(json['labour_id']),
+    labourCode: json['labour_code']?.toString() ?? '',
+    name: json['name']?.toString() ?? '',
+    mobile: json['mobile']?.toString() ?? '',
+    dailyRate: _toIntNonNull(json['daily_rate']),
+    breakdown: Breakdown.fromJson(json['breakdown'] as Map<String, dynamic>? ?? {}),
+    payableAmount: _toIntNonNull(json['payable_amount']),
+    paidAmount: _toIntNonNull(json['paid_amount']),
+    remainingAmount: _toIntNonNull(json['remaining_amount']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -84,10 +95,10 @@ class Breakdown {
   });
 
   factory Breakdown.fromJson(Map<String, dynamic> json) => Breakdown(
-    present: json['present'],
-    halfDay: json['half_day'],
-    absent: json['absent'],
-    overtimeHours: json['overtime_hours'],
+    present: _toIntNonNull(json['present']),
+    halfDay: _toIntNonNull(json['half_day']),
+    absent: _toIntNonNull(json['absent']),
+    overtimeHours: _toIntNonNull(json['overtime_hours']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -120,14 +131,14 @@ class Summary {
   });
 
   factory Summary.fromJson(Map<String, dynamic> json) => Summary(
-    totalLabour: json['total_labour'],
-    present: json['present'] ,
-    halfDay: json['half_day'],
-    absent: json['absent'],
-    overtimeHours: json['overtime_hours'],
-    totalPayable: json['total_payable'],
-    totalPaid: json['total_paid'],
-    remaining: json['remaining'],
+    totalLabour: _toIntNonNull(json['total_labour']),
+    present: _toIntNonNull(json['present']),
+    halfDay: _toIntNonNull(json['half_day']),
+    absent: _toIntNonNull(json['absent']),
+    overtimeHours: _toIntNonNull(json['overtime_hours']),
+    totalPayable: _toIntNonNull(json['total_payable']),
+    totalPaid: _toIntNonNull(json['total_paid']),
+    remaining: _toIntNonNull(json['remaining']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -152,8 +163,8 @@ class DateRange {
   });
 
   factory DateRange.fromJson(Map<String, dynamic> json) => DateRange(
-    fromDate: json['from_date'],
-    toDate: json['to_date'],
+    fromDate: json['from_date']?.toString() ?? '',
+    toDate: json['to_date']?.toString() ?? '',
   );
 
   Map<String, dynamic> toJson() => {

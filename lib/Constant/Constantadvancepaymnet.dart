@@ -1,29 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/dailypayout.dart';
+import 'package:mahindra_bricks/utils/utils.dart';
+import 'package:mahindra_bricks/viewmodel/labour_viewmodel.dart';
+import 'package:mahindra_bricks/viewmodel/savepaymentview_model.dart';
+import 'package:provider/provider.dart';
 
 import 'Constantcustomecalender.dart';
 import 'Sizes.dart';
 
 class GiveAdvancePopup extends StatefulWidget {
-  GiveAdvancePopup({super.key});
+  final String? labourId;
+  final String? labourName;
+
+  const GiveAdvancePopup({
+    super.key,
+    this.labourId,
+    this.labourName,
+  });
 
   @override
   State<GiveAdvancePopup> createState() => _GiveAdvancePopupState();
 }
 
 class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
-  final Color redColor = Color(0xFF98251D);
+  final Color redColor = const Color(0xFF98251D);
 
-  String selectedLabour = 'Rajesh Kumar (LB-001)';
+  String? selectedLabourId;
   String selectedPayment = 'Cash';
 
-  DateTime selectedDate = DateTime(2026, 10, 17);
+  DateTime selectedDate = DateTime.now();
 
-  final TextEditingController amountController =
-  TextEditingController(text: '2000');
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController notesController = TextEditingController();
 
-  final TextEditingController notesController =
-  TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    if (widget.labourId != null && widget.labourId!.isNotEmpty) {
+      selectedLabourId = widget.labourId;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final labourVM = Provider.of<LabourListViewModel>(context, listen: false);
+      if (labourVM.labourListModel == null) {
+        labourVM.LabourApi().then((_) {
+          if (mounted &&
+              selectedLabourId == null &&
+              labourVM.labourListModel?.data != null &&
+              labourVM.labourListModel!.data!.isNotEmpty) {
+            setState(() {
+              selectedLabourId =
+                  labourVM.labourListModel!.data!.first.id.toString();
+            });
+          }
+        });
+      } else if (selectedLabourId == null &&
+          labourVM.labourListModel?.data != null &&
+          labourVM.labourListModel!.data!.isNotEmpty) {
+        setState(() {
+          selectedLabourId =
+              labourVM.labourListModel!.data!.first.id.toString();
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -40,15 +80,69 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
     ][date.month - 1]} ${date.year}';
   }
 
+  Future<void> handleSaveAdvance() async {
+    if (selectedLabourId == null || selectedLabourId!.isEmpty) {
+      Utils.showErrorMessage(context, 'Please select a labourer');
+      return;
+    }
+
+    if (amountController.text.trim().isEmpty ||
+        double.tryParse(amountController.text.trim()) == null ||
+        double.parse(amountController.text.trim()) <= 0) {
+      Utils.showErrorMessage(context, 'Enter a valid advance amount');
+      return;
+    }
+
+    final dateStr =
+        "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+
+    final savePaymentVM =
+        Provider.of<SavePaymentViewModel>(context, listen: false);
+
+    final success = await savePaymentVM.savePaymentApi(
+      selectedLabourId!,
+      amountController.text.trim(),
+      dateStr,
+      selectedPayment.toLowerCase(),
+      "advance",
+      notesController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      Utils.showSuccessMessage(context, 'Advance saved successfully!');
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Dailypayout(),
+        ),
+      );
+    } else {
+      Utils.showErrorMessage(
+        context,
+        savePaymentVM.errorMessage ?? 'Failed to save advance',
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final labourVM = Provider.of<LabourListViewModel>(context);
+    final labourList = labourVM.labourListModel?.data ?? [];
+
+    if (selectedLabourId == null && labourList.isNotEmpty) {
+      selectedLabourId = labourList.first.id.toString();
+    }
+
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 15),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 15),
       child: Container(
-        padding: EdgeInsets.all(14),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Color(0xFFFFFCF8),
+          color: const Color(0xFFFFFCF8),
           borderRadius: BorderRadius.circular(15),
         ),
         child: SingleChildScrollView(
@@ -63,7 +157,7 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                     color: redColor,
                     size: 29,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Give Advance',
@@ -76,7 +170,7 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                   ),
                   InkWell(
                     onTap: () => Navigator.pop(context),
-                    child: Icon(
+                    child: const Icon(
                       Icons.close,
                       color: Colors.blueGrey,
                     ),
@@ -84,49 +178,78 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                 ],
               ),
 
-              SizedBox(height: 14),
+              const SizedBox(height: 14),
 
               Text(
                 'Labourer *',
                 style: GoogleFonts.poppins(fontSize: 12),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
 
-              Container(
-                height: Sizes.screenHeight * 0.046,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFFEAE4DD)),
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: selectedLabour,
-                    icon: Icon(Icons.keyboard_arrow_down),
-                    items: [
-                      'Rajesh Kumar (LB-001)',
-                      'Amit Kumar (LB-002)',
-                      'Ramesh Kumar (LB-003)',
-                    ].map((labour) {
-                      return DropdownMenuItem(
-                        value: labour,
-                        child: Text(
-                          labour,
-                          style: TextStyle(fontSize: 11),
+              widget.labourName != null && widget.labourName!.isNotEmpty
+                  ? Container(
+                      height: Sizes.screenHeight * 0.046,
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF7F3EF),
+                        border: Border.all(color: const Color(0xFFEAE4DD)),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: Text(
+                        widget.labourName!,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF263747),
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedLabour = value!;
-                      });
-                    },
-                  ),
-                ),
-              ),
+                      ),
+                    )
+                  : Container(
+                      height: Sizes.screenHeight * 0.046,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFFEAE4DD)),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: selectedLabourId,
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          hint: Text(
+                            'Select Labourer',
+                            style: GoogleFonts.poppins(fontSize: 11),
+                          ),
+                          items: labourList.map((labour) {
+                            final name = (labour.name != null &&
+                                    labour.name.toString().isNotEmpty)
+                                ? labour.name.toString()
+                                : 'Labour #${labour.id}';
+                            final code = labour.labourCode != null
+                                ? ' (${labour.labourCode})'
+                                : '';
+                            return DropdownMenuItem<String>(
+                              value: labour.id.toString(),
+                              child: Text(
+                                '$name$code',
+                                style: GoogleFonts.poppins(fontSize: 11),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                selectedLabourId = value;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
               Row(
                 children: [
@@ -134,30 +257,31 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Advance Amount *',
                           style: TextStyle(fontSize: 12),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         SizedBox(
                           height: Sizes.screenHeight * 0.046,
                           child: TextField(
                             controller: amountController,
                             keyboardType: TextInputType.number,
-                            style: TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 12),
                             decoration: InputDecoration(
                               prefixText: '₹  ',
+                              hintText: 'Enter amount',
                               contentPadding:
-                              EdgeInsets.symmetric(horizontal: 9),
+                                  const EdgeInsets.symmetric(horizontal: 9),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(7),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0xFFEAE4DD),
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(7),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0xFFEAE4DD),
                                 ),
                               ),
@@ -167,76 +291,60 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                       ],
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Payment Date *',
                           style: TextStyle(fontSize: 12),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         InkWell(
-                          onTap: () async {
-                            final date = await showDatePicker(
+                          onTap: () {
+                            showDialog(
                               context: context,
-                              initialDate: selectedDate,
-                              firstDate: DateTime(2020),
-                              lastDate: DateTime(2100),
+                              builder: (context) {
+                                return Dialog(
+                                  child: CustomCalendar(
+                                    isRange: false,
+                                    selectedDate: selectedDate,
+                                    onDateSelected: (date) {
+                                      setState(() {
+                                        selectedDate = date;
+                                      });
+
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                );
+                              },
                             );
-
-                            if (date != null) {
-                              setState(() {
-                                selectedDate = date;
-                              });
-                            }
                           },
-                         child:  InkWell(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialog(
-                                    child: CustomCalendar(
-                                      isRange: false,
-                                      selectedDate: selectedDate,
-                                      onDateSelected: (date) {
-                                        setState(() {
-                                          selectedDate = date;
-                                        });
-
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            child: Container(
-                              height: Sizes.screenHeight * 0.046,
-                              padding: EdgeInsets.symmetric(horizontal: 7),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Color(0xFFEAE4DD),
+                          child: Container(
+                            height: Sizes.screenHeight * 0.046,
+                            padding: const EdgeInsets.symmetric(horizontal: 7),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: const Color(0xFFEAE4DD),
+                              ),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_month,
+                                  size: 17,
                                 ),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.calendar_month,
-                                    size: 17,
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    formatDate(selectedDate),
+                                    style: const TextStyle(fontSize: 10),
                                   ),
-                                  SizedBox(width: 6),
-                                  Expanded(
-                                    child: Text(
-                                      formatDate(selectedDate),
-                                      style: TextStyle(fontSize: 10),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -246,30 +354,30 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                 ],
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-              Text(
+              const Text(
                 'Payment Mode *',
                 style: TextStyle(fontSize: 11),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
 
               Row(
                 children: [
                   paymentButton('Cash', Icons.money, 'Cash'),
-                  SizedBox(width: 5),
+                   SizedBox(width: 5),
                   paymentButton('UPI', Icons.payments, 'UPI'),
-                  SizedBox(width: 5),
+                   SizedBox(width: 5),
                 ],
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-              Text(
+              const Text(
                 'Notes (Optional)',
                 style: TextStyle(fontSize: 12),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
 
               SizedBox(
                 height: Sizes.screenHeight * 0.046,
@@ -278,19 +386,19 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                   style: GoogleFonts.poppins(fontSize: 12),
                   decoration: InputDecoration(
                     hintText: 'e.g. Festival advance, personal reason...',
-                    hintStyle: TextStyle(fontSize: 10),
-                    contentPadding: EdgeInsets.symmetric(
+                    hintStyle: const TextStyle(fontSize: 10),
+                    contentPadding: const EdgeInsets.symmetric(
                       horizontal: 9,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(7),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0xFFEAE4DD),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(7),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0xFFEAE4DD),
                       ),
                     ),
@@ -298,7 +406,7 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                 ),
               ),
 
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
 
               Row(
                 children: [
@@ -321,23 +429,13 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 9),
+                  const SizedBox(width: 9),
                   Expanded(
                     child: SizedBox(
                       height: Sizes.screenHeight * 0.046,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (amountController.text.trim().isEmpty ||
-                              double.tryParse(amountController.text) == null ||
-                              double.parse(amountController.text) <= 0) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Enter a valid amount'),
-                              ),
-                            );
-                            return;
-                          }
-                          Navigator.pop(context);
+                        onPressed: () async {
+                          await handleSaveAdvance();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: redColor,
@@ -347,13 +445,22 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                             borderRadius: BorderRadius.circular(7),
                           ),
                         ),
-                        child: Text(
-                          'Save Advance',
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        child: Provider.of<SavePaymentViewModel>(context).loading
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                'Save Advance',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -379,11 +486,9 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
         child: Container(
           height: Sizes.screenHeight * 0.046,
           decoration: BoxDecoration(
-            color: isSelected ? Color(0xFFFFF0EC) : Colors.white,
+            color: isSelected ? const Color(0xFFFFF0EC) : Colors.white,
             border: Border.all(
-              color: isSelected
-                  ? redColor
-                  : Color(0xFFEAE4DD),
+              color: isSelected ? redColor : const Color(0xFFEAE4DD),
             ),
             borderRadius: BorderRadius.circular(6),
           ),
@@ -395,7 +500,7 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                 size: 18,
                 color: isSelected ? redColor : Colors.blueGrey,
               ),
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   title,
@@ -403,9 +508,8 @@ class _GiveAdvancePopupState extends State<GiveAdvancePopup> {
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     color: isSelected ? redColor : Colors.black87,
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),

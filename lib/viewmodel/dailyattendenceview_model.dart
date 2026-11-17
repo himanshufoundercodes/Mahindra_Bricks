@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../model/dailyattendence.dart';
-import '../model/orderlist_model.dart';
-import '../repo/client_repo.dart';
 import '../repo/dailyattendence_repo.dart';
-import '../repo/orderslist_repo.dart';
 
 class DailyattendenceViewModel with ChangeNotifier {
-
   final DailyattendenceRepo _dailyattendenceRepo = DailyattendenceRepo();
 
   DailyattendenceModel? _dailyattendenceModel;
@@ -19,35 +14,28 @@ class DailyattendenceViewModel with ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  Future<bool> AttendenceApi() async {
-
+  Future<bool> AttendenceApi({String? date}) async {
     _loading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-
-      final response = await _dailyattendenceRepo.AttendenceApi();
+      final response = await _dailyattendenceRepo.AttendenceApi(date: date);
 
       _dailyattendenceModel = response;
 
-      debugPrint("Orders Listed Successfully");
+      debugPrint("Attendance Listed Successfully for date: $date");
 
       return true;
-
     } catch (e) {
-
       _errorMessage = e.toString();
 
-      debugPrint("Category Error: $e");
+      debugPrint("Attendance Error: $e");
 
       return false;
-
     } finally {
-
       _loading = false;
       notifyListeners();
-
     }
   }
 }

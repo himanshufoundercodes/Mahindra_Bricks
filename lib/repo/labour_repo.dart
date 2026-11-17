@@ -6,11 +6,11 @@ import 'package:mahindra_bricks/helper/network/network_api_services.dart';
 import '../model/labour_model.dart';
 import '../model/orderlist_model.dart';
 
-class labourListRepo {
+class LabourListRepo {
 
   final BaseApiServices _apiServices = NetworkApiServices();
 
-  Future<List<LabourListModel>> LabourApi() async {
+  Future<LabourListModel> LabourApi() async {
 
     try {
 
@@ -18,14 +18,7 @@ class labourListRepo {
         ApiConstants.labourUrl,
       );
 
-      List<LabourListModel> labourList = [];
-      if (response is List) {
-        labourList = response.map((e) => LabourListModel.fromJson(e as Map<String, dynamic>)).toList();
-      } else if (response is Map && response['data'] is List) {
-        labourList = (response['data'] as List).map((e) => LabourListModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-
-      return labourList;
+      return LabourListModel.fromJson(response);
 
     } catch (e) {
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
-import 'package:mahindra_bricks/model/labour_model.dart';
 import 'package:mahindra_bricks/viewmodel/labour_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'Constant/Constant_Appbar.dart';
@@ -9,11 +8,19 @@ import 'Constant/Constant_Color.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'addlabour.dart';
 import 'circularprogressindicator.dart';
+import 'drawer.dart';
 import 'labourdetail.dart';
 import 'url_launcher.dart';
 
 class Labourmanagement extends StatefulWidget {
-  Labourmanagement({super.key});
+  final Function(int)? onMenuTap;
+  final int selectedIndex;
+
+  const Labourmanagement({
+    super.key,
+    this.onMenuTap,
+    this.selectedIndex = 3,
+  });
 
   @override
   State<Labourmanagement> createState() => _LabourmanagementState();
@@ -25,7 +32,6 @@ class _LabourmanagementState extends State<Labourmanagement> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<LabourListViewModel>(
         context,
@@ -33,17 +39,6 @@ class _LabourmanagementState extends State<Labourmanagement> {
       ).LabourApi();
     });
   }
-
-  List<LabourListModel> getFilteredLabourList(List<LabourListModel>? apiList) {
-    if (apiList == null) return [];
-    String query = searchController.text.toLowerCase();
-    return apiList.where((labour) {
-      final name = labour.name?.toString().toLowerCase() ?? '';
-      final mobile = labour.mobile?.toString() ?? '';
-      return name.contains(query) || mobile.contains(query);
-    }).toList();
-  }
-
   @override
   void dispose() {
     searchController.dispose();
@@ -52,15 +47,29 @@ class _LabourmanagementState extends State<Labourmanagement> {
 
   @override
   Widget build(BuildContext context) {
-    final LabourList = Provider.of<LabourListViewModel>(context);
-    final filteredLabourList = getFilteredLabourList(LabourList.labourListModel);
+    final labour = Provider.of<LabourListViewModel>(context);
+    final rawLabourData = labour.labourListModel?.data;
+    final searchQuery = searchController.text.trim().toLowerCase();
+    final labourData = rawLabourData?.where((item) {
+      if (searchQuery.isEmpty) return true;
+      final name = item.name?.toString().toLowerCase() ?? '';
+      final mobile = item.mobile?.toString().toLowerCase() ?? '';
+      final code = item.labourCode?.toString().toLowerCase() ?? '';
+      return name.contains(searchQuery) ||
+          mobile.contains(searchQuery) ||
+          code.contains(searchQuery);
+    }).toList();
     return Scaffold(
       backgroundColor: AppColor.bodybackgroundColor,
-      appBar:  ConstantAppBar(
+      appBar:  const ConstantAppBar(
         title: 'Dashboard',
         showBranding: true,
-        showBackButton: true,
+        showDrawer: true,
         logoAsset: 'assets/logo.jpg',
+      ),
+      drawer: MahindraDrawer(
+        onMenuTap: widget.onMenuTap,
+        selectedIndex: widget.selectedIndex,
       ),
 
       body: RefreshIndicator(
@@ -115,9 +124,7 @@ class _LabourmanagementState extends State<Labourmanagement> {
                         ),
                         SizedBox(height: Sizes.screenHeight * 0.0025,),
                         Text(
-                          LabourList.labourListModel != null 
-                              ? LabourList.labourListModel!.length.toString() 
-                              : "0",
+                          labour.labourListModel?.totalLabour.toString()??"",
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             height: 1.1,
@@ -168,278 +175,204 @@ class _LabourmanagementState extends State<Labourmanagement> {
                       ),
                     ),
                   ),
+                  if (searchController.text.isNotEmpty)
+                    GestureDetector(
+                      onTap: () {
+                        searchController.clear();
+                        setState(() {});
+                      },
+                      child: Icon(Icons.clear, size: 20, color: AppColor.gey),
+                    ),
                 ],
               ),
             ),
 
             SizedBox(height: Sizes.screenHeight * 0.01),
 
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.021),
-            //   child: Column(
-            //     children: filteredLabourList.map((labour) {
-            //       return Container(
-            //         height: Sizes.screenHeight * 0.074,
-            //         margin: EdgeInsets.only(bottom: Sizes.screenHeight * 0.01),
-            //         padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027,),
-            //         decoration: BoxDecoration(
-            //           color: AppColor.white,
-            //           borderRadius: BorderRadius.circular(9),
-            //           border: Border.all(color: AppColor.grey),
-            //         ),
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //           children: [
-            //             GestureDetector(
-            //               onTap: () {
-            //                 Navigator.push(
-            //                   context,
-            //                   MaterialPageRoute(
-            //                     builder: (context) => Labourdetail(),
-            //                   ),
-            //                 );
-            //               },
-            //               child: SizedBox(
-            //                 width: Sizes.screenWidth * 0.38,
-            //                 child: Column(
-            //                   mainAxisAlignment: MainAxisAlignment.center,
-            //                   crossAxisAlignment: CrossAxisAlignment.start,
-            //                   children: [
-            //                     Text(
-            //                       labour["name"]!,
-            //                       maxLines: 1,
-            //                       overflow: TextOverflow.ellipsis,
-            //                       style: GoogleFonts.poppins(
-            //                         fontSize: 12,
-            //                         fontWeight: FontWeight.w700,
-            //                         color: AppColor.black,
-            //                       ),
-            //                     ),
-            //                     Row(
-            //                       children: [
-            //                         Icon(
-            //                           Icons.call,
-            //                           size: 13,
-            //                           color: AppColor.gey,
-            //                         ),
-            //                         SizedBox(
-            //                           width: Sizes.screenWidth * 0.009,
-            //                         ),
-            //                         Text(
-            //                           labour["mobile"]!,
-            //                           style: GoogleFonts.poppins(
-            //                             fontSize: 11,
-            //                             color: AppColor.gey,
-            //                           ),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ),
-            //             ),
-            //
-            //             Container(
-            //               height: Sizes.screenHeight * 0.038,
-            //               width: Sizes.screenWidth * 0.003,
-            //               color: AppColor.grey,
-            //             ),
-            //             Column(
-            //               mainAxisAlignment: MainAxisAlignment.center,
-            //               crossAxisAlignment: CrossAxisAlignment.start,
-            //               children: [
-            //                 Text(
-            //                   "Daily Rate",
-            //                   style: GoogleFonts.poppins(
-            //                     fontSize: 10,
-            //                     color: AppColor.gey,
-            //                   ),
-            //                 ),
-            //                 SizedBox(height: Sizes.screenHeight * 0.004),
-            //                 Text(
-            //                   "₹ ${labour["rate"]}",
-            //                   style: GoogleFonts.poppins(
-            //                     fontSize: 13,
-            //                     height: 1.1,
-            //                     fontWeight: FontWeight.w700,
-            //                     color: AppColor.stockUnitColor,
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //             Container(
-            //               height: Sizes.screenHeight * 0.075,
-            //               width: Sizes.screenWidth * 0.075,
-            //               decoration: BoxDecoration(
-            //                 color: AppColor.lightgreen,
-            //                 shape: BoxShape.circle,
-            //               ),
-            //               child: IconButton(
-            //                 padding: EdgeInsets.zero,
-            //                 onPressed: () {},
-            //                 icon: Icon(
-            //                   Icons.call,
-            //                   size: 16,
-            //                   color: AppColor.green,
-            //                 ),
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       );
-            //     }).toList(),
-            //   ),
-            // ),
-
-
               Column(
                 children: [
                   SizedBox(height: 15),
 
-                  if (LabourList.loading)
+                  if (labour.loading)
                     Center(
                       child: Circularprogressindicator(),
                     )
 
-                  else if (LabourList.errorMessage != null)
+                  else if (labour.errorMessage != null)
                     Center(
                       child: Column(
                         children: [
-                          Text(LabourList.errorMessage!),
-
+                          Text(labour.errorMessage!),
                           CustomButton(
                             text: 'Retry',
-                            onPressed: LabourList.LabourApi,
+                            onPressed: labour.LabourApi,
                           ),
                         ],
                       ),
                     )
-                    else
+                  else if (labourData == null || labourData.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 30),
+                        child: Text(
+                          'No labour found',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: AppColor.gey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    )
+                  else
                   ListView.builder(
-                    itemCount: filteredLabourList.length,
+                    itemCount: labourData.length,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
-                      final labour = filteredLabourList[index];
-                      return Container(
-                        height: Sizes.screenHeight * 0.074,
-                        margin: EdgeInsets.only(
-                          bottom: Sizes.screenHeight * 0.01,
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Sizes.screenWidth * 0.027,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
-                          borderRadius: BorderRadius.circular(9),
-                          border: Border.all(color: AppColor.grey),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Labourdetail(),
+                      final labour = labourData[index];
+                      return Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 10),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Labourdetail(
+                                  data: labour,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: Sizes.screenHeight * 0.074,
+                            margin: EdgeInsets.only(
+                              bottom: Sizes.screenHeight * 0.01,
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Sizes.screenWidth * 0.027,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
+                              borderRadius: BorderRadius.circular(9),
+                              border: Border.all(color: AppColor.grey),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                GestureDetector(
+                                  child: SizedBox(
+                                    width: Sizes.screenWidth * 0.38,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          labour.name?.toString() ?? "N/A",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColor.black,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.call,
+                                              size: 13,
+                                              color: AppColor.gey,
+                                            ),
+                                            SizedBox(
+                                              width: Sizes.screenWidth * 0.009,
+                                            ),
+                                            Text(
+                                              labour.mobile?.toString() ?? "N/A",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 11,
+                                                color: AppColor.gey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                );
-                              },
-                              child: SizedBox(
-                                width: Sizes.screenWidth * 0.38,
-                                child: Column(
+                                ),
+                                Container(
+                                  height: Sizes.screenHeight * 0.038,
+                                  width: Sizes.screenWidth * 0.003,
+                                  color: AppColor.grey,
+                                ),
+                                Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      labour.name?.toString() ?? "N/A",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                      "Daily Rate",
                                       style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColor.black,
+                                        fontSize: 10,
+                                        color: AppColor.gey,
                                       ),
                                     ),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.call,
-                                          size: 13,
-                                          color: AppColor.gey,
+                                    SizedBox(
+                                      height: Sizes.screenHeight * 0.002,
+                                    ),
+                                    Text(
+                                      "₹ ${labour.dailyRate?.toString() ?? "0"}",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        height: 1.1,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColor.stockUnitColor,
+                                      ),
+                                    ),
+                                    if (labour.totalPaid != null &&
+                                        (int.tryParse(labour.totalPaid.toString()) ?? 0) > 0) ...[
+                                      SizedBox(height: 2),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFFFEED6),
+                                          borderRadius: BorderRadius.circular(4),
                                         ),
-                                        SizedBox(
-                                          width: Sizes.screenWidth * 0.009,
-                                        ),
-                                        Text(
-                                          labour.mobile?.toString() ?? "N/A",
+                                        child: Text(
+                                          "Advance: ₹ ${labour.totalPaid}",
                                           style: GoogleFonts.poppins(
-                                            fontSize: 11,
-                                            color: AppColor.gey,
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF8E4318),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ],
                                 ),
-                              ),
-                            ),
-
-                            Container(
-                              height: Sizes.screenHeight * 0.038,
-                              width: Sizes.screenWidth * 0.003,
-                              color: AppColor.grey,
-                            ),
-
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Daily Rate",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 10,
-                                    color: AppColor.gey,
+                                Container(
+                                  height: Sizes.screenHeight * 0.075,
+                                  width: Sizes.screenWidth * 0.075,
+                                  decoration: BoxDecoration(
+                                    color: AppColor.lightgreen,
+                                    shape: BoxShape.circle,
                                   ),
-                                ),
-                                SizedBox(
-                                  height: Sizes.screenHeight * 0.004,
-                                ),
-                                Text(
-                                  "₹ ${labour.daily_rate?.toString() ?? "0"}",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13,
-                                    height: 1.1,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColor.stockUnitColor,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      if (labour.mobile != null) {
+                                        CustomLauncher.call(labour.mobile.toString());
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.call,
+                                      size: 16,
+                                      color: AppColor.green,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-
-                            Container(
-                              height: Sizes.screenHeight * 0.075,
-                              width: Sizes.screenWidth * 0.075,
-                              decoration: BoxDecoration(
-                                color: AppColor.lightgreen,
-                                shape: BoxShape.circle,
-                              ),
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: () {
-                                  if (labour.mobile != null) {
-                                    CustomLauncher.call(labour.mobile.toString());
-                                  }
-                                },
-                                icon: Icon(
-                                  Icons.call,
-                                  size: 16,
-                                  color: AppColor.green,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       );
                     },
@@ -452,7 +385,6 @@ class _LabourmanagementState extends State<Labourmanagement> {
       ),
     );
   }
-
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(

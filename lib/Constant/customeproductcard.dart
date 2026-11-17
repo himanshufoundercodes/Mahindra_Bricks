@@ -12,7 +12,7 @@ class CustomProductCard extends StatelessWidget {
   final String stockStatus;
 
   final Color backgroundColor;
-  final Color stockColor;
+  final Color? stockColor;
 
   final VoidCallback? onTap;
   final VoidCallback? onArrowTap;
@@ -26,7 +26,7 @@ class CustomProductCard extends StatelessWidget {
     required this.price,
     required this.stockStatus,
     this.backgroundColor = const Color(0xFFFFFCFA),
-    this.stockColor = const Color(0xFF2E9B59),
+    this.stockColor,
     this.onTap,
     this.onArrowTap,
   });
@@ -46,10 +46,10 @@ class CustomProductCard extends StatelessWidget {
           },
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
-            return const Center(
+            return  Center(
               child: SizedBox(
-                height: 18,
-                width: 18,
+                height: Sizes.screenHeight * 0.0225,
+                width: Sizes.screenWidth * 0.045,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   color: AppColor.stockAmountColor,
@@ -77,6 +77,15 @@ class CustomProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String statusLower = stockStatus.toLowerCase();
+    final Color effectiveStockColor = stockColor ??
+        ((statusLower.contains('low') ||
+                statusLower.contains('out') ||
+                statusLower.contains('alert') ||
+                statusLower.contains('critical'))
+            ? const Color(0xFFD32F2F)
+            : const Color(0xFF2E9B59));
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -95,7 +104,7 @@ class CustomProductCard extends StatelessWidget {
             BoxShadow(
               color: Colors.brown.withOpacity(0.05),
               blurRadius: 6,
-              offset: const Offset(0, 2),
+              offset:  Offset(0, 2),
             ),
           ],
         ),
@@ -104,7 +113,7 @@ class CustomProductCard extends StatelessWidget {
             Container(
               height: Sizes.screenHeight * 0.079,
               width: Sizes.screenWidth * 0.203,
-              padding: const EdgeInsets.all(4),
+              padding:  EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: AppColor.imgbg,
                 borderRadius: BorderRadius.circular(9),
@@ -185,7 +194,7 @@ class CustomProductCard extends StatelessWidget {
                     vertical: Sizes.screenHeight * 0.004,
                   ),
                   decoration: BoxDecoration(
-                    color: stockColor.withOpacity(0.13),
+                    color: effectiveStockColor.withOpacity(0.13),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Text(
@@ -194,7 +203,7 @@ class CustomProductCard extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 7,
                       fontWeight: FontWeight.w600,
-                      color: stockColor,
+                      color: effectiveStockColor,
                     ),
                   ),
                 ),
@@ -204,7 +213,7 @@ class CustomProductCard extends StatelessWidget {
             SizedBox(width: Sizes.screenWidth * 0.013),
             GestureDetector(
               onTap: onArrowTap ?? onTap,
-              child: const Icon(
+              child:  Icon(
                 Icons.chevron_right,
                 size: 22,
                 color: AppColor.gey,

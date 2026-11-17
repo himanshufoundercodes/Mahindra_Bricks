@@ -10,9 +10,13 @@ class DailyattendenceModel {
   });
 
   factory DailyattendenceModel.fromJson(Map<String, dynamic> json) => DailyattendenceModel(
-    date: json["date"],
-    summary: Summary.fromJson(json['summary'] as Map<String, dynamic>),
-    workers: (json['workers'] as List<dynamic>? ?? []).map((e) => Workers.fromJson(e as Map<String, dynamic>)).toList(),
+    date: json["date"]?.toString() ?? '',
+    summary: json['summary'] != null && json['summary'] is Map<String, dynamic>
+        ? Summary.fromJson(json['summary'] as Map<String, dynamic>)
+        : const Summary(totalLabour: 0, present: 0, halfDay: 0, absent: 0, notMarked: 0),
+    workers: (json['workers'] as List<dynamic>? ?? [])
+        .map((e) => Workers.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -54,7 +58,9 @@ class Workers {
   });
 
   factory Workers.fromJson(Map<String, dynamic> json) => Workers(
-    labourId: json['labour_id'] is int ? json['labour_id'] : int.tryParse(json['labour_id']?.toString() ?? '0') ?? 0,
+    labourId: json['labour_id'] is num
+        ? (json['labour_id'] as num).toInt()
+        : (int.tryParse(json['labour_id']?.toString() ?? '0') ?? double.tryParse(json['labour_id']?.toString() ?? '0')?.toInt() ?? 0),
     labourCode: json['labour_code']?.toString() ?? '',
     name: json['name']?.toString() ?? '',
     mobile: json['mobile']?.toString() ?? '',
@@ -101,12 +107,11 @@ class Summary {
     required this.notMarked,
   });
 
-  factory Summary.fromJson(Map<String, dynamic> json) =>
-      Summary(
-        totalLabour: json['total_labour'],
-        present: json['present'],
-        halfDay: json['half_day'],
-        absent: json['absent'],
-        notMarked: json['not_marked'],
-      );
+  factory Summary.fromJson(Map<String, dynamic> json) => Summary(
+    totalLabour: json['total_labour'],
+    present: json['present'],
+    halfDay: json['half_day'],
+    absent: json['absent'],
+    notMarked: json['not_marked'],
+  );
 }

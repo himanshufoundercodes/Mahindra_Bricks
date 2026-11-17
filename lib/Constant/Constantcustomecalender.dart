@@ -34,7 +34,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
   void initState() {
     super.initState();
 
-    currentMonth = DateTime.now();
+    currentMonth = widget.selectedDate != null
+        ? DateTime(widget.selectedDate!.year, widget.selectedDate!.month)
+        : DateTime.now();
     selectedDate = widget.selectedDate;
     startDate = widget.startDate;
     endDate = widget.endDate;

@@ -9,12 +9,17 @@ class OrdersListRepo {
 
   final BaseApiServices _apiServices = NetworkApiServices();
 
-  Future<OrderdsListModel> OrdersApi() async {
+  Future<OrderdsListModel> OrdersApi({String? status}) async {
 
     try {
 
+      String url = ApiConstants.ordersUrl;
+      if (status != null && status.isNotEmpty && status != 'all') {
+        url = '$url?status=$status';
+      }
+
       dynamic response = await _apiServices.getGetApiResponse(
-        ApiConstants.ordersUrl,
+        url,
       );
 
       return OrderdsListModel.fromJson(response);

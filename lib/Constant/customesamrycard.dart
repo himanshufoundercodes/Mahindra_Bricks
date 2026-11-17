@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/model/clistlist_model.dart';
 
 class SummaryItem {
   final String title;
@@ -25,68 +26,137 @@ class SummaryItem {
 
 class HorizontalSummaryCards extends StatelessWidget {
   final List<SummaryItem>? items;
+  final BusinessSummary? businessSummary;
 
-  HorizontalSummaryCards({super.key, this.items});
+  const HorizontalSummaryCards({
+    super.key,
+    this.items,
+    this.businessSummary,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final defaultItems = items ?? [
-      SummaryItem(
-        title: 'Total Orders',
-        value: '12',
-        icon: Icon(
-          Icons.description_outlined,
-          color: Color(0xFF81241B),
-          size: 15,
-        ),
-        iconBgColor: Color(0xFFFDE8E6),
-        cardBgColor: Color(0xFFFFF8F7),
-        borderColor: Color(0xFFF7E6E3),
-        titleColor: Color(0xFF636A73),
-        valueColor: Color(0xFF81241B),
-      ),
-      SummaryItem(
-        title: 'Total Purchase',
-        value: '36,000 pcs',
-        icon: _buildBricksIcon(Color(0xFF81241B)),
-        iconBgColor: Color(0xFFFCF0D7),
-        cardBgColor: Color(0xFFFFFBF3),
-        borderColor: Color(0xFFF7EEDC),
-        titleColor: Color(0xFF636A73),
-        valueColor: Color(0xFF81241B),
-      ),
-      SummaryItem(
-        title: 'Total Amount',
-        value: '₹ 1,80,000',
-        icon: Text(
-          '₹',
-          style: GoogleFonts.poppins(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF16A34A),
+    List<SummaryItem> displayItems = items ?? [];
+
+    if (displayItems.isEmpty && businessSummary != null) {
+      displayItems = [
+        SummaryItem(
+          title: 'Total Orders',
+          value: '${businessSummary?.totalOrders ?? '0'}',
+          icon: Icon(
+            Icons.description_outlined,
+            color: Color(0xFF81241B),
+            size: 15,
           ),
+          iconBgColor: Color(0xFFFDE8E6),
+          cardBgColor: Color(0xFFFFF8F7),
+          borderColor: Color(0xFFF7E6E3),
+          titleColor: Color(0xFF636A73),
+          valueColor: Color(0xFF81241B),
         ),
-        iconBgColor: Color(0xFFDCF3E4),
-        cardBgColor: Color(0xFFF2F9F5),
-        borderColor: Color(0xFFE1F2E6),
-        titleColor: Color(0xFF636A73),
-        valueColor: Color(0xFF0F1E36),
-      ),
-      SummaryItem(
-        title: 'Pending Balance',
-        value: '₹ 20,000',
-        icon: Icon(
-          Icons.account_balance_wallet_rounded,
-          color: Color(0xFF81241B),
-          size: 15,
+        SummaryItem(
+          title: 'Total Purchase',
+          value: '${businessSummary?.totalPurchaseQty ?? '0'} pcs',
+          icon: _buildBricksIcon(Color(0xFF81241B)),
+          iconBgColor: Color(0xFFFCF0D7),
+          cardBgColor: Color(0xFFFFFBF3),
+          borderColor: Color(0xFFF7EEDC),
+          titleColor: Color(0xFF636A73),
+          valueColor: Color(0xFF81241B),
         ),
-        iconBgColor: Color(0xFFFCE2E2),
-        cardBgColor: Color(0xFFFFF5F5),
-        borderColor: Color(0xFFF7DEDF),
-        titleColor: Color(0xFF991B1B),
-        valueColor: Color(0xFFDC2626),
-      ),
-    ];
+        SummaryItem(
+          title: 'Total Amount',
+          value: '₹ ${businessSummary?.totalOrderAmount ?? '0'}',
+          icon: Text(
+            '₹',
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF16A34A),
+            ),
+          ),
+          iconBgColor: Color(0xFFDCF3E4),
+          cardBgColor: Color(0xFFF2F9F5),
+          borderColor: Color(0xFFE1F2E6),
+          titleColor: Color(0xFF636A73),
+          valueColor: Color(0xFF0F1E36),
+        ),
+        SummaryItem(
+          title: 'Pending Balance',
+          value: '₹ ${businessSummary?.pendingBalance ?? '0'}',
+          icon: Icon(
+            Icons.account_balance_wallet_rounded,
+            color: Color(0xFF81241B),
+            size: 15,
+          ),
+          iconBgColor: Color(0xFFFCE2E2),
+          cardBgColor: Color(0xFFFFF5F5),
+          borderColor: Color(0xFFF7DEDF),
+          titleColor: Color(0xFF991B1B),
+          valueColor: Color(0xFFDC2626),
+        ),
+      ];
+    }
+
+    if (displayItems.isEmpty) {
+      displayItems = [
+        SummaryItem(
+          title: 'Total Orders',
+          value: '12',
+          icon: Icon(
+            Icons.description_outlined,
+            color: Color(0xFF81241B),
+            size: 15,
+          ),
+          iconBgColor: Color(0xFFFDE8E6),
+          cardBgColor: Color(0xFFFFF8F7),
+          borderColor: Color(0xFFF7E6E3),
+          titleColor: Color(0xFF636A73),
+          valueColor: Color(0xFF81241B),
+        ),
+        SummaryItem(
+          title: 'Total Purchase',
+          value: '36,000 pcs',
+          icon: _buildBricksIcon(Color(0xFF81241B)),
+          iconBgColor: Color(0xFFFCF0D7),
+          cardBgColor: Color(0xFFFFFBF3),
+          borderColor: Color(0xFFF7EEDC),
+          titleColor: Color(0xFF636A73),
+          valueColor: Color(0xFF81241B),
+        ),
+        SummaryItem(
+          title: 'Total Amount',
+          value: '₹ 1,80,000',
+          icon: Text(
+            '₹',
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF16A34A),
+            ),
+          ),
+          iconBgColor: Color(0xFFDCF3E4),
+          cardBgColor: Color(0xFFF2F9F5),
+          borderColor: Color(0xFFE1F2E6),
+          titleColor: Color(0xFF636A73),
+          valueColor: Color(0xFF0F1E36),
+        ),
+        SummaryItem(
+          title: 'Pending Balance',
+          value: '₹ 20,000',
+          icon: Icon(
+            Icons.account_balance_wallet_rounded,
+            color: Color(0xFF81241B),
+            size: 15,
+          ),
+          iconBgColor: Color(0xFFFCE2E2),
+          cardBgColor: Color(0xFFFFF5F5),
+          borderColor: Color(0xFFF7DEDF),
+          titleColor: Color(0xFF991B1B),
+          valueColor: Color(0xFFDC2626),
+        ),
+      ];
+    }
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
@@ -110,12 +180,12 @@ class HorizontalSummaryCards extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         physics: BouncingScrollPhysics(),
         child: Row(
-          children: List.generate(defaultItems.length, (index) {
-            final item = defaultItems[index];
+          children: List.generate(displayItems.length, (index) {
+            final item = displayItems[index];
             return Container(
               width: 125,
               margin: EdgeInsets.only(
-                right: index == defaultItems.length - 1 ? 0 : 6,
+                right: index == displayItems.length - 1 ? 0 : 6,
               ),
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               decoration: BoxDecoration(

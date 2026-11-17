@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'Sizes.dart';
+
 class CustomAttendanceCard extends StatelessWidget {
   final IconData icon;
   final Color backgroundColor;
@@ -32,14 +34,14 @@ class CustomAttendanceCard extends StatelessWidget {
     required this.value,
     required this.text,
     this.width,
-    this.height = 65,
+    this.height = 60,
     this.iconRadius = 13,
-    this.valueFontSize = 15,
-    this.textFontSize = 10,
+    this.valueFontSize = 12,
+    this.textFontSize = 8,
     this.borderRadius = 9,
     this.padding = const EdgeInsets.symmetric(
       horizontal: 6,
-      vertical: 8,
+      vertical: 6,
     ),
   });
 
@@ -64,7 +66,7 @@ class CustomAttendanceCard extends StatelessWidget {
               size: 16,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: Sizes.screenWidth * 0.02),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

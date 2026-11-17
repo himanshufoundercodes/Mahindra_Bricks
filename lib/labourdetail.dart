@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/model/labour_model.dart';
 
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
 import 'Constant/Constant_attendence_card.dart';
-import 'Constant/Constantheader.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
 
+
 class Labourdetail extends StatefulWidget {
-  Labourdetail({super.key});
+final Data data;
 
-  @override
-  State<Labourdetail> createState() => _LabourdetailState();
+const Labourdetail({
+super.key,
+required this.data,
+});
+
+@override
+State<Labourdetail> createState() => _LabourdetailState();
 }
-
 class _LabourdetailState extends State<Labourdetail> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+      return Scaffold(
       backgroundColor: AppColor.bodybackgroundColor,
       appBar:  ConstantAppBar(
         title: 'Dashboard',
@@ -26,7 +31,7 @@ class _LabourdetailState extends State<Labourdetail> {
         showBackButton: true,
         logoAsset: 'assets/logo.jpg',
       ),
-      body: Column(
+      body: ListView(
         children: [
           _buildHeader(),
           Container(
@@ -82,10 +87,10 @@ class _LabourdetailState extends State<Labourdetail> {
                         type: CustomButtonType.outlined,
                         width: Sizes.screenWidth * 0.15,
                         height: Sizes.screenHeight * 0.032,
-                        fontSize: 12,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         icon: Icons.edit,
-                        iconSize: 12,
+                        iconSize: 10,
                         iconOnLeft: true,
                         backgroundColor: AppColor.lightredbg,
                         textColor:AppColor.stockUnitColor,
@@ -123,7 +128,7 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                       ),
                       Text(
-                        'LAB-001',
+                        widget.data.labourCode.toString(),
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -156,7 +161,7 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                       ),
                       Text(
-                        'Rajesh Kumar',
+                        widget.data.name.toString(),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -191,7 +196,7 @@ class _LabourdetailState extends State<Labourdetail> {
 
                       Expanded(
                         child: Text(
-                          '9876543210',
+                          widget.data.mobile.toString(),
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -236,7 +241,7 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                       ),
                       Text(
-                        '600',
+                        widget.data.dailyRate.toString(),
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -302,7 +307,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.green,
                             valueColor: AppColor.green,
                             textColor: AppColor.gey,
-                            value: '18',
+                            value: widget.data.attendanceSummary?.presentDays?.toString() ?? '0',
                             text: 'Present Days',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.065,
@@ -315,7 +320,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.darkyellow,
                             valueColor: AppColor.stockAmountColor,
                             textColor: AppColor.gey,
-                            value: '3',
+                            value: widget.data.attendanceSummary?.halfDays?.toString() ?? '0',
                             text: 'Half Days',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.065,
@@ -330,7 +335,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.stockUnitColor,
                             valueColor: AppColor.stockUnitColor,
                             textColor: AppColor.gey,
-                            value: '2',
+                            value: widget.data.attendanceSummary?.absentDays?.toString() ?? '0',
                             text: 'Absent Days',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.065,
@@ -389,7 +394,8 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.blue,
                             valueColor: AppColor.black,
                             textColor: AppColor.gey,
-                            value: '12',
+                            value: widget.data.overtimeSummary?.totalOvertimeHours?.toString() ??
+                                widget.data.totalOvertimeHours?.toString() ?? '0',
                             text: 'Total Overtime Hours',
                             width: Sizes.screenWidth * 0.40,
                             height: Sizes.screenHeight * 0.065,
@@ -402,7 +408,8 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.black,
                             valueColor: AppColor.black,
                             textColor: AppColor.gey,
-                            value: '360',
+                            value: widget.data.overtimeSummary?.approvedOvertime?.toString() ??
+                                widget.data.approvedOvertime?.toString() ?? '0',
                             text: 'Approved Overtime',
                             width: Sizes.screenWidth * 0.47,
                             height: Sizes.screenHeight * 0.065,
@@ -412,7 +419,6 @@ class _LabourdetailState extends State<Labourdetail> {
                     ],
                   ),
                 ),
-
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -460,7 +466,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.green,
                             valueColor: AppColor.green,
                             textColor: AppColor.gey,
-                            value: '18,600',
+                            value: widget.data.totalEarned?.toString() ?? '0',
                             text: 'Total Earned',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.060,
@@ -473,7 +479,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.blue,
                             valueColor: AppColor.blue,
                             textColor: AppColor.gey,
-                            value: '12000',
+                            value: widget.data.totalPaid?.toString() ?? '0',
                             text: 'Total Paid',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.060,
@@ -488,7 +494,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.stockUnitColor,
                             valueColor: AppColor.stockUnitColor,
                             textColor: AppColor.gey,
-                            value: '6600',
+                            value: widget.data.remainingBalance?.toString() ?? '0',
                             text: 'Remaining',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.060,
@@ -502,49 +508,49 @@ class _LabourdetailState extends State<Labourdetail> {
             ),
           ),
           SizedBox(height: Sizes.screenHeight * 0.012),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027),
-            child: Column(
-              children: [
-                SizedBox(height: Sizes.screenHeight * 0.006),
-                Row(
-                  children: [
-                    CustomButton(
-                      padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.015,
-                        vertical: Sizes.screenHeight * 0.005,),
-                      height: Sizes.screenHeight * 0.052,
-                      width: Sizes.screenWidth * 0.410,
-                      text: 'Mark Attendence',
-                      fontSize:  14,
-                      fontWeight: .w500,
-                      onPressed: () {
-                      },
-                      iconOnLeft: true,
-                      icon: Icons.calendar_month_rounded,
-                      iconSize: 18,
-                      iconSpacing: 5,
-                    ),
-                    SizedBox(width: Sizes.screenWidth * 0.025),
-                    CustomButton(
-                      padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.011,
-                        vertical: Sizes.screenHeight * 0.005,),
-                      height: Sizes.screenHeight * 0.052,
-                      width: Sizes.screenWidth * 0.475,
-                      text: 'Add Payout',
-                      fontSize:  14,
-                      fontWeight: .w500,
-                      onPressed: () {
-                      },
-                      iconOnLeft: true,
-                      icon: Icons.account_balance_wallet_rounded,
-                      iconSize: 18,
-                      iconSpacing: 5,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
+          // Container(
+          //   padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027),
+          //   child: Column(
+          //     children: [
+          //       SizedBox(height: Sizes.screenHeight * 0.006),
+          //       Row(
+          //         children: [
+          //           CustomButton(
+          //             padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.015,
+          //               vertical: Sizes.screenHeight * 0.005,),
+          //             height: Sizes.screenHeight * 0.052,
+          //             width: Sizes.screenWidth * 0.410,
+          //             text: 'Mark Attendence',
+          //             fontSize:  14,
+          //             fontWeight: .w500,
+          //             onPressed: () {
+          //             },
+          //             iconOnLeft: true,
+          //             icon: Icons.calendar_month_rounded,
+          //             iconSize: 18,
+          //             iconSpacing: 5,
+          //           ),
+          //           SizedBox(width: Sizes.screenWidth * 0.025),
+          //           CustomButton(
+          //             padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.011,
+          //               vertical: Sizes.screenHeight * 0.005,),
+          //             height: Sizes.screenHeight * 0.052,
+          //             width: Sizes.screenWidth * 0.475,
+          //             text: 'Add Payout',
+          //             fontSize:  14,
+          //             fontWeight: .w500,
+          //             onPressed: () {
+          //             },
+          //             iconOnLeft: true,
+          //             icon: Icons.account_balance_wallet_rounded,
+          //             iconSize: 18,
+          //             iconSpacing: 5,
+          //           ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // )
 
         ],
       ),

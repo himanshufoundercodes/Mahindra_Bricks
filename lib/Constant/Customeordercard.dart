@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:intl/intl.dart';
+import 'package:mahindra_bricks/viewmodel/ordersListviewmodel.dart';
+import 'package:provider/provider.dart' show Provider;
+import '../model/orderlist_model.dart';
 import '../viewproductdetails.dart';
 import 'Constnat_Appbutton.dart';
 import 'Sizes.dart';
 import 'constant_dateformatter.dart';
 
 class CustomOrderCard extends StatelessWidget {
+  final OrderdsDataModel? orderData;
   final String orderId;
   final String dateTime;
   final String image;
@@ -25,6 +29,7 @@ class CustomOrderCard extends StatelessWidget {
 
   CustomOrderCard({
     super.key,
+    this.orderData,
     required this.orderId,
     required this.dateTime,
     required this.image,
@@ -37,7 +42,8 @@ class CustomOrderCard extends StatelessWidget {
     this.onViewDetails,
     this.backgroundColor = const Color(0xFFFFFCFA),
     this.statusColor = const Color(0xFFFFE7B5),
-    this.statusTextColor = const Color(0xFF98500A), required Null Function() onTap,
+    this.statusTextColor = const Color(0xFF98500A),
+    Null Function()? onTap,
   });
 
   @override
@@ -234,14 +240,22 @@ class CustomOrderCard extends StatelessWidget {
                 text: 'View Details',
                 fontSize:  12,
                 fontWeight: .w500,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Viewproductdetails(),
-                    ),
-                  );
-                },
+                onPressed: onViewDetails ??
+                    () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              Viewproductdetails(orderData: orderData),
+                        ),
+                      );
+                      if (context.mounted) {
+                        Provider.of<OrdersListViewModel>(
+                          context,
+                          listen: false,
+                        ).OrdersApi();
+                      }
+                    },
                 iconOnLeft: false,
                 icon: Icons.arrow_forward_ios_sharp,
                 iconSize: 12,

@@ -41,6 +41,7 @@ class _AddclientState extends State<Addclient> {
       MobilenumberController.text,
       AlternatenumberController.text,
       AddressController.text,
+      context,
     );
 
     if (!context.mounted) return;
@@ -250,7 +251,7 @@ class _AddclientState extends State<Addclient> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              SizedBox(height: 6),
+                              SizedBox(height: Sizes.screenHeight * 0.0075),
                               SizedBox(
                                 height: Sizes.screenHeight * 0.055,
                                 child: AppTextField(
@@ -273,7 +274,7 @@ class _AddclientState extends State<Addclient> {
                       margin: EdgeInsets.symmetric(horizontal: 16),
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColor.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppColor.grey),
                       ),
@@ -332,7 +333,7 @@ class _AddclientState extends State<Addclient> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              SizedBox(height: Sizes.screenHeight * 0.012),
                               AppTextField(
                                 prefixIcon: Icons.home,
                                 controller: AddressController,
@@ -347,7 +348,7 @@ class _AddclientState extends State<Addclient> {
                       ),
                     ),
 
-                    SizedBox(height: 24),
+                    SizedBox(height: Sizes.screenHeight * 0.03),
                   ],
                 ),
               ),
@@ -355,7 +356,7 @@ class _AddclientState extends State<Addclient> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColor.white,
                 boxShadow: [
                   BoxShadow(
                     color: Color(0x0A000000),
@@ -449,8 +450,7 @@ class _AddclientState extends State<Addclient> {
                 ),
               ],
             ),
-
-            SizedBox(width: 8),
+            SizedBox(width: Sizes.screenWidth * 0.02),
 
             // CustomButton(
             //   padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),

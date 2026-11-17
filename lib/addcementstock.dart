@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/model/cementstock_model.dart';
@@ -325,12 +325,11 @@ class _AddcementstockState extends State<Addcementstock> {
                                         children: [
                                           Text(
                                             'Record Cement Usage',
-                                            maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: GoogleFonts.poppins(
-                                              fontSize: 10,
+                                              fontSize: 9.5,
                                               fontWeight: FontWeight.w600,
-                                              color: Color(0xFF8E1B12),
+                                              color:AppColor.stockUnitColor,
                                             ),
                                           ),
                                           Text(
@@ -338,7 +337,7 @@ class _AddcementstockState extends State<Addcementstock> {
                                             maxLines: 1,
                                             style: GoogleFonts.poppins(
                                               fontSize: 9,
-                                              color: Color(0xFF8E1B12),
+                                              color: AppColor.stockUnitColor,
                                             ),
                                           ),
                                         ],
@@ -384,21 +383,21 @@ class _AddcementstockState extends State<Addcementstock> {
 
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 7,
-                              vertical: 7,
+                              horizontal: Sizes.screenWidth * 0.0175,
+                              vertical: Sizes.screenHeight * 0.00875,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColor.white,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: Color(0xFFF2EDE9),
+                                color: AppColor.grey,
                               ),
                             ),
                             child: Row(
                               children: [
                                 Container(
-                                  height: 45,
-                                  width: 34,
+                                  height: Sizes.screenHeight * 0.056,
+                                  width: Sizes.screenWidth * 0.085,
                                   decoration: BoxDecoration(
                                     color: Color(0xFFE6F5E9),
                                     shape: BoxShape.circle,
@@ -425,6 +424,15 @@ class _AddcementstockState extends State<Addcementstock> {
                                           color: Color(0xFF263238),
                                         ),
                                       ),
+                                      Text(
+                                        '10:30 AM',
+                                        maxLines: 1,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.normal,
+                                          color: AppColor.gey,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -447,8 +455,8 @@ class _AddcementstockState extends State<Addcementstock> {
 
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 7,
-                              vertical: 7,
+                              horizontal: Sizes.screenWidth * 0.0175,
+                              vertical: Sizes.screenHeight * 0.00875,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -491,11 +499,10 @@ class _AddcementstockState extends State<Addcementstock> {
                                     ],
                                   ),
                                 ),
-
                                 SizedBox(width: 4),
 
                                 Text(
-                                  '-${cementStock.cementStockModel?.summary?.today_stock_in.toString()} bags',
+                                  '-${cementStock.cementStockModel?.summary?.today_used?.toString() ?? '0'} bags',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,

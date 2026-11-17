@@ -336,10 +336,10 @@ class _CustomAddStockDialogState
 
                   CustomButton(
                     height: Sizes.screenHeight * 0.050,
-                    width: Sizes.screenWidth * 0.39,
+                    width: Sizes.screenWidth * 0.38,
                     text: 'Add Stock',
+                    fontSize: 15,
                     iconOnLeft: false,
-
                     isLoading: addCementViewModel.loading,
                     onPressed: addCementViewModel.loading
                         ? null

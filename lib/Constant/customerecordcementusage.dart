@@ -298,7 +298,7 @@ class _CustomerecordcementusageState extends State<Customerecordcementusage> {
                   SizedBox(width: 10),
                   CustomButton(
                     height: Sizes.screenHeight * 0.050,
-                    width: Sizes.screenWidth * 0.39,
+                    width: Sizes.screenWidth * 0.375,
                     text: 'Add Stock',
                     iconOnLeft: false,
                     isLoading: addRecordCementViewModel.loading,

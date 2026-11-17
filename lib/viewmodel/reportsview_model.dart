@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mahindra_bricks/model/reportlist_model.dart';
 import 'package:mahindra_bricks/repo/report_repo.dart';
 
-import '../model/dailyattendence.dart';
-import '../model/orderlist_model.dart';
-import '../model/reports_model.dart';
-import '../repo/client_repo.dart';
-import '../repo/dailyattendence_repo.dart';
-import '../repo/orderslist_repo.dart';
-
 class ReportsviewModel with ChangeNotifier {
-
   final ReportsRepo _reportsRepo = ReportsRepo();
 
-  ReportsModel? _reportsModel;
-  ReportsModel? get reportsModel => _reportsModel;
+  ReportListModel? _reportListModel;
+  ReportListModel? get reportListModel => _reportListModel;
 
   bool _loading = false;
   bool get loading => _loading;
@@ -21,35 +14,26 @@ class ReportsviewModel with ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  Future<bool> ReportsApi() async {
-
+  Future<bool> ReportsApi({String? fromDate, String? toDate}) async {
     _loading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-
-      final response = await _reportsRepo.ReportsApi();
-
-      _reportsModel = response;
-
+      final response = await _reportsRepo.ReportsApi(
+        fromDate: fromDate,
+        toDate: toDate,
+      );
+      _reportListModel = response;
       debugPrint("Reports Listed Successfully");
-
       return true;
-
     } catch (e) {
-
       _errorMessage = e.toString();
-
-      debugPrint("Category Error: $e");
-
+      debugPrint("Reports Error: $e");
       return false;
-
     } finally {
-
       _loading = false;
       notifyListeners();
-
     }
   }
 }

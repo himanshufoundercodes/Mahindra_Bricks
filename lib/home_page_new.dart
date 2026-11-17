@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
+import 'package:mahindra_bricks/viewmodel/dashboardview_model.dart';
+import 'package:provider/provider.dart';
 
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
@@ -15,7 +17,14 @@ import 'drawer.dart';
 import 'neworder.dart';
 
 class HomePageNew extends StatefulWidget {
-  const HomePageNew({super.key});
+  final Function(int)? onMenuTap;
+  final int selectedIndex;
+
+  const HomePageNew({
+    super.key,
+    this.onMenuTap,
+    this.selectedIndex = 0,
+  });
 
   @override
   State<HomePageNew> createState() => _HomePageNewState();
@@ -23,7 +32,21 @@ class HomePageNew extends StatefulWidget {
 
 class _HomePageNewState extends State<HomePageNew> {
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DashboardviewModel>(
+        context,
+        listen: false,
+      ).DashBoardApi();
+    });
+  }
+  @override
   Widget build(BuildContext context) {
+    final homedata = Provider.of<DashboardviewModel>(context);
+    final cards = homedata.dashBoardListModel?.cards;
+
     return Scaffold(
       backgroundColor: AppColor.bodybackgroundColor,
       appBar: const ConstantAppBar(
@@ -32,198 +55,217 @@ class _HomePageNewState extends State<HomePageNew> {
         showDrawer: true,
         logoAsset: 'assets/logo.jpg',
       ),
-      drawer: Drawer(
-        clipBehavior: Clip.none,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        child: MahindraDrawer(),
+      drawer: MahindraDrawer(
+        onMenuTap: widget.onMenuTap,
+        selectedIndex: widget.selectedIndex,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: Sizes.screenHeight * 0.27,
-              width: Sizes.screenWidth,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/homebg.jpg"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 40, right: 12),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      ConstantText(text: 'STRONGER FOUNDATIONS',
-                        color:AppColor.stockTitleColor,
-                        fontSize: 10,
-                      ),
-                      Text(
-                        'FOR A BETTER TOMORROW',
-                        style: GoogleFonts.poppins(
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
-                          color: AppColor.stockTitleColor,
+      body: homedata.loading && homedata.dashBoardListModel == null
+          ? Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: () async {
+                await Provider.of<DashboardviewModel>(
+                  context,
+                  listen: false,
+                ).DashBoardApi();
+              },
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    Container(
+                      height: Sizes.screenHeight * 0.27,
+                      width: Sizes.screenWidth,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/homebg.jpg"),
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      SizedBox(height: 3),
-                      SizedBox(
-                        width: 30,
-                        child: Divider(
-                          color: Color(0xFFB88A70),
-                          thickness: 1.5,
-                          height: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 40, right: 12),
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              ConstantText(
+                                text: 'STRONGER FOUNDATIONS',
+                                color: AppColor.stockTitleColor,
+                                fontSize: 10,
+                              ),
+                              Text(
+                                'FOR A BETTER TOMORROW',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.stockTitleColor,
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              SizedBox(
+                                width: Sizes.screenWidth * 0.075,
+                                child: Divider(
+                                  color: AppColor.gey,
+                                  thickness: 1.5,
+                                  height: 1,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(Sizes.screenHeight * 0.015),
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 7,
-                mainAxisSpacing: 7,
-                childAspectRatio: 1.65,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                children: [
-                  GestureDetector(
-                    child: DashboardCardWidget(
-                      title: 'Total Stock',
-                      value: '24,560',
-                      unit: 'Pieces',
-                      subtitle: '12 Products',
-                      leftImage: 'assets/hc1.jpg',
-                      titleColor:AppColor.stockTitleColor,
-                      subtitleColor:AppColor.stockUnitColor,
-                      color: AppColor.stockAmountColor,
-                      unitColor:  AppColor.stockUnitColor,
-                      background: AppColor.backgroundColor,
-                      rightImage: 'assets/bricks.jpg',
-                      showArrow: true,
                     ),
-                  ),
-        
-                  DashboardCardWidget(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Clients(),
-                        ),
-                      );
-                    },
-                    title: "Today's Production",
-                    value: '8,500',
-                    unit: 'Pieces',
-                    subtitle: '4 Products',
-                    leftImage: 'assets/c2.jpg',
-                    color: AppColor.productionAmountColor,
-                    background: AppColor.productbackgroundColor,
-                    titleColor:AppColor.productionTitleColor,
-                    valueColor: AppColor.productionAmountColor,
-                    unitColor:  AppColor.productionUnitColor,
-                    subtitleColor: AppColor.productionProductsColor,
-                    rightImage: 'assets/bricks2.jpg',
-                  ),
-        
-                  DashboardCardWidget(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Clients(),
-                        ),
-                      );
-                    },
-                    title: 'Total Clients',
-                    value: '48',
-                    subtitle: '6 Pending Payments',
-                    leftImage: 'assets/c3.jpg',
-                    color: AppColor.clientsAmountColor,
-                    background: AppColor.clientsBackgroundColor,
-                    titleColor:AppColor.clientsTitleColor,
-                    subtitleColor: AppColor.pendingPaymentsColor,
-                    rightImage: 'assets/homec1.jpg',
-                    showArrow: true,
-                  ),
-        
-                  DashboardCardWidget(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Clients(),
-                        ),
-                      );
-                    },
-                    title: "Today's Dispatch",
-                    value: '12,000',
-                    unit: 'Pieces',
-                    subtitle: '3 Trips',
-                    leftImage: 'assets/c4.jpg',
-                    color: AppColor.dispatchTripsColor,
-                    background: AppColor.dispatchBackgroundColor,
-                    titleColor: AppColor.dispatchTitleColor,
-                    valueColor: AppColor.dispatchAmountColor,
-                    unitColor: AppColor.dispatchUnitColor,
-                    subtitleColor: AppColor.dispatchTripsColor,
-                    rightImage: 'assets/truck.jpg',
-                  ),
-        
-                  DashboardCardWidget(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Dailyattendence(),
-                        ),
-                      );
-                    },
-                    title: 'Labour Present',
-                    value: '28 / 32',
-                    subtitle: '2 Absent | 2 Half Day',
-                    leftImage: 'assets/c5.jpg',
-                    color: AppColor.labourTitleColor,
-                    background: AppColor.labourBackgroundColor,
-                    titleColor: AppColor.labourTitleColor,
-                    valueColor: AppColor.labourAmountColor,
-                    subtitleColor: AppColor.labourSubtitleColor,
-                    rightImage: 'assets/homec2.jpg',
-                    showArrow: true,
-                  ),
-        
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Dailypayout(),
-                        ),
-                      );
-                    },
-                    child: DashboardCardWidget(
-                      title: 'Labour Payout',
-                      value: '₹ 42,600',
-                      subtitle: '8 Labourers',
-                      leftImage: 'assets/c4.jpg',
-                      color: AppColor.payoutTitleColor,
-                      background: AppColor.payoutBackgroundColor,
-                      titleColor: AppColor.payoutTitleColor,
-                      valueColor: AppColor.payoutAmountColor,
-                      subtitleColor: AppColor.payoutSubtitleColor,
-                      rightImage: 'assets/homec3.jpg',
-                      showArrow: true,
+                    Padding(
+                      padding: EdgeInsets.all(Sizes.screenHeight * 0.015),
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 7,
+                        mainAxisSpacing: 7,
+                        childAspectRatio: 1.65,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          DashboardCardWidget(
+                            onTap: () {
+                              widget.onMenuTap?.call(1);
+                            },
+                            title: 'Total Stock',
+                            value: cards?.totalStock?.pieces?.toString() ?? '0',
+                            unit: 'Pieces',
+                            subtitle: cards?.totalStock?.subLabel ??
+                                '${cards?.totalStock?.productsCount ?? 0} Products',
+                            leftImage: 'assets/hc1.jpg',
+                            titleColor: AppColor.stockTitleColor,
+                            subtitleColor: AppColor.stockUnitColor,
+                            color: AppColor.stockAmountColor,
+                            unitColor: AppColor.stockUnitColor,
+                            background: AppColor.backgroundColor,
+                            rightImage: 'assets/bricks.jpg',
+                            showArrow: true,
+                          ),
+
+                          DashboardCardWidget(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddProduction(),
+                                ),
+                              );
+                            },
+                            title: "Today's Production",
+                            value: cards?.todayProduction?.pieces?.toString() ?? '0',
+                            unit: 'Pieces',
+                            subtitle: cards?.todayProduction?.subLabel ??
+                                '${cards?.todayProduction?.productsCount ?? 0} Products',
+                            leftImage: 'assets/c2.jpg',
+                            color: AppColor.productionAmountColor,
+                            background: AppColor.productbackgroundColor,
+                            titleColor: AppColor.productionTitleColor,
+                            valueColor: AppColor.productionAmountColor,
+                            unitColor: AppColor.productionUnitColor,
+                            subtitleColor: AppColor.productionProductsColor,
+                            rightImage: 'assets/bricks2.jpg',
+                          ),
+
+                          DashboardCardWidget(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Clients(),
+                                ),
+                              );
+                            },
+                            title:'Total Clients',
+                            value: cards?.totalClients?.clientsCount?.toString() ?? '0',
+                            subtitle: cards?.totalClients?.subLabel ??
+                                '${cards?.totalClients?.pendingPaymentsCount ?? 0} Pending Payments',
+                            leftImage: 'assets/c3.jpg',
+                            color: AppColor.clientsAmountColor,
+                            background: AppColor.clientsBackgroundColor,
+                            titleColor: AppColor.clientsTitleColor,
+                            subtitleColor: AppColor.pendingPaymentsColor,
+                            rightImage: 'assets/homec1.jpg',
+                            showArrow: true,
+                          ),
+
+                          DashboardCardWidget(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Neworder(),
+                                ),
+                              );
+                            },
+                            title:"Today's Dispatch",
+                            value: cards?.todayDispatch?.pieces?.toString() ?? '0',
+                            unit: 'Pieces',
+                            subtitle: cards?.todayDispatch?.subLabel ??
+                                '${cards?.todayDispatch?.tripsCount ?? 0} Trips',
+                            leftImage: 'assets/c4.jpg',
+                            color: AppColor.dispatchTripsColor,
+                            background: AppColor.dispatchBackgroundColor,
+                            titleColor: AppColor.dispatchTitleColor,
+                            valueColor: AppColor.dispatchAmountColor,
+                            unitColor: AppColor.dispatchUnitColor,
+                            subtitleColor: AppColor.dispatchTripsColor,
+                            rightImage: 'assets/truck.jpg',
+                          ),
+
+                          DashboardCardWidget(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Dailyattendence(),
+                                ),
+                              );
+                            },
+                            title: 'Labour Present',
+                            value:
+                                '${cards?.labourPresent?.present ?? 0} / ${cards?.labourPresent?.total ?? 0}',
+                            subtitle: cards?.labourPresent?.subLabel ??
+                                '${cards?.labourPresent?.absent ?? 0} Absent | ${cards?.labourPresent?.halfDay ?? 0} Half Day',
+                            leftImage: 'assets/c5.jpg',
+                            color: AppColor.labourTitleColor,
+                            background: AppColor.labourBackgroundColor,
+                            titleColor: AppColor.labourTitleColor,
+                            valueColor: AppColor.labourAmountColor,
+                            subtitleColor: AppColor.labourSubtitleColor,
+                            rightImage: 'assets/homec2.jpg',
+                            showArrow: true,
+                          ),
+
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Dailypayout(),
+                                ),
+                              );
+                            },
+                            child: DashboardCardWidget(
+                              title:'Labour Payout',
+                              value:
+                                  '₹ ${cards?.pendingLabourPayout?.amount?.toString() ?? '0'}',
+                              subtitle: cards?.pendingLabourPayout?.subLabel ??
+                                  '${cards?.pendingLabourPayout?.labourersCount ?? 0} Labourers',
+                              leftImage: 'assets/c4.jpg',
+                              color: AppColor.payoutTitleColor,
+                              background: AppColor.payoutBackgroundColor,
+                              titleColor: AppColor.payoutTitleColor,
+                              valueColor: AppColor.payoutAmountColor,
+                              subtitleColor: AppColor.payoutSubtitleColor,
+                              rightImage: 'assets/homec3.jpg',
+                              showArrow: true,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: Sizes.screenHeight * 0.015),
               padding: EdgeInsets.all(Sizes.screenHeight * 0.010),
@@ -256,8 +298,8 @@ class _HomePageNewState extends State<HomePageNew> {
                       QuickActionWidget(
                         icon: Icons.inventory_2,
                         title: 'Add Production',
-                        color: Color(0xFFB54A2C),
-                        background: Color(0xFFFFEDE5),
+                        color:AppColor.stockUnitColor,
+                        background: AppColor.lightredbg,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -270,8 +312,8 @@ class _HomePageNewState extends State<HomePageNew> {
                       QuickActionWidget(
                         icon: Icons.shopping_cart,
                         title: 'Create Order',
-                        color: Colors.green.shade700,
-                        background: Color(0xFFE8F6EC),
+                        color: AppColor.green,
+                        background: AppColor.lightgreen,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -284,8 +326,8 @@ class _HomePageNewState extends State<HomePageNew> {
                       QuickActionWidget(
                         icon: Icons.groups,
                         title: 'Mark Attendance',
-                        color: Color(0xFFAA6100),
-                        background: Color(0xFFFFF3DF),
+                        color: AppColor.darkyellow,
+                        background: AppColor.lightyellow,
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => Dailyattendence()));
                         },
@@ -300,6 +342,7 @@ class _HomePageNewState extends State<HomePageNew> {
           ],
         ),
       ),
+    ),
     );
   }
 }

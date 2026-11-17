@@ -42,14 +42,34 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
       Utils.showErrorMessage(context, "Please enter vehicle name");
       return;
     }
+
+    final vehicleNumber = vehicleNumberController.text.trim().toUpperCase();
+    if (vehicleNumber.isEmpty) {
+      Utils.showErrorMessage(context, "Please enter vehicle number");
+      return;
+    }
+
+    // Validation for State Series (e.g. UP32CX3494) and BH Series (e.g. 22BH1234AA)
+    final vehicleRegex = RegExp(
+      r'^([A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}|[0-9]{2}BH[0-9]{4}[A-Z]{1,2})$',
+    );
+    if (!vehicleRegex.hasMatch(vehicleNumber)) {
+      Utils.showErrorMessage(
+        context,
+        "Please enter valid vehicle number (e.g. UP32CX3494 or 22BH1234AA)",
+      );
+      return;
+    }
+
     final viewModel = context.read<AddvehicleviewModel>();
     if (viewModel.loading) return;
     final success = await viewModel.addvehicleApi(
-      vehicleNameController.text,
-      vehicleNumberController.text,
-      driverNameController.text,
-      driverMobileNumberController.text,
-      capacityPiecesController.text,
+      vehicleNameController.text.trim(),
+      vehicleNumber,
+      driverNameController.text.trim(),
+      driverMobileNumberController.text.trim(),
+      capacityPiecesController.text.trim(),
+      context,
     );
 
     if (!context.mounted) return;
@@ -213,7 +233,11 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
 
                     _buildTextField(
                       controller: vehicleNumberController,
-                      hint: 'Enter vehicle number (e.g. UP32 AB 1234)',
+                      hint: 'Enter vehicle number (e.g. UP32CX3494)',
+                      textCapitalization: TextCapitalization.characters,
+                      inputFormatters: [
+                        VehicleNumberFormatter(),
+                      ],
                     ),
 
                     SizedBox(height: 12),
@@ -497,8 +521,8 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
                     Row(
                       children: [
                         Container(
-                          height: 35,
-                          width: 35,
+                          height: Sizes.screenHeight * 0.043,
+                          width: Sizes.screenWidth * 0.0875,
                           decoration: BoxDecoration(
                             color: Color(0xFFFBE7DF),
                             borderRadius: BorderRadius.circular(8),
@@ -616,6 +640,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
     TextInputType? keyboardType,
     int? maxLength,
     List<TextInputFormatter>? inputFormatters,
+    TextCapitalization textCapitalization = TextCapitalization.none,
   }) {
     return SizedBox(
       height: Sizes.screenHeight * 0.052,
@@ -624,6 +649,7 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
         keyboardType: keyboardType,
         maxLength: maxLength,
         inputFormatters: inputFormatters,
+        textCapitalization: textCapitalization,
         style: GoogleFonts.poppins(fontSize: 12),
         decoration: InputDecoration(
           counterText: '',
@@ -660,6 +686,101 @@ class _AddvihclecategoryState extends State<Addvihclecategory> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
+  }
+}
+
+class VehicleNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
+
+    String text = newValue.text.toUpperCase();
+    bool isBhSeries = RegExp(r'^[0-9]').hasMatch(text[0]);
+
+    if (isBhSeries) {
+      // BH Series rules: YY BH #### AA (e.g. 22BH1234AA)
+      for (int i = 0; i < text.length; i++) {
+        String char = text[i];
+        if (i == 0 || i == 1) {
+          // Year of registration (0-9)
+          if (!RegExp(r'^[0-9]$').hasMatch(char)) return oldValue;
+        } else if (i == 2) {
+          if (char != 'B') return oldValue;
+        } else if (i == 3) {
+          if (char != 'H') return oldValue;
+        } else if (i >= 4 && i <= 7) {
+          // 4-digit registration number
+          if (!RegExp(r'^[0-9]$').hasMatch(char)) return oldValue;
+        } else if (i == 8 || i == 9) {
+          // 1 or 2 letters (A-Z)
+          if (!RegExp(r'^[A-Z]$').hasMatch(char)) return oldValue;
+        } else {
+          return oldValue;
+        }
+      }
+    } else {
+      // State Series rules: SS DD CC #### (e.g. UP32CX3494)
+      bool is5thCharLetter = false;
+      for (int i = 0; i < text.length; i++) {
+        String char = text[i];
+        if (i == 0 || i == 1) {
+          // State code (A-Z)
+          if (!RegExp(r'^[A-Z]$').hasMatch(char)) return oldValue;
+        } else if (i == 2 || i == 3) {
+          // District code (0-9)
+          if (!RegExp(r'^[0-9]$').hasMatch(char)) return oldValue;
+        } else if (i == 4) {
+          // Series first char (A-Z)
+          if (!RegExp(r'^[A-Z]$').hasMatch(char)) return oldValue;
+        } else if (i == 5) {
+          // Series second char (A-Z or 0-9)
+          if (RegExp(r'^[A-Z]$').hasMatch(char)) {
+            is5thCharLetter = true;
+          } else if (RegExp(r'^[0-9]$').hasMatch(char)) {
+            is5thCharLetter = false;
+          } else {
+            return oldValue;
+          }
+        } else {
+          // Remaining chars must be digits (0-9)
+          if (is5thCharLetter) {
+            if (i > 9) return oldValue;
+            if (!RegExp(r'^[0-9]$').hasMatch(char)) return oldValue;
+          } else {
+            if (i > 8) return oldValue;
+            if (!RegExp(r'^[0-9]$').hasMatch(char)) return oldValue;
+          }
+        }
+      }
+    }
+
+    int selectionOffset = newValue.selection.baseOffset;
+    if (selectionOffset < 0 || selectionOffset > text.length) {
+      selectionOffset = text.length;
+    }
+
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: selectionOffset),
     );
   }
 }

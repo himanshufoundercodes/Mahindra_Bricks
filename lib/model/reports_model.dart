@@ -1,3 +1,14 @@
+int _toIntNonNull(dynamic value, [int defaultValue = 0]) {
+  if (value == null) return defaultValue;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  if (value is num) return value.toInt();
+  if (value is String) {
+    return int.tryParse(value) ?? double.tryParse(value)?.toInt() ?? defaultValue;
+  }
+  return defaultValue;
+}
+
 class ReportsModel {
   final DateRange dateRange;
   final StockReport stockReport;
@@ -18,13 +29,13 @@ class ReportsModel {
   });
 
   factory ReportsModel.fromJson(Map<String, dynamic> json) => ReportsModel(
-    dateRange: DateRange.fromJson(json['date_range'] as Map<String, dynamic>),
-    stockReport: StockReport.fromJson(json['stock_report'] as Map<String, dynamic>),
-    dispatchReport: DispatchReport.fromJson(json['dispatch_report'] as Map<String, dynamic>),
-    productionReport: ProductionReport.fromJson(json['production_report'] as Map<String, dynamic>),
-    labourReport: LabourReport.fromJson(json['labour_report'] as Map<String, dynamic>),
-    paymentReport: PaymentReport.fromJson(json['payment_report'] as Map<String, dynamic>),
-    clientReport: ClientReport.fromJson(json['client_report'] as Map<String, dynamic>),
+    dateRange: DateRange.fromJson(json['date_range'] as Map<String, dynamic>? ?? {}),
+    stockReport: StockReport.fromJson(json['stock_report'] as Map<String, dynamic>? ?? {}),
+    dispatchReport: DispatchReport.fromJson(json['dispatch_report'] as Map<String, dynamic>? ?? {}),
+    productionReport: ProductionReport.fromJson(json['production_report'] as Map<String, dynamic>? ?? {}),
+    labourReport: LabourReport.fromJson(json['labour_report'] as Map<String, dynamic>? ?? {}),
+    paymentReport: PaymentReport.fromJson(json['payment_report'] as Map<String, dynamic>? ?? {}),
+    clientReport: ClientReport.fromJson(json['client_report'] as Map<String, dynamic>? ?? {}),
   );
 
   Map<String, dynamic> toJson() => {
@@ -52,10 +63,10 @@ class ClientReport {
   });
 
   factory ClientReport.fromJson(Map<String, dynamic> json) => ClientReport(
-    totalClients: json['total_clients'],
-    totalOrders: json['total_orders'],
-    totalBilling: json['total_billing'],
-    pendingAmount: json['pending_amount'],
+    totalClients: _toIntNonNull(json['total_clients']),
+    totalOrders: _toIntNonNull(json['total_orders']),
+    totalBilling: _toIntNonNull(json['total_billing']),
+    pendingAmount: _toIntNonNull(json['pending_amount']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -80,10 +91,10 @@ class PaymentReport {
   });
 
   factory PaymentReport.fromJson(Map<String, dynamic> json) => PaymentReport(
-    receivedClients: json['received_clients'],
-    pendingClients: json['pending_clients'],
-    labourPayout: json['labour_payout'],
-    cementPurchase: json['cement_purchase'],
+    receivedClients: _toIntNonNull(json['received_clients']),
+    pendingClients: _toIntNonNull(json['pending_clients']),
+    labourPayout: _toIntNonNull(json['labour_payout']),
+    cementPurchase: _toIntNonNull(json['cement_purchase']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -110,11 +121,11 @@ class LabourReport {
   });
 
   factory LabourReport.fromJson(Map<String, dynamic> json) => LabourReport(
-    totalLabour: json['total_labour'],
-    present: json['present'],
-    absent: json['absent'],
-    overtime: json['overtime'],
-    overtimeHours: json['overtime_hours'],
+    totalLabour: _toIntNonNull(json['total_labour']),
+    present: _toIntNonNull(json['present']),
+    absent: _toIntNonNull(json['absent']),
+    overtime: json['overtime']?.toString() ?? '',
+    overtimeHours: _toIntNonNull(json['overtime_hours']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -146,13 +157,13 @@ class ProductionReport {
   });
 
   factory ProductionReport.fromJson(Map<String, dynamic> json) => ProductionReport(
-    totalProduced: json['total_produced'],
-    totalPiecesProduced: json['total_pieces_produced'],
-    totalBreakage: json['total_breakage'],
-    totalBreakagePieces: json['total_breakage_pieces'],
-    netProduced: json['net_produced'],
-    netPieces: json['net_pieces'],
-    batchesCount: json['batches_count'],
+    totalProduced: json['total_produced']?.toString() ?? '',
+    totalPiecesProduced: _toIntNonNull(json['total_pieces_produced']),
+    totalBreakage: json['total_breakage']?.toString() ?? '',
+    totalBreakagePieces: _toIntNonNull(json['total_breakage_pieces']),
+    netProduced: json['net_produced']?.toString() ?? '',
+    netPieces: _toIntNonNull(json['net_pieces']),
+    batchesCount: _toIntNonNull(json['batches_count']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -180,10 +191,10 @@ class DispatchReport {
   });
 
   factory DispatchReport.fromJson(Map<String, dynamic> json) => DispatchReport(
-    totalDispatch: json['total_dispatch'],
-    totalDispatchPieces: json['total_dispatch_pieces'],
-    totalTrips: json['total_trips'],
-    totalClients: json['total_clients'],
+    totalDispatch: json['total_dispatch']?.toString() ?? '',
+    totalDispatchPieces: _toIntNonNull(json['total_dispatch_pieces']),
+    totalTrips: _toIntNonNull(json['total_trips']),
+    totalClients: _toIntNonNull(json['total_clients']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -212,12 +223,12 @@ class StockReport {
   });
 
   factory StockReport.fromJson(Map<String, dynamic> json) => StockReport(
-    cementStock: json['cement_stock'],
-    cementStockBags: json['cement_stock_bags'],
-    brickStock: json['brick_stock'],
-    brickStockPieces: json['brick_stock_pieces'],
-    paverStock: json['paver_stock'],
-    paverStockPieces: json['paver_stock_pieces'],
+    cementStock: json['cement_stock']?.toString() ?? '',
+    cementStockBags: _toIntNonNull(json['cement_stock_bags']),
+    brickStock: json['brick_stock']?.toString() ?? '',
+    brickStockPieces: _toIntNonNull(json['brick_stock_pieces']),
+    paverStock: json['paver_stock']?.toString() ?? '',
+    paverStockPieces: _toIntNonNull(json['paver_stock_pieces']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -240,8 +251,8 @@ class DateRange {
   });
 
   factory DateRange.fromJson(Map<String, dynamic> json) => DateRange(
-    fromDate: json['from_date'],
-    toDate: json['to_date'],
+    fromDate: json['from_date']?.toString() ?? '',
+    toDate: json['to_date']?.toString() ?? '',
   );
 
   Map<String, dynamic> toJson() => {

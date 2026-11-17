@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/url_launcher.dart';
 import 'package:mahindra_bricks/viewmodel/vehicle_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -94,7 +95,7 @@ class _AddvehicleState extends State<Addvehicle> {
                         size: 26,
                       ),
 
-                      SizedBox(width: 12),
+                      SizedBox(width: Sizes.screenWidth * 0.03),
 
                       Expanded(
                         child: TextField(
@@ -102,13 +103,12 @@ class _AddvehicleState extends State<Addvehicle> {
                             hintText: 'Search vehicles...',
                             hintStyle: GoogleFonts.poppins(
                               color: AppColor.gey,
-                              fontSize: 15,
+                              fontSize: 14,
                             ),
                             border: InputBorder.none,
                             isDense: true,
                             contentPadding: EdgeInsets.zero,
                           ),
-
                           style: GoogleFonts.poppins(
                             fontSize: 13,
                             color: Colors.black87,
@@ -119,7 +119,7 @@ class _AddvehicleState extends State<Addvehicle> {
                   ),
                 ),
 
-                SizedBox(height: 15),
+                SizedBox(height: Sizes.screenHeight * 0.018),
                 if (vehicleProvider.loading)
                   Center(
                     child: Circularprogressindicator(),
@@ -156,10 +156,10 @@ class _AddvehicleState extends State<Addvehicle> {
                           margin: EdgeInsets.only(bottom: 12),
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: AppColor.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Color(0xFFF1E8E2),
+                              color: AppColor.grey,
                             ),
                           ),
 
@@ -172,7 +172,7 @@ class _AddvehicleState extends State<Addvehicle> {
                                 width: Sizes.screenWidth * 0.17,
 
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFFFF1E8),
+                                  color: AppColor.lightredbg,
                                   borderRadius: BorderRadius.circular(9),
                                 ),
 
@@ -184,7 +184,7 @@ class _AddvehicleState extends State<Addvehicle> {
                                 ),
                               ),
 
-                              SizedBox(width: 12),
+                              SizedBox(width: Sizes.screenWidth * 0.03),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,17 +196,13 @@ class _AddvehicleState extends State<Addvehicle> {
                                       item.vehicle_name?.toString() ?? '',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-
                                       style: GoogleFonts.poppins(
                                         fontSize: 15,
                                         color: Color(0xFFB32616),
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-
-                                    SizedBox(height: 3),
-
-                                    // Vehicle Number
+                                    SizedBox(height: Sizes.screenHeight * 0.00375),
                                     Row(
                                       children: [
 
@@ -341,19 +337,22 @@ class _AddvehicleState extends State<Addvehicle> {
 
                                         children: [
 
-                                          Container(
-                                            height: Sizes.screenHeight * 0.040,
-                                            width: Sizes.screenWidth * 0.12,
-
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFFFEAE3),
-                                              shape: BoxShape.circle,
-                                            ),
-
-                                            child: Icon(
-                                              Icons.call,
-                                              color: Color(0xFFB32616),
-                                              size: 18,
+                                          GestureDetector(
+                                            onTap: () {
+                                              CustomLauncher.call(item.driver_mobile.toString());
+                                            },
+                                            child: Container(
+                                              height: Sizes.screenHeight * 0.040,
+                                              width: Sizes.screenWidth * 0.12,
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFFFEAE3),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                Icons.call,
+                                                color: Color(0xFFB32616),
+                                                size: 18,
+                                              ),
                                             ),
                                           ),
 

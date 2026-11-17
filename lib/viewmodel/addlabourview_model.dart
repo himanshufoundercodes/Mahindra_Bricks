@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mahindra_bricks/repo/login_repo.dart';
+import 'package:provider/provider.dart';
 import '../core/storage/login_sharedpreferences.dart';
 import '../model/addlabour_model.dart';
 import '../model/login_model.dart';
 import '../repo/addlabour_repo.dart';
+import 'labour_viewmodel.dart';
 
 class AddlabourviewModel with ChangeNotifier {
 
@@ -21,7 +23,8 @@ class AddlabourviewModel with ChangeNotifier {
   Future<bool> addlabourApi(
       String name,
       String mobile,
-      String daily_rate
+      String daily_rate,
+      BuildContext context,
       ) async {
     _loading = true;
     _errorMessage = null;
@@ -38,17 +41,15 @@ class AddlabourviewModel with ChangeNotifier {
       final response = await _AddlabourRepo.addlabourApi(data);
 
       _addlabourModel = response;
+     Provider.of<LabourListViewModel>(
+        context,
+        listen: false,
+      ).LabourApi();
 
-      // if (response.accessToken.isEmpty) {
-      //   _errorMessage = 'Token not received';
-      //   return false;
-      // }
-      // await PreferenceService.saveSession(
-      //   token: response.accessToken,
-      //   userId: response.id,
-      // );
-      debugPrint("Login Success");
+      debugPrint("Add Labour Successfull");
       debugPrint("User ID: ${response.id}");
+      debugPrint("Labour Code: ${response.labour_code}");
+
 
       return true;
 

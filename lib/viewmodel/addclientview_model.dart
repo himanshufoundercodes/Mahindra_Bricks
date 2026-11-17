@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mahindra_bricks/repo/addvehicle_repo.dart';
+import 'package:provider/provider.dart';
 
 import '../model/addcategory_model.dart';
 import '../model/addclient_model.dart';
 import '../model/addvehicle_model.dart';
 import '../repo/addcategory_repo.dart';
 import '../repo/addclient_repo.dart';
+import 'clientview_model.dart';
 
 class AddclientviewModel with ChangeNotifier {
   final AddClientRepo _addClientRepo = AddClientRepo();
@@ -27,6 +29,7 @@ class AddclientviewModel with ChangeNotifier {
       String clientNumber,
       String clientalternateNumber,
       String address,
+      BuildContext context,
       ) async {
     _loading = true;
     _errorMessage = null;
@@ -47,6 +50,10 @@ class AddclientviewModel with ChangeNotifier {
       final response = await _addClientRepo.addClientApi(data);
 
       _addClientModel = response;
+      Provider.of<ClientListViewModel>(
+        context,
+        listen: false,
+      ).clintApi();
 
       debugPrint("Client Added Successfully");
       debugPrint("Client ID: ${response.id}");

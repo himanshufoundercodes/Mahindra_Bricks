@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
+import 'package:mahindra_bricks/addproduct.dart';
 import 'package:mahindra_bricks/viewmodel/stocklist_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'Constant/Constant_Appbar.dart';
-import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/customeproductcard.dart';
-import 'addproduct.dart';
-import 'viewproductdetails.dart';
 import 'circularprogressindicator.dart';
+import 'drawer.dart';
+import 'viewproductdetails.dart';
 
 class Stock extends StatefulWidget {
-  Stock({super.key});
+  final Function(int)? onMenuTap;
+  final int selectedIndex;
+
+  const Stock({
+    super.key,
+    this.onMenuTap,
+    this.selectedIndex = 1,
+  });
 
   @override
   State<Stock> createState() => _StockState();
@@ -28,7 +35,7 @@ class _StockState extends State<Stock> {
       Provider.of<StocklistViewmodel>(
         context,
         listen: false,
-      ).StockListApi();
+      ).stockListApi();
     });
   }
   int selectedCategory = 0;
@@ -40,19 +47,35 @@ class _StockState extends State<Stock> {
       appBar: const ConstantAppBar(
         title: 'Dashboard',
         showBranding: true,
+        showDrawer: true,
         logoAsset: 'assets/logo.jpg',
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeader(),
-            StockContente(stockList),
-          ],
+      drawer: MahindraDrawer(
+        onMenuTap: widget.onMenuTap,
+        selectedIndex: widget.selectedIndex,
+      ),
+      body: RefreshIndicator(
+        color: AppColor.stockAmountColor,
+        backgroundColor: Colors.white,
+        displacement: 50,
+        onRefresh: () async {
+          await Provider.of<StocklistViewmodel>(
+            context,
+            listen: false,
+          ).stockListApi();
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              _buildHeader(),
+              StockContente(stockList),
+            ],
+          ),
         ),
       ),
     );
   }
-
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -97,7 +120,8 @@ class _StockState extends State<Stock> {
     );
   }
 
-  Widget StockContente(dynamic stockList){
+  Widget StockContente(StocklistViewmodel stockList){
+    final stockListData = stockList.stockListModel?.data ?? [];
     return Container(
       child: Column(
         children: [
@@ -131,7 +155,7 @@ class _StockState extends State<Stock> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Total Stock',
+                          stockList.stockListModel?.stockSummary?.title?.toString() ?? '',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -139,7 +163,8 @@ class _StockState extends State<Stock> {
                           ),
                         ),
                         Text(
-                          '24,560',
+                          stockList.stockListModel?.stockSummary?.totalStockFormatted?.toString() ??
+                          stockList.stockListModel?.stockSummary?.totalStock?.toString() ?? '0',
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -148,7 +173,7 @@ class _StockState extends State<Stock> {
                           ),
                         ),
                         Text(
-                          'Pieces',
+                          stockList.stockListModel?.stockSummary?.unit?.toString() ?? '',
                           style: GoogleFonts.poppins(
                             fontSize: 13,
                             color: AppColor.gey,
@@ -176,46 +201,85 @@ class _StockState extends State<Stock> {
           Column(
             children: [
               SizedBox(height: 15),
-
               if (stockList.loading)
                 Center(
                   child: Circularprogressindicator(),
                 )
-              else if (stockList.stockList.isEmpty)
+              else if (stockListData.isEmpty)
                 Center(
                   child: Text('No Stock Found'),
                 )
               else
                 ListView.builder(
-                  itemCount: stockList.stockList.length,
+                  itemCount: stockListData.length,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    final stock = stockList.stockList[index];
-                    return CustomProductCard(
-                      image: stock.image,
-                      name: stock.name?.toString() ?? '',
-                      size: stock.size,
-                      code: stock.code,
-                      price: stock.price,
-                      stockStatus: stock.stockStatus,
-                      backgroundColor: AppColor.tilesColor,
-                      onArrowTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Viewproductdetails(),
+                    final stock = stockListData[index];
+                    return GestureDetector( onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Addproduct(
+                            image: stock.imageUrl?.toString() ?? '',
+                            name: stock.name?.toString() ?? '',
+                            category: stock.category?.toString() ?? '',
+                            size: stock.dimensions?.toString() ?? '',
+                            code: stock.sku?.toString() ?? '',
+                            price: stock.pricePerUnit?.toString() ?? '',
+                            stockStatus: stock.stockStatus?.toString() ?? '',
+                            AvaibleStock: stock.stockQuantity?.toString() ?? '',
+                            MinimumStockAlert: stock.minStockAlert?.toString() ?? '',
+                            TotalProduction: stock.totalProduction?.toString() ?? '',
+                            TotalDispatched: stock.totalDispatched?.toString() ?? '',
+                            TotalSold: stock.totalSold?.toString() ?? '',
+                            CurrentStockValue: stock.currentStockValue?.toString() ?? '',
+                            CostPrice: stock.costPrice?.toString() ?? '',
+                            SellingPrice: stock.sellingPrice?.toString() ?? '',
                           ),
-                        );
-                      },
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Viewproductdetails(),
-                          ),
-                        );
-                      },
+                        ),
+                      );
+                    },
+                      child: CustomProductCard(
+                        image: stock.imageUrl?.toString() ?? '',
+                        name: stock.name?.toString() ?? '',
+                        size: stock.dimensions?.toString() ?? '',
+                        code: stock.sku?.toString() ?? '',
+                        price: stock.pricePerUnit?.toString() ?? '',
+                        stockStatus: stock.stockStatus?.toString() ?? '',
+                        backgroundColor: AppColor.tilesColor,
+                        onArrowTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Addproduct(
+                                image: stock.imageUrl?.toString() ?? '',
+                                name: stock.name?.toString() ?? '',
+                                size: stock.dimensions?.toString() ?? '',
+                                code: stock.sku?.toString() ?? '',
+                                price: stock.pricePerUnit?.toString() ?? '',
+                                stockStatus: stock.stockStatus?.toString() ?? '',
+                                AvaibleStock: stock.stockQuantity?.toString() ?? '',
+                                MinimumStockAlert: stock.minStockAlert?.toString() ?? '',
+                                TotalProduction: stock.totalProduction?.toString() ?? '',
+                                TotalDispatched: stock.totalDispatched?.toString() ?? '',
+                                TotalSold: stock.totalSold?.toString() ?? '',
+                                CurrentStockValue: stock.currentStockValue?.toString() ?? '',
+                                CostPrice: stock.costPrice?.toString() ?? '',
+                                SellingPrice: stock.sellingPrice?.toString() ?? '',
+                              ),
+                            ),
+                          );
+                        },
+                        // onTap: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => Viewproductdetails(),
+                        //     ),
+                        //   );
+                        // },
+                      ),
                     );
                   },
                 )

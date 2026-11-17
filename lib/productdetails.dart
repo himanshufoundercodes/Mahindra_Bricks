@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'Constant/Sizes.dart';
+
 class Productdetails extends StatefulWidget {
   const Productdetails({super.key});
 
@@ -19,8 +21,8 @@ class _ProductdetailsState extends State<Productdetails> {
             Container(
               width: double.infinity,
               padding:  EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 8,
+                horizontal: Sizes.screenWidth * 0.025,
+                vertical: Sizes.screenHeight * 0.01,
               ),
               child: Padding(
                 padding:  EdgeInsets.symmetric(horizontal: 8),

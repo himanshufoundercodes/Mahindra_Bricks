@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
-import 'package:mahindra_bricks/homepage.dart';
 import 'package:mahindra_bricks/orders.dart';
 import 'package:mahindra_bricks/report.dart';
 import 'package:mahindra_bricks/stock.dart';
+import 'package:provider/provider.dart';
 
 import '../home_page_new.dart';
 import '../labourmanagement.dart';
+import '../viewmodel/dashboardview_model.dart';
+import '../viewmodel/labour_viewmodel.dart';
+import '../viewmodel/ordersListviewmodel.dart';
+import '../viewmodel/reportsview_model.dart';
+import '../viewmodel/stocklist_viewmodel.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
-  const CustomBottomNavBar({super.key});
+  final int initialIndex;
+  const CustomBottomNavBar({super.key, this.initialIndex = 0});
 
   @override
   State<CustomBottomNavBar> createState() =>
@@ -19,7 +26,13 @@ class CustomBottomNavBar extends StatefulWidget {
 
 class _CustomBottomNavBarState
     extends State<CustomBottomNavBar> {
-  int selectedIndex = 0;
+  late int selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = widget.initialIndex;
+  }
 
   final List<IconData> icons = [
     Icons.home_rounded,
@@ -42,6 +55,7 @@ class _CustomBottomNavBarState
       setState(() {
         selectedIndex = 0;
       });
+      _fetchApiForIndex(0);
       return false;
     }
     final shouldExit = await showDialog<bool>(
@@ -85,7 +99,7 @@ class _CustomBottomNavBarState
               onPressed: () {
                 Navigator.of(dialogContext).pop(true);
               },
-              child: const Text('Exit'),
+              child:  Text('Exit'),
             ),
           ],
         );
@@ -99,6 +113,33 @@ class _CustomBottomNavBarState
     return false;
   }
 
+  void _fetchApiForIndex(int index) {
+    switch (index) {
+      case 0:
+        Provider.of<DashboardviewModel>(context, listen: false).DashBoardApi();
+        break;
+      case 1:
+        Provider.of<StocklistViewmodel>(context, listen: false).stockListApi();
+        break;
+      case 2:
+        Provider.of<OrdersListViewModel>(context, listen: false).OrdersApi();
+        break;
+      case 3:
+        Provider.of<LabourListViewModel>(context, listen: false).LabourApi();
+        break;
+      case 4:
+        Provider.of<ReportsviewModel>(context, listen: false).ReportsApi();
+        break;
+    }
+  }
+
+  void _onMenuTap(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+    _fetchApiForIndex(index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -107,11 +148,26 @@ class _CustomBottomNavBarState
         body: IndexedStack(
           index: selectedIndex,
           children: [
-            HomePageNew(),
-            Stock(),
-            Orders(),
-            Labourmanagement(),
-            Report(),
+            HomePageNew(
+              onMenuTap: _onMenuTap,
+              selectedIndex: selectedIndex,
+            ),
+            Stock(
+              onMenuTap: _onMenuTap,
+              selectedIndex: selectedIndex,
+            ),
+            Orders(
+              onMenuTap: _onMenuTap,
+              selectedIndex: selectedIndex,
+            ),
+            Labourmanagement(
+              onMenuTap: _onMenuTap,
+              selectedIndex: selectedIndex,
+            ),
+            Report(
+              onMenuTap: _onMenuTap,
+              selectedIndex: selectedIndex,
+            ),
           ],
         ),
         bottomNavigationBar: SafeArea(
@@ -136,6 +192,7 @@ class _CustomBottomNavBarState
                       setState(() {
                         selectedIndex = index;
                       });
+                      _fetchApiForIndex(index);
                     },
                     child: AnimatedContainer(
                       duration: Duration(
@@ -167,7 +224,7 @@ class _CustomBottomNavBarState
                             labels[index],
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               fontSize: 10,
                               fontWeight: isSelected
                                   ? FontWeight.w600

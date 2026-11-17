@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/Constant/customesamrycard.dart';
 
 import 'Constant/ConstantOrderhistory.dart';
+import 'model/clistlist_model.dart';
 
 class Clientdetails extends StatefulWidget {
-  Clientdetails({super.key});
+  final Data data;
 
+  const Clientdetails({
+    super.key,
+    required this.data,
+  });
+
+  //Clientdetails({super.key});
   @override
   State<Clientdetails> createState() => _ClientdetailsState();
 }
-
 class _ClientdetailsState extends State<Clientdetails> {
   @override
   Widget build(BuildContext context) {
@@ -136,10 +143,10 @@ class _ClientdetailsState extends State<Clientdetails> {
                   child: Row(
                     children: [
                       Container(
-                        height: 40,
-                        width: 40,
+                        height: Sizes.screenHeight * 0.05,
+                        width: Sizes.screenWidth * 0.1,
                         decoration: BoxDecoration(
-                          color: Color(0xFFFDEEEB),
+                          color: AppColor.lightredbg,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -157,7 +164,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    'ROYAL BROTHERS GROUP OF COMPANY',
+                                    widget.data.companyName.toString(),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.poppins(
@@ -170,8 +177,8 @@ class _ClientdetailsState extends State<Clientdetails> {
                                 SizedBox(width: 6),
                                 Container(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 3,
+                                    horizontal: Sizes.screenWidth * 0.015,
+                                    vertical: Sizes.screenHeight * 0.00375,
                                   ),
                                   decoration: BoxDecoration(
                                     color: Color(0xFFE0F5E5),
@@ -188,47 +195,47 @@ class _ClientdetailsState extends State<Clientdetails> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 2),
+                            SizedBox(height: Sizes.screenHeight * 0.0025),
                             Text(
-                              'Client ID: C-001',
+                                widget.data.clientCode.toString(),
                               style: GoogleFonts.poppins(
                                 fontSize: 11,
                                 color: Color(0xFF757575),
                               ),
                             ),
-                            SizedBox(height: 4),
+                            SizedBox(height: Sizes.screenHeight * 0.005),
                             Row(
                               children: [
                                 Icon(
                                   Icons.call,
                                   size: 12,
-                                  color: Color(0xFF55606E),
+                                  color: AppColor.gey,
                                 ),
-                                SizedBox(width: 4),
+                                SizedBox(width: Sizes.screenWidth * 0.01),
                                 Text(
-                                  '9685538768',
-                                  style: GoogleFonts.poppins(
+                                    widget.data.mobile.toString(),
+                                    style: GoogleFonts.poppins(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w500,
-                                    color: Color(0xFF0F1E36),
+                                    color: AppColor.black87,
                                   ),
                                 ),
                                 SizedBox(width: 10),
                                 Icon(
                                   Icons.call,
                                   size: 12,
-                                  color: Color(0xFF55606E),
+                                  color: AppColor.gey,
                                 ),
                                 SizedBox(width: 4),
                                 Expanded(
                                   child: Text(
-                                    '9300123456 (Alternate)',
+                                    widget.data.alternateMobile.toString(),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.poppins(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
-                                      color: Color(0xFF0F1E36),
+                                      color: AppColor.black87,
                                     ),
                                   ),
                                 ),
@@ -237,12 +244,12 @@ class _ClientdetailsState extends State<Clientdetails> {
                           ],
                         ),
                       ),
-                      SizedBox(width: 8),
+                      SizedBox(width: Sizes.screenWidth * 0.02),
                       Container(
                         height: Sizes.screenHeight * 0.075,
                         width: Sizes.screenWidth * 0.075,
                         decoration: BoxDecoration(
-                          color: Color(0xFF81241B),
+                          color: AppColor.stockAmountColor,
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
@@ -259,12 +266,15 @@ class _ClientdetailsState extends State<Clientdetails> {
                   ),
                 ),
               ),
-              SizedBox(height: 5),
-              HorizontalSummaryCards(),
-              SizedBox(height: 5),
-
+              SizedBox(height: Sizes.screenHeight * 0.006),
+              HorizontalSummaryCards(
+                businessSummary: widget.data.businessSummary,
+              ),
+              SizedBox(height: Sizes.screenHeight * 0.006),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: Sizes.screenWidth * 0.025,
+                ),
                 child: Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -326,7 +336,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                               ),
                             ),
                             Text(
-                              '12',
+                                widget.data.totalOrders.toString(),
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -356,7 +366,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                               ),
                             ),
                             Text(
-                              '36,000 pcs',
+                                widget.data.totalPurchaseQty.toString(),
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -386,7 +396,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                               ),
                             ),
                             Text(
-                              '₹ 1,80,000',
+                                widget.data.totalOrderAmount.toString(),
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -396,10 +406,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                           ],
                         ),
                       ),
-
                       Divider(height: 1, color: Color(0xFFE9E1DC)),
-
-                      // Total Paid Amount
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 8,
@@ -416,7 +423,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                               ),
                             ),
                             Text(
-                              '₹ 1,60,000',
+                              widget.data.totalPaidAmount.toString(),
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -428,8 +435,6 @@ class _ClientdetailsState extends State<Clientdetails> {
                       ),
 
                       SizedBox(height: 2),
-
-                      // Pending Balance
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 12,
@@ -451,7 +456,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                               ),
                             ),
                             Text(
-                              '₹ 20,000',
+                                widget.data.pendingBalance.toString(),
                               style: GoogleFonts.poppins(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -471,58 +476,26 @@ class _ClientdetailsState extends State<Clientdetails> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: OrderHistoryTable(
-                  orders: [
-                    OrderHistoryItem(
-                      orderNo: 'ORD-2026-0010',
-                      date: '16 Oct 2026',
-                      product: 'Bricks',
-                      quantity: '3,000 pcs',
-                      totalAmount: '₹ 20,000',
-                      paidAmount: '₹ 0',
-                      pendingAmount: '₹ 20,000',
-                      status: 'Pending',
-                    ),
-                    OrderHistoryItem(
-                      orderNo: 'ORD-2026-0009',
-                      date: '10 Oct 2026',
-                      product: 'Bricks',
-                      quantity: '2,000 pcs',
-                      totalAmount: '₹ 12,500',
-                      paidAmount: '₹ 12,500',
-                      pendingAmount: '₹ 0',
-                      status: 'Dispatched',
-                    ),
-                    OrderHistoryItem(
-                      orderNo: 'ORD-2026-0008',
-                      date: '28 Sep 2026',
-                      product: 'Paver Block',
-                      quantity: '5,000 pcs',
-                      totalAmount: '₹ 30,000',
-                      paidAmount: '₹ 30,000',
-                      pendingAmount: '₹ 0',
-                      status: 'Completed',
-                    ),
-                    OrderHistoryItem(
-                      orderNo: 'ORD-2026-0007',
-                      date: '15 Sep 2026',
-                      product: 'Bricks',
-                      quantity: '4,000 pcs',
-                      totalAmount: '₹ 24,000',
-                      paidAmount: '₹ 14,000',
-                      pendingAmount: '₹ 10,000',
-                      status: 'Pending',
-                    ),
-                    OrderHistoryItem(
-                      orderNo: 'ORD-2026-0006',
-                      date: '02 Sep 2026',
-                      product: 'Bricks',
-                      quantity: '2,500 pcs',
-                      totalAmount: '₹ 15,000',
-                      paidAmount: '₹ 15,000',
-                      pendingAmount: '₹ 0',
-                      status: 'Completed',
-                    ),
-                  ],
+                  orders: widget.data.orderHistory != null && widget.data.orderHistory!.isNotEmpty
+                      ? widget.data.orderHistory!.map((order) {
+                          final productName = (order.items != null && order.items!.isNotEmpty)
+                              ? order.items!.first.productName?.toString() ?? 'Product'
+                              : 'Product';
+                          final quantity = (order.items != null && order.items!.isNotEmpty)
+                              ? '${order.items!.first.quantity ?? ''} pcs'
+                              : '';
+                          return OrderHistoryItem(
+                            orderNo: order.orderNumber?.toString() ?? '',
+                            date: order.orderDate?.toString() ?? '',
+                            product: productName,
+                            quantity: quantity,
+                            totalAmount: '₹ ${order.totalAmount ?? '0'}',
+                            paidAmount: '₹ ${order.amountPaid ?? '0'}',
+                            pendingAmount: '₹ ${order.remainingBalance ?? '0'}',
+                            status: order.orderStatus?.toString() ?? 'Pending',
+                          );
+                        }).toList()
+                      : [],
                   onOrderTap: (order) {
                     debugPrint('Selected Order: ${order.orderNo}');
                   },

@@ -136,8 +136,8 @@ class CustomLabourCard extends StatelessWidget {
 
               Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
+                  horizontal: 8,
+                  vertical: 4,
                 ),
                 decoration: BoxDecoration(
                   color: isNoAdvance
@@ -145,20 +145,31 @@ class CustomLabourCard extends StatelessWidget {
                       : Color(0xFFFFEED6),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: Text(
-                  isNoAdvance
-                      ? "No Advance"
-                      : "₹ ${advance.toStringAsFixed(0).replaceAllMapped(
-                    RegExp(r'\B(?=(\d{3})+(?!\d))'),
-                        (match) => ',',
-                  )} Advance",
-                  style: GoogleFonts.poppins(
-                    fontSize: 8.5,
-                    fontWeight: FontWeight.w500,
-                    color: isNoAdvance
-                        ? Color(0xFF25864A)
-                        : Color(0xFF8E4318),
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isNoAdvance ? Icons.check_circle_outline : Icons.account_balance_wallet_outlined,
+                      size: 11,
+                      color: isNoAdvance ? Color(0xFF25864A) : Color(0xFF8E4318),
+                    ),
+                    SizedBox(width: 3),
+                    Text(
+                      isNoAdvance
+                          ? "No Advance"
+                          : "Advance: ₹ ${advance.toStringAsFixed(0).replaceAllMapped(
+                                RegExp(r'\B(?=(\d{3})+(?!\d))'),
+                                (match) => ',',
+                              )}",
+                      style: GoogleFonts.poppins(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                        color: isNoAdvance
+                            ? Color(0xFF25864A)
+                            : Color(0xFF8E4318),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

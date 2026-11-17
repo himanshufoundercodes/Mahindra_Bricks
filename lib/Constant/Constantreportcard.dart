@@ -47,7 +47,14 @@ class CustomReportCard extends StatelessWidget {
                     color: iconBackgroundColor,
                     borderRadius: BorderRadius.circular(9),
                   ),
-                  child: Image.asset(imagePath, fit: BoxFit.contain),
+                  child: imagePath.startsWith('http')
+                      ? Image.network(
+                          imagePath,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.description, color: Color(0xFFAD2018)),
+                        )
+                      : Image.asset(imagePath, fit: BoxFit.contain),
                 ),
 
                 const SizedBox(width: 10),

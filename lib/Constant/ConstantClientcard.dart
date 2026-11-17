@@ -11,7 +11,6 @@ class ClientCard extends StatelessWidget {
   final String totalPurchase;
   final String pendingBalance;
   final Color pendingBalanceColor;
-  final String statusText;
   final Color statusBgColor;
   final Color statusTextColor;
   final VoidCallback? onCall;
@@ -26,7 +25,6 @@ class ClientCard extends StatelessWidget {
     required this.totalPurchase,
     required this.pendingBalance,
     this.pendingBalanceColor = const Color(0xFFE53935),
-    this.statusText = 'Active Client',
     this.statusBgColor = const Color(0xFFE6F4E7),
     this.statusTextColor = const Color(0xFF287A38),
     this.onCall,
@@ -84,24 +82,24 @@ class ClientCard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: Sizes.screenWidth * 0.0075),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Sizes.screenWidth * 0.0125,
-                            vertical: Sizes.screenHeight * 0.0025,
-                          ),
-                          decoration: BoxDecoration(
-                            color: statusBgColor,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Text(
-                            statusText,
-                            style: GoogleFonts.poppins(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: statusTextColor,
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   padding: EdgeInsets.symmetric(
+                        //     horizontal: Sizes.screenWidth * 0.0125,
+                        //     vertical: Sizes.screenHeight * 0.0025,
+                        //   ),
+                        //   decoration: BoxDecoration(
+                        //     color: statusBgColor,
+                        //     borderRadius: BorderRadius.circular(5),
+                        //   ),
+                        //   child: Text(
+                        //     statusText,
+                        //     style: GoogleFonts.poppins(
+                        //       fontSize: 10,
+                        //       fontWeight: FontWeight.w600,
+                        //       color: statusTextColor,
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(width: Sizes.screenWidth * 0.01),
                         GestureDetector(
                           onTap: onCall,

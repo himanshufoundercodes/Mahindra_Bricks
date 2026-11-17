@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 
 import 'Sizes.dart';
 
@@ -51,12 +52,15 @@ class DashboardCardWidget extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: EdgeInsets.symmetric(
+          horizontal: Sizes.screenWidth * 0.02,
+          vertical: Sizes.screenHeight * 0.002,
+        ),
         decoration: BoxDecoration(
           color: background,
           borderRadius: BorderRadius.circular(11),
           border: Border.all(
-            color: Colors.white,
+            color: AppColor.white,
             width: 1.5,
           ),
           boxShadow: [
@@ -87,26 +91,26 @@ class DashboardCardWidget extends StatelessWidget {
                 else if (icon != null)
                   Icon(icon, size: 22, color: color),
 
-                const SizedBox(width: 6),
+                 SizedBox(width: 6),
 
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.poppins(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w600,
-                          color: titleColor ?? Colors.black87,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          title,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: titleColor ?? Colors.black87,
+                          ),
                         ),
                       ),
-
                        SizedBox(height: 1),
-
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
@@ -136,7 +140,7 @@ class DashboardCardWidget extends StatelessWidget {
                   rightWidget!
                 else if (rightImage != null)
                   Padding(
-                    padding: const EdgeInsets.only(top: 7),
+                    padding:  EdgeInsets.only(top: 9),
                     child: Image.asset(
                       rightImage!,
                       height: Sizes.screenWidth * 0.14,
@@ -153,7 +157,7 @@ class DashboardCardWidget extends StatelessWidget {
                   child: Text(
                     subtitle,
                     style: GoogleFonts.poppins(
-                      fontSize: 12,
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: subtitleColor ?? color,
                     ),
