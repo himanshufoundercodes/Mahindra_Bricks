@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/model/labour_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
@@ -213,6 +214,7 @@ class _LabourdetailState extends State<Labourdetail> {
                         fontSize:  12,
                         fontWeight: .w500,
                         onPressed: () {
+                          launchUrl(Uri.parse('tel:${widget.data.mobile}'));
                         },
                         iconOnLeft: true,
                         icon: Icons.call,

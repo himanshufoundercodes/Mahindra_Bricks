@@ -179,10 +179,15 @@ class _OrdersState extends State<Orders> {
                       itemCount: OrderList.filteredOrders.length,
                       itemBuilder: (BuildContext context, int index) {
                         final order = OrderList.filteredOrders[index];
+                        final String displayDateTime =
+                            (order.created_at.isNotEmpty &&
+                                    order.created_at.toLowerCase() != 'null')
+                                ? order.created_at
+                                : order.order_date;
                         return CustomOrderCard(
                           orderData: order,
                           orderId: order.order_number,
-                          dateTime: order.order_date,
+                          dateTime: displayDateTime,
                           image: 'assets/bricks.jpg',
                           productName: order.primary_item?.product_name ?? 'Unknown',
                           quantity: '${order.total_pieces} Pieces',
@@ -264,13 +269,19 @@ class _OrdersState extends State<Orders> {
               text: 'New Order',
               fontSize:  12,
               fontWeight: .w500,
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  Neworder(),
+                    builder: (context) => Neworder(),
                   ),
                 );
+                if (mounted) {
+                  Provider.of<OrdersListViewModel>(
+                    context,
+                    listen: false,
+                  ).OrdersApi(status: _getStatusParam(selectedOrderTab));
+                }
               },
               iconOnLeft: true,
               icon: Icons.add,

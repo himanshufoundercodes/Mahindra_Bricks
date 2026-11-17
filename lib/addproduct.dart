@@ -305,61 +305,72 @@ class _AddproductState extends State<Addproduct> {
                       titleColor: AppColor.green,
                     ),
 
-                      // Total Sold
-                      StockCard(
-                        title: 'Total Sold',
-                        value: widget.TotalSold,
-                        icon: Icons.shopping_cart,
-                        backgroundColor: AppColor.lightyellow,
-                        iconBackgroundColor: AppColor.lightmediumyellow,
-                        iconColor: AppColor.darkyellow,
-                        valueColor: AppColor.black,
-                      ),
+                    // Total Dispatched
+                    StockCard(
+                      title: 'Total Dispatched',
+                      value: totalDispatchedStr,
+                      icon: Icons.local_shipping,
+                      backgroundColor: AppColor.dispatchBackgroundColor,
+                      iconBackgroundColor: AppColor.dispatcheColor,
+                      iconColor: AppColor.dispatchiconcolore,
+                      valueColor: AppColor.productionAmountColor,
+                      titleColor: AppColor.blueAccent,
+                    ),
 
-                      // Current Stock Value
-                      StockCard(
-                        title: 'Current Stock Value',
-                        value: '₹ ${widget.CurrentStockValue.toString()}',
-                        subtitle: '(at selling price)',
-                        icon: Icons.widgets,
-                        backgroundColor: AppColor.lightred,
-                        iconBackgroundColor: AppColor.lightredbg,
-                        iconColor: AppColor.stockUnitColor,
-                        titleColor: AppColor.gey,
-                        valueColor: AppColor.stockAmountColor,
-                        subtitleColor: AppColor.gey,
-                      ),
+                    // Total Sold
+                    StockCard(
+                      title: 'Total Sold',
+                      value: totalSoldStr,
+                      icon: Icons.shopping_cart,
+                      backgroundColor: AppColor.lightyellow,
+                      iconBackgroundColor: AppColor.lightmediumyellow,
+                      iconColor: AppColor.darkyellow,
+                      valueColor: AppColor.black,
+                    ),
 
-                      // Cost Price
-                      StockCard(
-                        title: 'Cost Price',
-                        value: '₹ ${widget.CostPrice.toString()}',
-                        subtitle: '(per piece)',
-                        icon: Icons.currency_rupee,
-                        backgroundColor: AppColor.lightbgcolor,
-                        iconBackgroundColor: AppColor.lightredbg,
-                        iconColor: AppColor.stockUnitColor,
-                        titleColor: AppColor.gey,
-                        valueColor: AppColor.stockAmountColor,
-                        subtitleColor: AppColor.gey,
-                      ),
+                    // Current Stock Value
+                    StockCard(
+                      title: 'Current Stock Value',
+                      value: '₹ $currentStockValueStr',
+                      subtitle: '(at selling price)',
+                      icon: Icons.widgets,
+                      backgroundColor: AppColor.lightred,
+                      iconBackgroundColor: AppColor.lightredbg,
+                      iconColor: AppColor.stockUnitColor,
+                      titleColor: AppColor.gey,
+                      valueColor: AppColor.stockAmountColor,
+                      subtitleColor: AppColor.gey,
+                    ),
 
-                      // Selling Price
-                      StockCard(
-                        title: 'Selling Price',
-                        value: '₹ ${widget.SellingPrice}',
-                        subtitle: '(per piece)',
-                        icon: Icons.currency_rupee,
-                        backgroundColor: AppColor.lightbgcolor,
-                        iconBackgroundColor: AppColor.lightredbg,
-                        iconColor: AppColor.stockUnitColor,
-                        titleColor: AppColor.gey,
-                        valueColor: AppColor.stockAmountColor,
-                        subtitleColor: AppColor.gey,
-                      ),
+                    // Cost Price
+                    StockCard(
+                      title: 'Cost Price',
+                      value: '₹ $costPriceStr',
+                      subtitle: '(per piece)',
+                      icon: Icons.currency_rupee,
+                      backgroundColor: AppColor.lightbgcolor,
+                      iconBackgroundColor: AppColor.lightredbg,
+                      iconColor: AppColor.stockUnitColor,
+                      titleColor: AppColor.gey,
+                      valueColor: AppColor.stockAmountColor,
+                      subtitleColor: AppColor.gey,
+                    ),
 
-                    ],
-                  )
+                    // Selling Price
+                    StockCard(
+                      title: 'Selling Price',
+                      value: '₹ $sellingPriceStr',
+                      subtitle: '(per piece)',
+                      icon: Icons.currency_rupee,
+                      backgroundColor: AppColor.lightbgcolor,
+                      iconBackgroundColor: AppColor.lightredbg,
+                      iconColor: AppColor.stockUnitColor,
+                      titleColor: AppColor.gey,
+                      valueColor: AppColor.stockAmountColor,
+                      subtitleColor: AppColor.gey,
+                    ),
+                  ],
+                )
               ],
             ),
           ],
@@ -367,6 +378,7 @@ class _AddproductState extends State<Addproduct> {
       ),
     );
   }
+
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(

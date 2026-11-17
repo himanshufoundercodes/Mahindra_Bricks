@@ -28,13 +28,38 @@ class DataFormatter {
       if (value is String) {
         final input = value.trim();
 
-        if (input.isEmpty) return null;
+        if (input.isEmpty || input.toLowerCase() == 'null') return null;
 
         if (RegExp(r'^\d+$').hasMatch(input)) {
           return parseDate(int.tryParse(input));
         }
 
-        return DateTime.tryParse(input);
+        final parsed = DateTime.tryParse(input);
+        if (parsed != null) return parsed;
+
+        if (input.contains(' ') && !input.contains('T')) {
+          final tFormatted = input.replaceFirst(' ', 'T');
+          final parsedT = DateTime.tryParse(tFormatted);
+          if (parsedT != null) return parsedT;
+        }
+
+        final formats = [
+          'yyyy-MM-dd HH:mm:ss',
+          'yyyy-MM-dd HH:mm',
+          'dd-MM-yyyy HH:mm:ss',
+          'dd-MM-yyyy HH:mm',
+          'dd/MM/yyyy HH:mm:ss',
+          'dd/MM/yyyy HH:mm',
+          'dd-MM-yyyy',
+          'dd/MM/yyyy',
+          'yyyy/MM/dd',
+        ];
+
+        for (final fmt in formats) {
+          try {
+            return DateFormat(fmt).parse(input);
+          } catch (_) {}
+        }
       }
 
       return null;
@@ -95,8 +120,12 @@ class DataFormatter {
   static String timeWithSeconds(dynamic value) =>
       customDate(value, format: 'hh:mm:ss a');
 
-  static String dateTime(dynamic value) =>
-      customDate(value, format: 'dd MMM yyyy, hh:mm a');
+  static String dateTime(dynamic value) {
+    if (value is String && value.trim().isNotEmpty && !value.contains(':')) {
+      return dateShort(value);
+    }
+    return customDate(value, format: 'dd MMM yyyy, hh:mm a');
+  }
 
   static String dateTimeLong(dynamic value) =>
       customDate(value, format: 'EEEE, dd MMMM yyyy hh:mm a');

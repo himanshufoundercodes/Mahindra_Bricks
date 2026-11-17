@@ -12,6 +12,7 @@ import 'Constant/Constant_Color.dart';
 import 'Constant/Constantpaymentcard.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
+import 'Constant/constant_dateformatter.dart';
 import 'model/orderlist_model.dart';
 import 'model/vehicle_model.dart';
 import 'viewmodel/vehicle_viewmodel.dart';
@@ -174,10 +175,15 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
     final String clientLocationText = getClientLocation(order);
     final String deliveryLocationText = getDeliveryLocation(order);
 
-    final String displayOrderDate =
-        order != null && order.order_date.isNotEmpty
-            ? _formatDateOnly(order.order_date)
-            : '16 Oct 2026';
+    final String orderTimeStr = (order != null &&
+            order.created_at.isNotEmpty &&
+            order.created_at.toLowerCase() != 'null')
+        ? order.created_at
+        : (order?.order_date ?? '');
+
+    final String displayOrderDate = orderTimeStr.isNotEmpty
+        ? _formatDateOnly(orderTimeStr)
+        : '-';
 
     final String displayDeliveryDate =
         order != null && order.delivery_date.isNotEmpty
@@ -612,7 +618,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                             ),
                           ],
                         ),
-                        SizedBox(width: Sizes.screenWidth * 0.013),
+                        SizedBox(width: Sizes.screenWidth * 0.020),
                         Container(
                           height: Sizes.screenHeight * 0.039,
                           width: Sizes.screenWidth * 0.003,
@@ -627,7 +633,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                               size: 19,
                               color: AppColor.gey,
                             ),
-                            SizedBox(width: 6),
+                            SizedBox(width: 10),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

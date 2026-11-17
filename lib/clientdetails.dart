@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/Constant/customesamrycard.dart';
+import 'package:url_launcher/url_launcher.dart' show launchUrl;
 
 import 'Constant/ConstantOrderhistory.dart';
 import 'model/clistlist_model.dart';
@@ -254,7 +255,9 @@ class _ClientdetailsState extends State<Clientdetails> {
                         ),
                         child: IconButton(
                           padding: EdgeInsets.zero,
-                          onPressed: () {},
+                          onPressed: () {
+                            launchUrl(Uri.parse('tel:${widget.data.mobile}'));
+                          },
                           icon: Icon(
                             Icons.call,
                             color: Colors.white,
