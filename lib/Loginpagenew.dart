@@ -3,8 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/utils/utils.dart';
 import 'package:mahindra_bricks/viewmodel/loginview_model.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'Constant/Constant_Color.dart';
 import 'Constant/Constant_bottomnav.dart';
 import 'Constant/ConstnatTextfield.dart';
@@ -23,10 +21,70 @@ class _LoginpagenewState extends State<Loginpagenew> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  // Future<void> handleLogin() async {
+  //   final success = await context.read<LoginViewModel>().loginApi(
+  //     emailController.text,
+  //     passwordController.text,
+  //   );
+  //
+  //   if (!context.mounted) return;
+  //
+  //   if (success) {
+  //     Utils.showSuccessMessage(
+  //       context,
+  //       "Login Successfully!",
+  //     );
+  //
+  //     await Future.delayed(Duration(milliseconds: 500));
+  //
+  //     if (!context.mounted) return;
+  //
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => CustomBottomNavBar(),
+  //       ),
+  //     );
+  //
+  //   } else {
+  //     final message =
+  //         context.read<LoginViewModel>().errorMessage ?? 'Login failed';
+  //     Utils.showErrorMessage(
+  //       context,
+  //       message,
+  //     );
+  //   }
+  // }
+
+
   Future<void> handleLogin() async {
+    if (emailController.text.trim().isEmpty && passwordController.text.trim().isEmpty) {
+      Utils.showErrorMessage(
+        context,
+        "Please enter your email and password",
+      );
+      return;
+    }
+
+    if (emailController.text.trim().isEmpty) {
+      Utils.showErrorMessage(
+        context,
+        "Please enter your email",
+      );
+      return;
+    }
+
+    if (passwordController.text.trim().isEmpty) {
+      Utils.showErrorMessage(
+        context,
+        "Please enter your password",
+      );
+      return;
+    }
+
     final success = await context.read<LoginViewModel>().loginApi(
-      emailController.text,
-      passwordController.text,
+      emailController.text.trim(),
+      passwordController.text.trim(),
     );
 
     if (!context.mounted) return;
@@ -51,12 +109,14 @@ class _LoginpagenewState extends State<Loginpagenew> {
     } else {
       final message =
           context.read<LoginViewModel>().errorMessage ?? 'Login failed';
+
       Utils.showErrorMessage(
         context,
         message,
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
    final loginViewModel = Provider.of<LoginViewModel>(context);

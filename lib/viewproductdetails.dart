@@ -1,9 +1,13 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/url_launcher.dart';
 import 'package:mahindra_bricks/utils/utils.dart';
 import 'package:mahindra_bricks/viewmodel/ordersListviewmodel.dart';
 import 'package:mahindra_bricks/viewmodel/updateorderview_model.dart';
+import 'package:mahindra_bricks/viewmodel/user_view_model.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -12,7 +16,6 @@ import 'Constant/Constant_Color.dart';
 import 'Constant/Constantpaymentcard.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
-import 'Constant/constant_dateformatter.dart';
 import 'model/orderlist_model.dart';
 import 'model/vehicle_model.dart';
 import 'viewmodel/vehicle_viewmodel.dart';
@@ -29,6 +32,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
   String selectedStatus = 'Pending';
   bool isVehicleDropdownOpen = false;
   VehicleModel? selectedVehicle;
+  bool isOrderCompleted = false;
 
   String _formatDateOnly(String? rawDate) {
     if (rawDate == null || rawDate.trim().isEmpty) return '';
@@ -62,23 +66,76 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
 
     final String orderNum = order.order_number.isNotEmpty
         ? order.order_number
-        : order.invoice_no;
+        : (order.invoice_no.isNotEmpty ? order.invoice_no : '${order.id}');
 
-    final String message =
-        'Order Invoice (#ORD-$orderNum):\n$invoiceUrl';
+    // Show loading progress dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
 
     try {
-      if (order.client_mobile.trim().isNotEmpty) {
-        await CustomLauncher.whatsapp(
-          order.client_mobile.trim(),
-          message: message,
+      final tempDir = await getTemporaryDirectory();
+      final String filePath = '${tempDir.path}/Invoice_ORD_$orderNum.pdf';
+      final File pdfFile = File(filePath);
+
+      final token = await UserViewModel().getToken();
+      final dio = Dio();
+
+      await dio.download(
+        invoiceUrl,
+        filePath,
+        options: Options(
+          headers: {
+            if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+            'Accept': 'application/pdf',
+          },
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+        ),
+      );
+
+      // Dismiss loading dialog
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      if (await pdfFile.exists() && (await pdfFile.length()) > 0) {
+        final xFile = XFile(
+          pdfFile.path,
+          mimeType: 'application/pdf',
+          name: 'Invoice_ORD_$orderNum.pdf',
+        );
+        await Share.shareXFiles(
+          [xFile],
+          text: 'Invoice for Order #ORD-$orderNum',
+          subject: 'Invoice #ORD-$orderNum',
         );
       } else {
-        await Share.share(message);
+        throw Exception('Downloaded PDF file is empty');
       }
     } catch (e) {
+      // Dismiss loading dialog if still visible
+      if (mounted) {
+        try {
+          Navigator.of(context, rootNavigator: true).pop();
+        } catch (_) {}
+      }
+
+      // Fallback: Share text link if PDF download fails
       try {
-        await Share.share(message);
+        final String message = 'Order Invoice (#ORD-$orderNum):\n$invoiceUrl';
+        if (order.client_mobile.trim().isNotEmpty) {
+          await CustomLauncher.whatsapp(
+            order.client_mobile.trim(),
+            message: message,
+          );
+        } else {
+          await Share.share(message);
+        }
       } catch (err) {
         if (mounted) {
           Utils.showErrorMessage(context, 'Could not share invoice: $err');
@@ -90,17 +147,29 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
   @override
   void initState() {
     super.initState();
+
     if (widget.orderData != null && widget.orderData!.order_status.isNotEmpty) {
       final s = widget.orderData!.order_status.trim();
-      final formattedStatus = s.isEmpty
+
+      isOrderCompleted =
+          s.toLowerCase() == 'completed' ||
+              s.toLowerCase() == 'dispatched';
+
+      String formattedStatus = s.isEmpty
           ? 'Pending'
           : '${s[0].toUpperCase()}${s.substring(1).toLowerCase()}';
-      if (['Pending', 'Processing', 'Completed', 'Cancelled', 'Dispatched']
+
+      if (formattedStatus == 'Dispatched') {
+        formattedStatus = 'Completed';
+      }
+
+      if (['Pending', 'Processing', 'Completed', 'Cancelled']
           .contains(formattedStatus)) {
         selectedStatus = formattedStatus;
+      } else {
+        selectedStatus = 'Pending';
       }
     }
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<VehicleViewmodel>(context, listen: false).vehicleApi().then((_) {
         if (mounted) {
@@ -988,6 +1057,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                           ),
                         ),
                       ),
+                      if (!isOrderCompleted)
                       Container(
                         height: Sizes.screenHeight * 0.047,
                         padding: EdgeInsets.symmetric(
@@ -1004,18 +1074,21 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                               color: AppColor.black,
                               size: 20,
                             ),
-                            items: [
+                             items: [
                               'Pending',
-                              'Processing',
-                              'Dispatched',
+                              'Completed',
                             ].map((status) {
                               return DropdownMenuItem(
                                 value: status,
                                 child: Row(
                                   children: [
                                     Icon(
-                                      Icons.access_time,
-                                      color: AppColor.yellow,
+                                      status == 'Pending'
+                                          ? Icons.access_time
+                                          : Icons.check_circle,
+                                      color: status == 'Pending'
+                                          ? AppColor.yellow
+                                          : Colors.green,
                                       size: 17,
                                     ),
                                     SizedBox(width: Sizes.screenWidth * 0.019),
@@ -1023,7 +1096,9 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                       status,
                                       style: GoogleFonts.poppins(
                                         fontSize: 12,
-                                        color: AppColor.yellow,
+                                        color: status == 'Pending'
+                                            ? AppColor.yellow
+                                            : Colors.green,
                                       ),
                                     ),
                                   ],
@@ -1071,18 +1146,24 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                       SizedBox(width: Sizes.screenWidth * 0.025),
 
                       // Update Status Button - Right Side
+
                       Expanded(
                         child: CustomButton(
-                          text: 'Update Status',
+                          text: isOrderCompleted
+                              ? 'Payment Received'
+                              : 'Update Status',
+
                           height: Sizes.screenHeight * 0.049,
                           fontWeight: FontWeight.w500,
+
                           isLoading: Provider.of<UpdateOrderViewModel>(context).loading,
+
                           onPressed: () async {
                             if (order == null) return;
 
                             Map<String, dynamic> data = {
                               "order_status": selectedStatus,
-                              "dispatch_status": "Dispatched on 06 Nov",
+                              "dispatch_status": "Completed on 06 Nov",
                               "vehicle_number": selectedVehicle?.vehicle_number ?? '',
                               "payment_option": 2,
                               "amount_paid": int.tryParse(
@@ -1100,8 +1181,11 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
 
                             if (context.mounted) {
                               if (success) {
-                                setState(() {});
-
+                                setState(() {
+                                  if (selectedStatus.toLowerCase() == 'completed') {
+                                    isOrderCompleted = true;
+                                  }
+                                });
                                 Provider.of<OrdersListViewModel>(
                                   context,
                                   listen: false,
@@ -1121,6 +1205,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                           },
                         ),
                       ),
+
                     ],
                   ),
                   SizedBox(height: Sizes.screenHeight * 0.025),

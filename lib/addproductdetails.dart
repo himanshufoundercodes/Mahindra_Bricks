@@ -5,12 +5,9 @@ import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/utils/utils.dart';
 import 'package:mahindra_bricks/viewmodel/addnewproductview_model.dart';
 import 'package:mahindra_bricks/viewmodel/categoryview_model.dart';
-import 'package:mahindra_bricks/Constant/Constant_bottomnav.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-
 import 'package:image_picker/image_picker.dart';
-
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/ConstnatTextfield.dart';
 import 'Constant/Constnat_Appbutton.dart';
@@ -79,6 +76,74 @@ class _AddProductPageState extends State<AddProductPage> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _handleSaveProduct() async {
+    if (nameController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, 'Please enter product name');
+      return;
+    }
+
+    if (selectedCategory == null || selectedCategory!.isEmpty) {
+      Utils.showErrorMessage(context, 'Please select a category');
+      return;
+    }
+
+    if (lengthController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, 'Please enter length');
+      return;
+    }
+
+    if (widthController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, 'Please enter width');
+      return;
+    }
+
+    if (hightController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, 'Please enter height');
+      return;
+    }
+
+    if (quantityController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, 'Please enter initial quantity');
+      return;
+    }
+
+    if (minimumStockController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, 'Please enter minimum stock alert');
+      return;
+    }
+
+    if (costPriceController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, 'Please enter cost price');
+      return;
+    }
+
+    if (selllingPriceController.text.trim().isEmpty) {
+      Utils.showErrorMessage(context, 'Please enter selling price');
+      return;
+    }
+
+    final addProduct =
+        Provider.of<AddNewProductViewModel>(context, listen: false);
+    await addProduct.addProductApi(
+      productImage: selectedImage,
+      productName: nameController.text.trim(),
+      sku: productCodeController.text.trim(),
+      category: selectedCategory!,
+      productType: productTypeController.text.trim(),
+      lengthMm: lengthController.text.trim(),
+      widthMm: widthController.text.trim(),
+      heightMm: hightController.text.trim(),
+      colour: selectedColour,
+      initialQuantity: quantityController.text.trim(),
+      minStockAlert: minimumStockController.text.trim(),
+      costPrice: costPriceController.text.trim(),
+      sellingPrice: selllingPriceController.text.trim(),
+      description: descriptionController.text.trim(),
+      productStatus: productStatus,
+      context: context,
     );
   }
 
@@ -347,63 +412,6 @@ class _AddProductPageState extends State<AddProductPage> {
                             ],
                           ),
                         ),
-
-                        // SizedBox(width: 16),
-                        //
-                        // Expanded(
-                        //   child: Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       RichText(
-                        //         text: TextSpan(
-                        //           style: GoogleFonts.poppins(
-                        //             fontSize: 12,
-                        //             color: Color(0xFF333333),
-                        //           ),
-                        //           children: [
-                        //             TextSpan(text: 'Product Code / SKU '),
-                        //             TextSpan(
-                        //               text: '*',
-                        //               style: TextStyle(color: Colors.red),
-                        //             ),
-                        //           ],
-                        //         ),
-                        //       ),
-                        //       SizedBox(height: 4),
-                        //       // TextField(
-                        //       //   style: GoogleFonts.poppins(fontSize: 12),
-                        //       //   decoration: InputDecoration(
-                        //       //     hintText: 'eg: RB -001',
-                        //       //     hintStyle: GoogleFonts.poppins(
-                        //       //       fontSize: 12,
-                        //       //       color: Colors.grey,
-                        //       //     ),
-                        //       //     contentPadding: EdgeInsets.symmetric(
-                        //       //       horizontal: 11,
-                        //       //       vertical: 10,
-                        //       //     ),
-                        //       //     isDense: true,
-                        //       //     border: OutlineInputBorder(
-                        //       //       borderRadius: BorderRadius.circular(8),
-                        //       //     ),
-                        //       //     enabledBorder: OutlineInputBorder(
-                        //       //       borderRadius: BorderRadius.circular(8),
-                        //       //       borderSide: BorderSide(
-                        //       //         color: Color(0xFFDDD8D4),
-                        //       //       ),
-                        //       //     ),
-                        //       //   ),
-                        //       // ),
-                        //       AppTextField(
-                        //         controller: productCodeController,
-                        //         keyboardType: TextInputType.text,
-                        //         hintText: 'eg: RB -001',
-                        //         height: Sizes.screenHeight * 0.050,
-                        //         hintTextHeight: Sizes.screenHeight * 0.010,
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                       ],
                     ),
 
@@ -497,54 +505,6 @@ class _AddProductPageState extends State<AddProductPage> {
                             ],
                           ),
                         ),
-                      //  SizedBox(width: 16),
-
-                        // Expanded(
-                        //   child: Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       Text(
-                        //         'Product Type / Design',
-                        //         style: GoogleFonts.poppins(
-                        //           fontSize: 12,
-                        //           color: Color(0xFF333333),
-                        //         ),
-                        //       ),
-                        //       SizedBox(height: 4),
-                        //       // TextField(
-                        //       //   style: GoogleFonts.poppins(fontSize: 12),
-                        //       //   decoration: InputDecoration(
-                        //       //     hintText: 'e.g. Standard, Zigzag, I Shape',
-                        //       //     hintStyle: GoogleFonts.poppins(
-                        //       //       fontSize: 12,
-                        //       //       color: Colors.grey,
-                        //       //     ),
-                        //       //     contentPadding: EdgeInsets.symmetric(
-                        //       //       horizontal: 11,
-                        //       //       vertical: 10,
-                        //       //     ),
-                        //       //     isDense: true,
-                        //       //     border: OutlineInputBorder(
-                        //       //       borderRadius: BorderRadius.circular(8),
-                        //       //     ),
-                        //       //     enabledBorder: OutlineInputBorder(
-                        //       //       borderRadius: BorderRadius.circular(8),
-                        //       //       borderSide: BorderSide(
-                        //       //         color: Color(0xFFDDD8D4),
-                        //       //       ),
-                        //       //     ),
-                        //       //   ),
-                        //       // ),
-                        //       AppTextField(
-                        //         controller: productTypeController,
-                        //         keyboardType: TextInputType.text,
-                        //         hintText: 'e.g. Standard, Zigzag',
-                        //         height: Sizes.screenHeight * 0.050,
-                        //         hintTextHeight: Sizes.screenHeight * 0.010,
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                       ],
                     ),
                   ],
@@ -1188,31 +1148,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     text: 'Save Product',
                     isLoading: Provider.of<AddNewProductViewModel>(context).loading,
                     onPressed: () async {
-                      if (selectedCategory == null) {
-                        Utils.showErrorMessage(context, 'Please select a category');
-                        return;
-                      }
-                      final addProduct = Provider.of<AddNewProductViewModel>(context,listen: false);
-                      await addProduct.addProductApi(
-                        productImage: selectedImage,
-                        productName: nameController.text,
-                        sku: productCodeController.text,
-                        category: selectedCategory!,
-                        productType: productTypeController.text,
-                        lengthMm: lengthController.text,
-                        widthMm: widthController.text,
-                        heightMm: hightController.text,
-                        colour: selectedColour,
-                        initialQuantity: quantityController.text,
-                        minStockAlert: minimumStockController.text,
-                        costPrice: costPriceController.text,
-                        sellingPrice: selllingPriceController.text,
-                        description: descriptionController.text,
-                        productStatus: productStatus,
-                        context: context,
-                      );
-                      
-
+                      await _handleSaveProduct();
                     },
                     iconOnLeft: false,
                   ),

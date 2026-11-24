@@ -50,8 +50,32 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
   }
 
   Future<void> handleSavePayment() async {
-    if (amountController.text.trim().isEmpty) {
+    final String amountText = amountController.text.trim();
+    if (amountText.isEmpty) {
       Utils.showErrorMessage(context, "Please enter payment amount");
+      return;
+    }
+
+    final double enteredAmount = double.tryParse(amountText) ?? 0;
+
+    if (enteredAmount <= 0) {
+      Utils.showErrorMessage(context, "Amount must be greater than 0");
+      return;
+    }
+
+    if (widget.data.remainingAmount <= 0) {
+      Utils.showErrorMessage(
+        context,
+        "Remaining payable is 0. Amount must be greater than 0",
+      );
+      return;
+    }
+
+    if (enteredAmount > widget.data.remainingAmount) {
+      Utils.showErrorMessage(
+        context,
+        "Payment amount cannot exceed remaining payable (₹ ${widget.data.remainingAmount})",
+      );
       return;
     }
 
@@ -64,7 +88,7 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
 
     final success = await savePaymentVM.savePaymentApi(
       widget.data.labourId.toString(),
-      amountController.text.trim(),
+      amountText,
       dateStr,
       selectedPayment.toLowerCase(),
       "wage",
@@ -801,16 +825,30 @@ class _LabourpayoutdetailsState extends State<Labourpayoutdetails> {
                                   Expanded(
                                     child: TextField(
                                       controller: amountController,
-                                      keyboardType: TextInputType.number,
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
                                       style: GoogleFonts.poppins(
                                         fontSize: 12,
-                                        color: Color(0xFF172033),
+                                        color: const Color(0xFF172033),
                                       ),
-                                      decoration: InputDecoration(
+                                      decoration: const InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.zero,
                                         isDense: true,
                                       ),
+                                      onChanged: (value) {
+                                        final double val =
+                                            double.tryParse(value.trim()) ?? 0;
+                                        if (widget.data.remainingAmount <= 0 &&
+                                            val > 0) {
+                                          Utils.showErrorMessage(
+                                            context,
+                                            "Remaining payable is 0. Amount must be greater than 0",
+                                          );
+                                        }
+                                      },
                                     ),
                                   ),
                                 ],

@@ -51,7 +51,7 @@ class StockCard extends StatelessWidget {
           children: [
             Container(
               height: Sizes.screenHeight * 0.09,
-              width: Sizes.screenWidth * 0.09,
+              width: Sizes.screenWidth * 0.08,
               decoration: BoxDecoration(
                 color: iconBackgroundColor,
                 shape: BoxShape.circle,

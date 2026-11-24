@@ -8,7 +8,6 @@ import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Customeordercard.dart';
-import 'addproduct.dart';
 import 'circularprogressindicator.dart';
 import 'drawer.dart';
 import 'neworder.dart';
@@ -33,7 +32,7 @@ class _OrdersState extends State<Orders> {
 
   String _getStatusParam(int index) {
     if (index == 1) return 'pending';
-    if (index == 2) return 'dispatched';
+    if (index == 2) return 'completed';
     return 'all';
   }
 
@@ -42,13 +41,14 @@ class _OrdersState extends State<Orders> {
       return [
         'All Orders',
         'Pending',
-        'Dispatched',
+        'Completed',
       ];
     }
+
     return [
       'All Orders (${orderList.allCount})',
       'Pending (${orderList.pendingCount})',
-      'Dispatched (${orderList.dispatchedCount})',
+      'Completed (${orderList.completedCount})',
     ];
   }
 
@@ -68,6 +68,15 @@ class _OrdersState extends State<Orders> {
   Widget build(BuildContext context) {
     final OrderList = Provider.of<OrdersListViewModel>(context);
     final orderTabs = _getDynamicOrderTabs(OrderList);
+    final displayedOrders = OrderList.filteredOrders.where((order) {
+      if (selectedOrderTab == 1) {
+        return order.order_status.toLowerCase().trim() == 'pending';
+      } else if (selectedOrderTab == 2) {
+        return order.order_status.toLowerCase().trim() == 'completed';
+      }
+
+      return true;
+    }).toList();
 
     return Scaffold(
       backgroundColor: AppColor.bodybackgroundColor,
@@ -167,7 +176,7 @@ class _OrdersState extends State<Orders> {
                     ),
                   )
 
-                else if (OrderList.ordersListModel == null || OrderList.filteredOrders.isEmpty)
+                else if (OrderList.ordersListModel == null || displayedOrders.isEmpty)
                     Center(
                       child: Text('No Orders Found'),
                     )
@@ -176,9 +185,9 @@ class _OrdersState extends State<Orders> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics:  ClampingScrollPhysics(),
-                      itemCount: OrderList.filteredOrders.length,
+                      itemCount: displayedOrders.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final order = OrderList.filteredOrders[index];
+                        final order = displayedOrders[index];
                         final String displayDateTime =
                             (order.created_at.isNotEmpty &&
                                     order.created_at.toLowerCase() != 'null')
@@ -194,7 +203,7 @@ class _OrdersState extends State<Orders> {
                           customer: order.client_name,
                           price: order.total_amount,
                           orderStatus: order.order_status,
-                          dispatchStatus: order.dispatch_status,
+                          dispatchStatus: order.dispatch_status.replaceAll(RegExp(r'dispatch(ed)?', caseSensitive: false), 'Completed'),
                           backgroundColor: AppColor.tilesColor,
                           onViewDetails: () async {
                             final ordersVM = Provider.of<OrdersListViewModel>(
@@ -248,7 +257,7 @@ class _OrdersState extends State<Orders> {
                   ),
                 ),
                 Text(
-                  'Manage your order and Dispatch',
+                  'Manage your order and Completed',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(

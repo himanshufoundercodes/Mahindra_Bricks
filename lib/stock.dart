@@ -221,6 +221,7 @@ class _StockState extends State<Stock> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => Addproduct(
+                            id: stock.id?.toString() ?? '',
                             image: stock.imageUrl?.toString() ?? '',
                             name: stock.name?.toString() ?? '',
                             category: stock.category?.toString() ?? '',
@@ -253,6 +254,7 @@ class _StockState extends State<Stock> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => Addproduct(
+                                id: stock.id?.toString() ?? '',
                                 image: stock.imageUrl?.toString() ?? '',
                                 name: stock.name?.toString() ?? '',
                                 size: stock.dimensions?.toString() ?? '',

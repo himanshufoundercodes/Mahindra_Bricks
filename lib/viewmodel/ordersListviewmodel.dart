@@ -22,45 +22,82 @@ class OrdersListViewModel with ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  static bool _isDispatchedOrder(OrderdsDataModel order) {
+    final oStatus = order.order_status.trim().toLowerCase();
+    final dStatus = order.dispatch_status.trim().toLowerCase();
+
+    if (oStatus.contains('not') ||
+        oStatus.contains('pending') ||
+        oStatus.contains('processing') ||
+        dStatus.contains('not') ||
+        dStatus.contains('pending') ||
+        dStatus.contains('processing')) {
+      return false;
+    }
+
+    if (oStatus.contains('dispatch') ||
+        dStatus.contains('dispatch') ||
+        oStatus == 'completed' ||
+        dStatus == 'completed') {
+      return true;
+    }
+
+    return false;
+  }
+
+  static bool _isPendingOrder(OrderdsDataModel order) {
+    final oStatus = order.order_status.trim().toLowerCase();
+    final dStatus = order.dispatch_status.trim().toLowerCase();
+
+    if (oStatus == 'processing') {
+      return false;
+    }
+
+    if (_isDispatchedOrder(order)) {
+      return false;
+    }
+
+    if (oStatus == 'pending' ||
+        dStatus.contains('pending') ||
+        dStatus.contains('not')) {
+      return true;
+    }
+
+    return oStatus.isEmpty || oStatus == 'pending';
+  }
+
   List<OrderdsDataModel> get filteredOrders {
-    if (_ordersListModel == null) return [];
-    final list = _ordersListModel!.data;
+    final list = _allOrders.isNotEmpty
+        ? _allOrders
+        : (_ordersListModel?.data ?? []);
+
     if (_currentStatus == 'pending') {
-      return list.where((order) {
-        final oStatus = order.order_status.toLowerCase();
-        final dStatus = order.dispatch_status.toLowerCase();
-        return oStatus.contains('pending') || dStatus.contains('pending');
-      }).toList();
+      return list.where(_isPendingOrder).toList();
     } else if (_currentStatus == 'dispatched') {
-      return list.where((order) {
-        final oStatus = order.order_status.toLowerCase();
-        final dStatus = order.dispatch_status.toLowerCase();
-        return oStatus.contains('dispatch') || dStatus.contains('dispatch');
-      }).toList();
+      return list.where(_isDispatchedOrder).toList();
     }
     return list;
   }
 
   int get allCount {
-    return _allOrders.isNotEmpty ? _allOrders.length : (_ordersListModel?.data.length ?? 0);
+    final list = _allOrders.isNotEmpty ? _allOrders : (_ordersListModel?.data ?? []);
+    return list.length;
   }
 
   int get pendingCount {
     final list = _allOrders.isNotEmpty ? _allOrders : (_ordersListModel?.data ?? []);
-    return list.where((order) {
-      final oStatus = order.order_status.toLowerCase();
-      final dStatus = order.dispatch_status.toLowerCase();
-      return oStatus.contains('pending') || dStatus.contains('pending');
+    return list.where(_isPendingOrder).length;
+  }
+
+  int get completedCount {
+    return allOrders.where((order) {
+      return order.order_status.toLowerCase().trim() == 'completed';
     }).length;
   }
 
   int get dispatchedCount {
     final list = _allOrders.isNotEmpty ? _allOrders : (_ordersListModel?.data ?? []);
-    return list.where((order) {
-      final oStatus = order.order_status.toLowerCase();
-      final dStatus = order.dispatch_status.toLowerCase();
-      return oStatus.contains('dispatch') || dStatus.contains('dispatch');
-    }).length;
+    return list.where(_isDispatchedOrder).length;
   }
 
   Future<bool> OrdersApi({String? status}) async {
@@ -74,14 +111,12 @@ class OrdersListViewModel with ChangeNotifier {
 
     try {
 
-      final response = await _ordersListRepo.OrdersApi(status: _currentStatus);
+      final response = await _ordersListRepo.OrdersApi(status: 'all');
 
       _ordersListModel = response;
-      if (_currentStatus == 'all' || _allOrders.isEmpty) {
-        _allOrders = response.data;
-      }
+      _allOrders = response.data;
 
-      debugPrint("Orders Listed Successfully");
+      debugPrint("Orders Listed Successfully: Total ${_allOrders.length}");
 
       return true;
 
@@ -89,7 +124,7 @@ class OrdersListViewModel with ChangeNotifier {
 
       _errorMessage = e.toString();
 
-      debugPrint("Category Error: $e");
+      debugPrint("Orders API Error: $e");
 
       return false;
 

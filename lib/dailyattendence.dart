@@ -306,9 +306,19 @@ class _DailyattendenceState extends State<Dailyattendence> {
                     InkWell(
                       borderRadius: BorderRadius.circular(20),
                       onTap: () {
+                        final now = DateTime.now();
+                        final today = DateTime(now.year, now.month, now.day);
+                        final nextDate = selectedDate.add(const Duration(days: 1));
+                        final nextDateOnly =
+                            DateTime(nextDate.year, nextDate.month, nextDate.day);
+
+                        if (nextDateOnly.isAfter(today)) {
+                          Utils.showErrorMessage(context, "Cannot select future date");
+                          return;
+                        }
+
                         setState(() {
-                          selectedDate =
-                              selectedDate.add(const Duration(days: 1));
+                          selectedDate = nextDate;
                         });
                         _fetchAttendanceForDate(selectedDate);
                       },
@@ -338,7 +348,19 @@ class _DailyattendenceState extends State<Dailyattendence> {
                               child: CustomCalendar(
                                 isRange: false,
                                 selectedDate: selectedDate,
+                                maxDate: DateTime.now(),
                                 onDateSelected: (date) {
+                                  final now = DateTime.now();
+                                  final today = DateTime(now.year, now.month, now.day);
+                                  final target =
+                                      DateTime(date.year, date.month, date.day);
+
+                                  if (target.isAfter(today)) {
+                                    Utils.showErrorMessage(
+                                        context, "Cannot select future date");
+                                    return;
+                                  }
+
                                   setState(() {
                                     selectedDate = date;
                                   });

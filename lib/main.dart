@@ -1,44 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:mahindra_bricks/homepage.dart';
-// import 'package:provider/provider.dart';
-// import 'Constant/Sizes.dart';
-// import 'Splashscreen.dart';
-// import 'addproduction.dart';
-// import 'labourmanagement.dart';
-//
-// void main() {
-//   runApp();
-//
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MultiProvider(
-//
-//       child: MaterialApp(
-//         debugShowCheckedModeBanner: false,
-//         title: 'Mahindra Bricks',
-//         theme: ThemeData(),
-//         builder: (context, child) {
-//           Sizes.init(context);
-//           return MediaQuery(
-//             data: MediaQuery.of(context).copyWith(
-//               textScaler: MediaQuery.textScalerOf(context).clamp(
-//                 minScaleFactor: 0.8,
-//                 maxScaleFactor: 1.3,
-//               ),
-//             ),
-//             child: child!,
-//           );
-//         },
-//         home: MahindraSplashScreen(),
-//       ),
-//     );
-//   }
-// }
 
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_file.dart';
@@ -56,6 +15,7 @@ import 'package:mahindra_bricks/viewmodel/cementstockview_model.dart';
 import 'package:mahindra_bricks/viewmodel/clientview_model.dart';
 import 'package:mahindra_bricks/viewmodel/dailyattendenceview_model.dart';
 import 'package:mahindra_bricks/viewmodel/dashboardview_model.dart';
+import 'package:mahindra_bricks/viewmodel/editproductview_model.dart' show EditProductViewModel, ProductUpdateViewModel;
 import 'package:mahindra_bricks/viewmodel/labour_viewmodel.dart';
 import 'package:mahindra_bricks/viewmodel/labourpayoutview_model.dart';
 import 'package:mahindra_bricks/viewmodel/loginview_model.dart';

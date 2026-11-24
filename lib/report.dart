@@ -93,6 +93,22 @@ class _ReportState extends State<Report> {
     );
   }
 
+  Future<void> _handleRefresh() async {
+    final now = DateTime.now();
+    setState(() {
+      selectedStartDate = now;
+      selectedEndDate = now;
+    });
+    final String todayStr = formatApiDate(now);
+    await Provider.of<ReportsviewModel>(
+      context,
+      listen: false,
+    ).ReportsApi(
+      fromDate: todayStr,
+      toDate: todayStr,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final reportsList = Provider.of<ReportsviewModel>(context);
@@ -130,9 +146,7 @@ class _ReportState extends State<Report> {
         color: AppColor.stockAmountColor,
         backgroundColor: Colors.white,
         displacement: 50,
-        onRefresh: () async {
-          _fetchFilteredReports();
-        },
+        onRefresh: _handleRefresh,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Column(

@@ -7,8 +7,6 @@ import 'package:provider/provider.dart';
 
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
-import 'Constant/Constantbutton.dart';
-import 'Constant/Constantheader.dart';
 import 'Constant/ConstnatTextfield.dart';
 import 'Constant/Constnat_Appbutton.dart';
 
@@ -25,30 +23,63 @@ class _AddlabourState extends State<Addlabour> {
   final TextEditingController MobilenumberController = TextEditingController();
   final TextEditingController DailyrateController = TextEditingController();
 
+  bool _isValidIndianMobile(String mobile) {
+    final indianMobileRegex = RegExp(r'^[6-9][0-9]{9}$');
+    final repeatingDigitsRegex = RegExp(r'(\d)\1{3,}');
+
+    if (!indianMobileRegex.hasMatch(mobile)) {
+      return false;
+    }
+    if (repeatingDigitsRegex.hasMatch(mobile)) {
+      return false;
+    }
+    return true;
+  }
+
   Future<void> handladdlabour() async {
-    if (LabournameController.text.trim().isEmpty) {
+    final String labourName = LabournameController.text.trim();
+    final String mobileNumber = MobilenumberController.text.trim();
+    final String dailyRate = DailyrateController.text.trim();
+
+    if (labourName.isEmpty) {
       Utils.showErrorMessage(context, "Labour name required");
       return;
     }
+
+    if (mobileNumber.isEmpty || !_isValidIndianMobile(mobileNumber)) {
+      Utils.showErrorMessage(context, "Enter valid number");
+      return;
+    }
+
+    if (dailyRate.isEmpty) {
+      Utils.showErrorMessage(context, "Daily rate required");
+      return;
+    }
+
+    if (double.tryParse(dailyRate) == null || double.parse(dailyRate) <= 0) {
+      Utils.showErrorMessage(context, "Enter valid daily rate");
+      return;
+    }
+
     final viewModel = context.read<AddlabourviewModel>();
     if (viewModel.loading) return;
+
     final success = await viewModel.addlabourApi(
-      LabournameController.text,
-      MobilenumberController.text,
-      DailyrateController.text,
+      labourName,
+      mobileNumber,
+      dailyRate,
       context,
     );
 
-    if (!context.mounted) return;
+    if (!mounted) return;
 
     if (success) {
-      Utils.showSuccessMessage(context, "Add Client Successfully!");
-
+      Utils.showSuccessMessage(context, "Labour added successfully!");
       Navigator.pop(context, true);
     } else {
       Utils.showErrorMessage(
         context,
-        viewModel.errorMessage ?? "Add client failed",
+        viewModel.errorMessage ?? "Failed to add labour",
       );
     }
   }
@@ -185,6 +216,18 @@ class _AddlabourState extends State<Addlabour> {
                       ),
                     ),
                     SizedBox(height: Sizes.screenHeight * 0.006),
+                    // SizedBox(
+                    //   height: Sizes.screenHeight * 0.075,
+                    //   child: AppTextField(
+                    //     prefixIcon: Icons.call,
+                    //     maxLength: 10,
+                    //     controller: MobilenumberController,
+                    //     keyboardType: TextInputType.number,
+                    //     hintText: 'Enter mobile number',
+                    //     height: Sizes.screenHeight * 0.056,
+                    //     hintTextHeight: Sizes.screenHeight * 0.015,
+                    //   ),
+                    // ),
                     SizedBox(
                       height: Sizes.screenHeight * 0.075,
                       child: AppTextField(
@@ -195,9 +238,19 @@ class _AddlabourState extends State<Addlabour> {
                         hintText: 'Enter mobile number',
                         height: Sizes.screenHeight * 0.056,
                         hintTextHeight: Sizes.screenHeight * 0.015,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter valid number';
+                          }
+
+                          if (!_isValidIndianMobile(value)) {
+                            return 'Enter valid number';
+                          }
+
+                          return null;
+                        },
                       ),
                     ),
-
                     SizedBox(height: Sizes.screenHeight * 0.006),
 
                     Text.rich(

@@ -6,6 +6,7 @@ class CustomCalendar extends StatefulWidget {
   final DateTime? selectedDate;
   final DateTime? startDate;
   final DateTime? endDate;
+  final DateTime? maxDate;
 
   final Function(DateTime)? onDateSelected;
   final Function(DateTime, DateTime)? onRangeSelected;
@@ -16,6 +17,7 @@ class CustomCalendar extends StatefulWidget {
     this.selectedDate,
     this.startDate,
     this.endDate,
+    this.maxDate,
     this.onDateSelected,
     this.onRangeSelected,
   });
@@ -58,6 +60,18 @@ class _CustomCalendarState extends State<CustomCalendar> {
   }
 
   void selectDay(DateTime date) {
+    if (widget.maxDate != null) {
+      final dateOnly = DateTime(date.year, date.month, date.day);
+      final maxOnly = DateTime(
+        widget.maxDate!.year,
+        widget.maxDate!.month,
+        widget.maxDate!.day,
+      );
+      if (dateOnly.isAfter(maxOnly)) {
+        return;
+      }
+    }
+
     setState(() {
       if (widget.isRange) {
         if (startDate == null || endDate != null) {
@@ -174,6 +188,17 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 day,
               );
 
+              final dateOnly = DateTime(date.year, date.month, date.day);
+              final maxOnly = widget.maxDate != null
+                  ? DateTime(
+                      widget.maxDate!.year,
+                      widget.maxDate!.month,
+                      widget.maxDate!.day,
+                    )
+                  : null;
+              final bool isDisabled =
+                  maxOnly != null && dateOnly.isAfter(maxOnly);
+
               final isSelected = widget.isRange
                   ? isSameDay(date, startDate) ||
                   isSameDay(date, endDate)
@@ -183,7 +208,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                   widget.isRange && isInRange(date);
 
               return GestureDetector(
-                onTap: () => selectDay(date),
+                onTap: isDisabled ? null : () => selectDay(date),
                 child: Container(
                   margin: EdgeInsets.all(2),
                   decoration: BoxDecoration(
@@ -198,9 +223,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
                   child: Text(
                     '$day',
                     style: GoogleFonts.poppins(
-                      color: isSelected
-                          ? Colors.white
-                          : Colors.black87,
+                      color: isDisabled
+                          ? Colors.grey.shade300
+                          : (isSelected ? Colors.white : Colors.black87),
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.normal,

@@ -1,12 +1,13 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mahindra_bricks/Constant/Constant_bottomnav.dart' show CustomBottomNavBar;
+import 'package:mahindra_bricks/Constant/Constant_bottomnav.dart'
+    show CustomBottomNavBar;
 import 'package:mahindra_bricks/repo/addproduct_repo.dart';
 import 'package:mahindra_bricks/utils/utils.dart';
 import 'package:mahindra_bricks/viewmodel/user_view_model.dart';
-
 
 class AddNewProductViewModel with ChangeNotifier {
   final AddProductRepo _addProductRepo = AddProductRepo();
@@ -20,6 +21,7 @@ class AddNewProductViewModel with ChangeNotifier {
   }
 
   Future<bool> addProductApi({
+    String? productId,
     required File? productImage,
     required String productName,
     required String sku,
@@ -37,9 +39,10 @@ class AddNewProductViewModel with ChangeNotifier {
     required String productStatus,
     required BuildContext context,
   }) async {
-
     setLoading(true);
     Map<String, String> fields = {
+      if (productId != null && productId.isNotEmpty) "product_id": productId,
+      if (productId != null && productId.isNotEmpty) "_method": "PUT",
       "product_name": productName,
       "sku": sku,
       "category": category,
@@ -56,9 +59,7 @@ class AddNewProductViewModel with ChangeNotifier {
       "product_status": productStatus,
     };
 
-    Map<String, dynamic> files = {
-      "product_images": productImage,
-    };
+    Map<String, dynamic> files = {"product_images": productImage};
 
     //  PRINT REQUEST DATA (DEBUG)
     print("=================== 📤 JOB REQUEST DEBUG ===================");
@@ -75,28 +76,38 @@ class AddNewProductViewModel with ChangeNotifier {
     print("============================================================\n");
 
     try {
-      final response = await _addProductRepo.addProductApi(fields, files);
+      final response = await _addProductRepo.addProductApi(
+        fields,
+        files,
+        productId: productId,
+      );
 
       print("FULL RESPONSE: $response");
 
-      if (response["message"] == "Product created successfully.") {
-
+      if (response["message"] == "Product created successfully." ||
+          response["message"] == "Product updated successfully." ||
+          response["status"] == true ||
+          response["status"] == 200 ||
+          response["status"] == "success" ||
+          response["message"]?.toString().toLowerCase().contains("success") ==
+              true) {
         Utils.showSuccessMessage(
           context,
-          response["message"] ?? "Product added successfully",
+          response["message"] ??
+              (productId != null
+                  ? "Product updated successfully"
+                  : "Product added successfully"),
         );
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => const CustomBottomNavBar(initialIndex: 1),
           ),
-              (route) => false,
+          (route) => false,
         );
 
         return true;
-
       } else {
-
         Utils.showErrorMessage(
           context,
           response["message"] ?? "Something went wrong!",
@@ -106,7 +117,7 @@ class AddNewProductViewModel with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) print("❌ ViewModel Error → $e");
-      
+
       // Extracting a cleaner error message if it's a string exception from network layer
       String errorMessage = "Request failed!";
       if (e.toString().contains("Invalid Request:")) {
@@ -116,7 +127,7 @@ class AddNewProductViewModel with ChangeNotifier {
       } else {
         errorMessage = e.toString();
       }
-      
+
       Utils.showErrorMessage(context, errorMessage);
       return false;
     } finally {

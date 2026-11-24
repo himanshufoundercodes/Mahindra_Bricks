@@ -94,6 +94,51 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future<dynamic> putFormDataApiResponse(
+      String url,
+      Map<String, String> fields,
+      Map<String, File>? files,
+      ) async {
+    try {
+      String? token = await UserViewModel().getToken();
+
+      var request = http.MultipartRequest(
+        'PUT',
+        Uri.parse(url),
+      );
+
+      request.headers.addAll({
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+
+      request.fields.addAll(fields);
+
+      if (files != null) {
+        for (var entry in files.entries) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              entry.key,
+              entry.value.path,
+            ),
+          );
+        }
+      }
+
+      var response = await request.send();
+
+      var responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201) {
+        return jsonDecode(responseBody);
+      } else {
+        throw Exception(responseBody);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   @override
   Future getPostApiFormData(

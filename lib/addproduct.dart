@@ -6,8 +6,10 @@ import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constantstockcard.dart';
 import 'Constant/Constnat_Appbutton.dart';
+import 'editproduct.dart';
 
 class Addproduct extends StatefulWidget {
+  final dynamic id; // Add product id
   final dynamic image;
   final dynamic name;
   final dynamic size;
@@ -24,8 +26,18 @@ class Addproduct extends StatefulWidget {
   final dynamic CostPrice;
   final dynamic SellingPrice;
 
+  // New fields for Editproduct
+  final dynamic categoryId;
+  final dynamic description;
+  final dynamic colour;
+  final dynamic productType;
+  final dynamic lengthMm;
+  final dynamic widthMm;
+  final dynamic heightMm;
+
   Addproduct({
     super.key,
+    this.id, // add here
     this.image,
     this.name,
     this.size,
@@ -41,6 +53,13 @@ class Addproduct extends StatefulWidget {
     this.CurrentStockValue,
     this.CostPrice,
     this.SellingPrice,
+    this.categoryId,
+    this.description,
+    this.colour,
+    this.productType,
+    this.lengthMm,
+    this.widthMm,
+    this.heightMm,
   });
 
   @override
@@ -71,19 +90,26 @@ class _AddproductState extends State<Addproduct> {
   @override
   Widget build(BuildContext context) {
     final String imageStr = widget.image?.toString() ?? '';
-    final String nameStr = (widget.name != null && widget.name.toString().trim().isNotEmpty)
+    final String nameStr =
+        (widget.name != null && widget.name.toString().trim().isNotEmpty)
         ? widget.name.toString().trim()
         : 'Product Details';
-    final String sizeStr = (widget.size != null && widget.size.toString().trim().isNotEmpty)
+    final String sizeStr =
+        (widget.size != null && widget.size.toString().trim().isNotEmpty)
         ? widget.size.toString().trim()
         : '230 × 110 × 70 mm';
-    final String codeStr = (widget.code != null && widget.code.toString().trim().isNotEmpty)
+    final String codeStr =
+        (widget.code != null && widget.code.toString().trim().isNotEmpty)
         ? widget.code.toString().trim()
         : 'N/A';
-    final String categoryStr = (widget.category != null && widget.category.toString().trim().isNotEmpty)
+    final String categoryStr =
+        (widget.category != null &&
+            widget.category.toString().trim().isNotEmpty)
         ? widget.category.toString().trim()
         : 'Bricks';
-    final String displayStatus = (widget.stockStatus != null && widget.stockStatus.toString().trim().isNotEmpty)
+    final String displayStatus =
+        (widget.stockStatus != null &&
+            widget.stockStatus.toString().trim().isNotEmpty)
         ? widget.stockStatus.toString().trim()
         : 'In Stock';
 
@@ -92,7 +118,8 @@ class _AddproductState extends State<Addproduct> {
     final String totalProductionStr = widget.TotalProduction?.toString() ?? '0';
     final String totalDispatchedStr = widget.TotalDispatched?.toString() ?? '0';
     final String totalSoldStr = widget.TotalSold?.toString() ?? '0';
-    final String currentStockValueStr = widget.CurrentStockValue?.toString() ?? '0';
+    final String currentStockValueStr =
+        widget.CurrentStockValue?.toString() ?? '0';
     final String costPriceStr = widget.CostPrice?.toString() ?? '0';
     final String sellingPriceStr = widget.SellingPrice?.toString() ?? '0';
 
@@ -113,7 +140,7 @@ class _AddproductState extends State<Addproduct> {
             _buildHeader(),
             Card(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                 decoration: BoxDecoration(
                   color: AppColor.white,
                   borderRadius: BorderRadius.circular(12),
@@ -134,23 +161,31 @@ class _AddproductState extends State<Addproduct> {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
                                   Container(
-                                height: Sizes.screenHeight * 0.16,
-                                color: AppColor.imgbg,
-                                child: Icon(Icons.inventory_2,
-                                    size: 40, color: AppColor.stockUnitColor),
-                              ),
+                                    height: Sizes.screenHeight * 0.16,
+                                    color: AppColor.imgbg,
+                                    child: Icon(
+                                      Icons.inventory_2,
+                                      size: 40,
+                                      color: AppColor.stockUnitColor,
+                                    ),
+                                  ),
                             )
                           : Image.asset(
-                              imageStr.isNotEmpty ? imageStr : 'assets/bricks.jpg',
+                              imageStr.isNotEmpty
+                                  ? imageStr
+                                  : 'assets/bricks.jpg',
                               height: Sizes.screenHeight * 0.16,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
                                   Container(
-                                height: Sizes.screenHeight * 0.16,
-                                color: AppColor.imgbg,
-                                child: Icon(Icons.inventory_2,
-                                    size: 40, color: AppColor.stockUnitColor),
-                              ),
+                                    height: Sizes.screenHeight * 0.16,
+                                    color: AppColor.imgbg,
+                                    child: Icon(
+                                      Icons.inventory_2,
+                                      size: 40,
+                                      color: AppColor.stockUnitColor,
+                                    ),
+                                  ),
                             ),
                     ),
                     SizedBox(width: Sizes.screenWidth * 0.025),
@@ -246,9 +281,9 @@ class _AddproductState extends State<Addproduct> {
                                   ),
                                   const SizedBox(width: 18),
                                 ],
-                              )
+                              ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -258,11 +293,12 @@ class _AddproductState extends State<Addproduct> {
             ),
             Column(
               children: [
-                const SizedBox(height: 15),
+                SizedBox(height: 10),
                 GridView.count(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
                   crossAxisCount: 2,
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
                   childAspectRatio: 2.1,
@@ -370,7 +406,7 @@ class _AddproductState extends State<Addproduct> {
                       subtitleColor: AppColor.gey,
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ],
@@ -382,8 +418,8 @@ class _AddproductState extends State<Addproduct> {
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: Sizes.screenHeight * 0.010,
-          vertical: Sizes.screenHeight * 0.010
+        horizontal: Sizes.screenHeight * 0.010,
+        vertical: Sizes.screenHeight * 0.010,
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
@@ -423,20 +459,41 @@ class _AddproductState extends State<Addproduct> {
               height: 35,
               width: 100,
               text: 'Edit Product',
-              fontSize:  12,
+              fontSize: 12,
               fontWeight: .w500,
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => AddProductPage()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Editproduct(
+                      productId: widget.id
+                          ?.toString(), // Pass ID to Editproduct
+                      image: widget.image,
+                      categoryId: widget.categoryId,
+                      name: widget.name,
+                      category: widget.category,
+                      code: widget.code,
+                      price: widget.price,
+                      AvaibleStock: widget.AvaibleStock,
+                      MinimumStockAlert: widget.MinimumStockAlert,
+                      CostPrice: widget.CostPrice,
+                      SellingPrice: widget.SellingPrice,
+                      description: widget.description,
+                      colour: widget.colour,
+                      productType: widget.productType,
+                      lengthMm: widget.lengthMm,
+                      widthMm: widget.widthMm,
+                      heightMm: widget.heightMm,
+                      stockStatus: widget.stockStatus,
+                    ),
+                  ),
+                );
               },
               iconOnLeft: true,
               icon: Icons.edit,
               iconSize: 15,
               iconSpacing: 2,
             ),
-
           ],
         ),
       ),
@@ -448,20 +505,16 @@ class _AddproductState extends State<Addproduct> {
     required String subtitle,
     required IconData icon,
   }) {
-    return  Row(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           padding: EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color:AppColor.imgbg,
+            color: AppColor.imgbg,
             borderRadius: BorderRadius.circular(5),
           ),
-          child: Icon(
-            icon,
-            size: 16,
-            color: AppColor.stockTitleColor,
-          ),
+          child: Icon(icon, size: 16, color: AppColor.stockTitleColor),
         ),
         SizedBox(width: 6),
         Column(
@@ -469,10 +522,7 @@ class _AddproductState extends State<Addproduct> {
           children: [
             Text(
               title,
-              style: GoogleFonts.poppins(
-                fontSize: 10,
-                color: Colors.blueGrey,
-              ),
+              style: GoogleFonts.poppins(fontSize: 10, color: Colors.blueGrey),
             ),
             Text(
               subtitle,
