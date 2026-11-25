@@ -51,9 +51,36 @@ class _NeworderState extends State<Neworder> {
   String selectedPaymentMode = '1';
   DateTime selectedDeliveryDate = DateTime(2026, 12, 10);
 
+  bool validateMobileNumber(String mobile) {
+    if (mobile.length != 10) {
+      Utils.showErrorMessage(context, 'Mobile number must be 10 digits');
+      return false;
+    }
+    if (!RegExp(r'^[6-9]').hasMatch(mobile)) {
+      Utils.showErrorMessage(
+        context,
+        'Please Enter valid mobile number',
+      );
+      return false;
+    }
+    if (RegExp(r'(\d)\1{3,}').hasMatch(mobile)) {
+      Utils.showErrorMessage(
+        context,
+        'Please Enter valid mobile number',
+      );
+      return false;
+    }
+    return true;
+  }
+
   Future<void> saveNewOrder() async {
     if (selectedClient == null || selectedClient!.isEmpty) {
       Utils.showErrorMessage(context, 'Please select a client');
+      return;
+    }
+    String mobile = OrdermobileController.text.trim();
+
+    if (mobile.isNotEmpty && !validateMobileNumber(mobile)) {
       return;
     }
 
@@ -556,6 +583,9 @@ class _NeworderState extends State<Neworder> {
                                   controller: OrdermobileController,
                                   keyboardType: TextInputType.number,
                                   maxLength: 10,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
                                   hintText: 'Enter number',
                                   height: Sizes.screenHeight * 0.050,
                                   hintTextHeight: Sizes.screenHeight * 0.008,
@@ -591,15 +621,12 @@ class _NeworderState extends State<Neworder> {
                               SizedBox(
                                 height: Sizes.screenHeight * 0.055,
                                 child: AppTextField(
-                                  prefix: const Icon(
-                                    Icons.location_on,
-                                    size: 14,
-                                  ),
                                   controller: OrderaddressController,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'Enter Company name',
+                                  hintText: 'Enter Address',
                                   height: Sizes.screenHeight * 0.050,
                                   hintTextHeight: Sizes.screenHeight * 0.005,
+                                  hintFontSize: 13,
                                 ),
                               ),
                             ],

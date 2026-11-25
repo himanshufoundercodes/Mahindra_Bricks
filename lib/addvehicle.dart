@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/url_launcher.dart';
+import 'package:mahindra_bricks/utils/utils.dart' ;
 import 'package:mahindra_bricks/viewmodel/vehicle_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,28 @@ class Addvehicle extends StatefulWidget {
 }
 
 class _AddvehicleState extends State<Addvehicle> {
+
+  bool validateMobileNumber(String mobile) {
+    if (mobile.length != 10) {
+      Utils.showErrorMessage(context, 'Mobile number must be 10 digits');
+      return false;
+    }
+    if (!RegExp(r'^[6-9]').hasMatch(mobile)) {
+      Utils.showErrorMessage(
+        context,
+        'Please Enter valid mobile number',
+      );
+      return false;
+    }
+    if (RegExp(r'(\d)\1{3,}').hasMatch(mobile)) {
+      Utils.showErrorMessage(
+        context,
+        'Please Enter valid mobile number',
+      );
+      return false;
+    }
+    return true;
+  }
 
   @override
   void initState() {
@@ -247,7 +270,6 @@ class _AddvehicleState extends State<Addvehicle> {
                                             item.driver_name?.toString() ?? '',
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-
                                             style: TextStyle(
                                               fontSize: 11,
                                               color: Colors.black87,
@@ -274,7 +296,6 @@ class _AddvehicleState extends State<Addvehicle> {
                                             item.driver_mobile?.toString() ?? '',
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-
                                             style: GoogleFonts.poppins(
                                               fontSize: 11,
                                               color: Colors.black87,

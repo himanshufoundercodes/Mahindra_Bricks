@@ -30,6 +30,7 @@ class AppTextField extends StatefulWidget {
   final FocusNode? focusNode;
   final double? height;
   final double? hintTextHeight;
+  final double? hintFontSize;
 
   const AppTextField({
     super.key,
@@ -57,6 +58,7 @@ class AppTextField extends StatefulWidget {
     this.focusNode,
     this.height,
     this.hintTextHeight,
+    this.hintFontSize,
   });
 
   @override
@@ -117,8 +119,7 @@ class _AppTextFieldState extends State<AppTextField> {
               counterText: '',
               hintText: widget.hintText,
               hintStyle: TextStyle(
-               // fontFamily: AppFonts.urbanistReg,
-                fontSize: AppFontSize.lg,
+                fontSize: widget.hintFontSize ?? AppFontSize.lg,
                 color: hintColor,
               ),
               filled: true,

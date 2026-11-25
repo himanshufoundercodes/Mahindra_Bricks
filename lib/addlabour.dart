@@ -216,18 +216,6 @@ class _AddlabourState extends State<Addlabour> {
                       ),
                     ),
                     SizedBox(height: Sizes.screenHeight * 0.006),
-                    // SizedBox(
-                    //   height: Sizes.screenHeight * 0.075,
-                    //   child: AppTextField(
-                    //     prefixIcon: Icons.call,
-                    //     maxLength: 10,
-                    //     controller: MobilenumberController,
-                    //     keyboardType: TextInputType.number,
-                    //     hintText: 'Enter mobile number',
-                    //     height: Sizes.screenHeight * 0.056,
-                    //     hintTextHeight: Sizes.screenHeight * 0.015,
-                    //   ),
-                    // ),
                     SizedBox(
                       height: Sizes.screenHeight * 0.075,
                       child: AppTextField(

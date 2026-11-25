@@ -39,7 +39,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? accessToken = prefs.getString('acess_token');
   runApp(
     MultiProvider(
       providers: [
