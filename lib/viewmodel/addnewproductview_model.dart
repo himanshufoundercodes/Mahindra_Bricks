@@ -42,6 +42,7 @@ class AddNewProductViewModel with ChangeNotifier {
     setLoading(true);
     Map<String, String> fields = {
       if (productId != null && productId.isNotEmpty) "product_id": productId,
+      if (productId != null && productId.isNotEmpty) "id": productId,
       if (productId != null && productId.isNotEmpty) "_method": "PUT",
       "product_name": productName,
       "sku": sku,

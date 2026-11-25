@@ -188,6 +188,8 @@ class _OrdersState extends State<Orders> {
                       itemCount: displayedOrders.length,
                       itemBuilder: (BuildContext context, int index) {
                         final order = displayedOrders[index];
+                        final primaryItem = order.primary_item ??
+                            (order.items.isNotEmpty ? order.items.first : null);
                         final String displayDateTime =
                             (order.created_at.isNotEmpty &&
                                     order.created_at.toLowerCase() != 'null')
@@ -197,8 +199,10 @@ class _OrdersState extends State<Orders> {
                           orderData: order,
                           orderId: order.order_number,
                           dateTime: displayDateTime,
-                          image: 'assets/bricks.jpg',
-                          productName: order.primary_item?.product_name ?? 'Unknown',
+                          image: primaryItem?.image_url.isNotEmpty == true
+                              ? primaryItem!.image_url
+                              : 'assets/bricks.jpg',
+                          productName: primaryItem?.product_name ?? 'Unknown',
                           quantity: '${order.total_pieces} Pieces',
                           customer: order.client_name,
                           price: order.total_amount,

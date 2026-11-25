@@ -827,6 +827,9 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                             ...order.items.asMap().entries.map((entry) {
                               final index = entry.key;
                               final item = entry.value;
+                              final String itemImage = item.image_url.isNotEmpty
+                                  ? item.image_url
+                                  : (order.primary_item?.image_url ?? '');
                               return TableRow(
                                 children: [
                                   _productCell('${index + 1}'),
@@ -837,17 +840,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                         SizedBox(
                                           height: Sizes.screenHeight * 0.042,
                                           width: Sizes.screenWidth * 0.17,
-                                          child: Image.asset(
-                                            'assets/bricks.jpg',
-                                            fit: BoxFit.contain,
-                                            errorBuilder: (context, error, stack) {
-                                              return Icon(
-                                                Icons.image_outlined,
-                                                size: 30,
-                                                color: AppColor.red,
-                                              );
-                                            },
-                                          ),
+                                          child: _buildProductImage(itemImage),
                                         ),
                                         SizedBox(width: Sizes.screenWidth * 0.013),
                                         Expanded(
@@ -897,16 +890,8 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                       SizedBox(
                                         height: Sizes.screenHeight * 0.042,
                                         width: Sizes.screenWidth * 0.17,
-                                        child: Image.asset(
-                                          'assets/bricks.jpg',
-                                          fit: BoxFit.contain,
-                                          errorBuilder: (context, error, stack) {
-                                            return Icon(
-                                              Icons.image_outlined,
-                                              size: 30,
-                                              color: AppColor.red,
-                                            );
-                                          },
+                                        child: _buildProductImage(
+                                          order?.primary_item?.image_url ?? '',
                                         ),
                                       ),
                                       SizedBox(width: Sizes.screenWidth * 0.013),
@@ -916,7 +901,9 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Red Bricks\n(Standard)',
+                                              order?.primary_item?.product_name.isNotEmpty == true
+                                                  ? order!.primary_item!.product_name
+                                                  : 'Red Bricks\n(Standard)',
                                               style: GoogleFonts.poppins(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w600,
@@ -924,7 +911,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                               ),
                                             ),
                                             Text(
-                                              'Code: RB-001',
+                                              'Code: ${order?.primary_item?.product_sku.isNotEmpty == true ? order!.primary_item!.product_sku : 'RB-001'}',
                                               style: GoogleFonts.poppins(
                                                 fontSize: 9,
                                                 color: Colors.grey.shade600,
@@ -936,11 +923,11 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                     ],
                                   ),
                                 ),
-                                _productCell('230 × 110 ×\n70 mm'),
-                                _productCell('Red'),
-                                _productCell('3,000\npcs'),
-                                _productCell('5.00'),
-                                _productCell('15,000.00'),
+                                _productCell(order?.primary_item?.dimensions.isNotEmpty == true ? order!.primary_item!.dimensions : '230 × 110 ×\n70 mm'),
+                                _productCell(order?.primary_item?.colour.isNotEmpty == true ? order!.primary_item!.colour : 'Red'),
+                                _productCell(order?.primary_item?.quantity.isNotEmpty == true ? '${order!.primary_item!.quantity} pcs' : '3,000\npcs'),
+                                _productCell(order?.primary_item?.rate.isNotEmpty == true ? order!.primary_item!.rate : '5.00'),
+                                _productCell(order?.primary_item?.amount.isNotEmpty == true ? order!.primary_item!.amount : '15,000.00'),
                               ],
                             ),
                         ],
@@ -1215,6 +1202,50 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildProductImage(String imageUrl) {
+    final String image = imageUrl.trim();
+    if (image.startsWith('http://') || image.startsWith('https://')) {
+      return Image.network(
+        image,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/bricks.jpg',
+            fit: BoxFit.contain,
+          );
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(
+            child: SizedBox(
+              height: 15,
+              width: 15,
+              child: CircularProgressIndicator(
+                strokeWidth: 1.5,
+                color: AppColor.stockAmountColor,
+              ),
+            ),
+          );
+        },
+      );
+    } else if (image.isNotEmpty) {
+      return Image.asset(
+        image,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/bricks.jpg',
+            fit: BoxFit.contain,
+          );
+        },
+      );
+    }
+    return Image.asset(
+      'assets/bricks.jpg',
+      fit: BoxFit.contain,
     );
   }
 

@@ -30,6 +30,6 @@ class ApiConstants {
   static const String labourPayoutHistoryUrl = '${baseUrl}labour/1/payments';
   static const String updateOrderUrl = '${baseUrl}updateOrders';
   static const String reportsListUrl = '${baseUrl}reports';
-  static const String editProductUrl = '${baseUrl}updateProducts/';
+  static const String editProductUrl = '${baseUrl}updateProducts';
 
 }

@@ -11,6 +11,21 @@ int _toInt(dynamic value) {
   return 0;
 }
 
+String _getFullImageUrl(String image) {
+  if (image.isEmpty || image.toLowerCase() == 'null') {
+    return '';
+  }
+
+  if (image.startsWith('http')) {
+    return image;
+  }
+
+  final baseUri = Uri.parse(ApiConstants.baseUrl);
+  final rootUri = baseUri.resolve('/');
+
+  return rootUri.resolve(image).toString();
+}
+
 class OrderdsListModel {
   final int count;
   final List<OrderdsDataModel> data;
@@ -204,7 +219,9 @@ class OrderdsDataModel {
           .toList(),
       primary_item: json['primary_item'] != null
           ? OrderItemsModel.fromJson(json['primary_item'])
-          : null,
+          : ((json['items'] as List? ?? []).isNotEmpty
+              ? OrderItemsModel.fromJson(json['items'][0])
+              : null),
     );
   }
 }
@@ -222,6 +239,7 @@ class OrderItemsModel {
   final String amount;
   final String created_at;
   final String updated_at;
+  final String image_url;
 
   OrderItemsModel({
     required this.id,
@@ -236,6 +254,7 @@ class OrderItemsModel {
     required this.amount,
     required this.created_at,
     required this.updated_at,
+    required this.image_url,
   });
 
   factory OrderItemsModel.fromJson(Map<String, dynamic> json) {
@@ -252,6 +271,17 @@ class OrderItemsModel {
       amount: json['amount']?.toString() ?? '',
       created_at: json['created_at']?.toString() ?? '',
       updated_at: json['updated_at']?.toString() ?? '',
+      image_url: _getFullImageUrl(
+        json['image_url']?.toString() ??
+            json['product_image']?.toString() ??
+            json['image']?.toString() ??
+            (json['product'] is Map
+                ? (json['product']['image_url']?.toString() ??
+                    json['product']['product_image']?.toString() ??
+                    json['product']['image']?.toString())
+                : null) ??
+            '',
+      ),
     );
   }
 }

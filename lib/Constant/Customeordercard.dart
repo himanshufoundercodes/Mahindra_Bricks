@@ -114,18 +114,61 @@ class CustomOrderCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Container(
+              //   height: Sizes.screenWidth * 0.155,
+              //   width: Sizes.screenWidth * 0.203,
+              //   padding: EdgeInsets.all(3),
+              //   decoration: BoxDecoration(
+              //     color: AppColor.imgbg,
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: image.startsWith('http')
+              //       ? Image.network(
+              //     image,
+              //     fit: BoxFit.contain,
+              //     errorBuilder: (context, error, stackTrace) {
+              //       return Image.asset(
+              //         'assets/bricks.jpg',
+              //         fit: BoxFit.cover,
+              //       );
+              //     },
+              //   )
+              //       : Image.asset(
+              //     image,
+              //     fit: BoxFit.cover,
+              //   ),
+              // ),
+
               Container(
-                height: Sizes.screenWidth * 0.155,
-                width: Sizes.screenWidth * 0.203,
-                padding: EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: AppColor.imgbg,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Image.asset(
+                  height: Sizes.screenWidth * 0.155,
+                  width: Sizes.screenWidth * 0.203,
+                  clipBehavior: Clip.antiAlias,
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    color: AppColor.imgbg,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                child: image.startsWith('http')
+                    ? Image.network(
                   image,
-                  fit: BoxFit.contain,
-                ),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/bricks.jpg',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    );
+                  },
+                )
+                    : Image.asset(
+                  image,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ), 
               ),
               SizedBox(width: Sizes.screenWidth * 0.022),
               Expanded(
