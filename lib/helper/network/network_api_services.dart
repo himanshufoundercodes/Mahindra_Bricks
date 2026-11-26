@@ -97,7 +97,7 @@ class NetworkApiServices extends BaseApiServices {
   Future<dynamic> putFormDataApiResponse(
       String url,
       Map<String, String> fields,
-      Map<String, File>? files,
+      Map<String, dynamic>? files,
       ) async {
     try {
       String? token = await UserViewModel().getToken();
@@ -107,35 +107,24 @@ class NetworkApiServices extends BaseApiServices {
         Uri.parse(url),
       );
 
-      request.headers.addAll({
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      });
-
+      var headers = _formHeaders();
+      headers['Accept'] = 'application/json';
+      if (token != null && token.isNotEmpty) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+      request.headers.addAll(headers);
       request.fields.addAll(fields);
 
       if (files != null) {
-        for (var entry in files.entries) {
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              entry.key,
-              entry.value.path,
-            ),
-          );
-        }
+        await _addFilesToRequest(request, files);
       }
 
-      var response = await request.send();
+      var streamed = await request.send();
+      var response = await http.Response.fromStream(streamed);
 
-      var responseBody = await response.stream.bytesToString();
-
-      if (response.statusCode == 200 ||
-          response.statusCode == 201) {
-        return jsonDecode(responseBody);
-      } else {
-        throw Exception(responseBody);
-      }
+      return returnRequest(response);
     } catch (e) {
+      if (kDebugMode) print("PUT FormData Error: $e");
       rethrow;
     }
   }

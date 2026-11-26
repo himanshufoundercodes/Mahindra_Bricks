@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/url_launcher.dart';
 import 'package:mahindra_bricks/utils/utils.dart';
 import 'package:mahindra_bricks/viewmodel/ordersListviewmodel.dart';
+import 'package:mahindra_bricks/viewmodel/recievedpaymentview_model.dart';
 import 'package:mahindra_bricks/viewmodel/updateorderview_model.dart';
 import 'package:mahindra_bricks/viewmodel/user_view_model.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,8 +15,10 @@ import 'package:share_plus/share_plus.dart';
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
 import 'Constant/Constantpaymentcard.dart';
+import 'Constant/ConstnatTextfield.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
+import 'core/constant/api_constant.dart';
 import 'model/orderlist_model.dart';
 import 'model/vehicle_model.dart';
 import 'viewmodel/vehicle_viewmodel.dart';
@@ -29,10 +32,19 @@ class Viewproductdetails extends StatefulWidget {
 }
 
 class _ViewproductdetailsState extends State<Viewproductdetails> {
+  OrderdsDataModel? currentOrder;
+  TextEditingController pendingBalanceController = TextEditingController();
+  TextEditingController amountPaidController = TextEditingController();
+
+  String selectedPaymentMode = 'Cash';
+  String? selectedMode;
+  String? selectedPayment;
+  bool isPaymentExpanded = false;
   String selectedStatus = 'Pending';
   bool isVehicleDropdownOpen = false;
   VehicleModel? selectedVehicle;
   bool isOrderCompleted = false;
+  List<OrderPaymentItem> paymentHistoryList = [];
 
   String _formatDateOnly(String? rawDate) {
     if (rawDate == null || rawDate.trim().isEmpty) return '';
@@ -49,6 +61,134 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
       }
     }
     return str;
+  }
+
+  String _formatTodayDate() {
+    final now = DateTime.now();
+    final months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    final day = now.day.toString().padLeft(2, '0');
+    final month = months[now.month - 1];
+    final year = now.year;
+    return '$day $month $year';
+  }
+
+  void _addNewPaymentRecord(double amount, String mode) {
+    final String formattedDate = _formatTodayDate();
+    final newPayment = OrderPaymentItem(
+      date: formattedDate,
+      amount: amount.toStringAsFixed(2),
+      mode: mode,
+      notes: 'Installment',
+      addedBy: 'Admin',
+    );
+    paymentHistoryList.insert(0, newPayment);
+  }
+
+  Future<void> receivePaymentApi() async {
+    final order = currentOrder ?? widget.orderData;
+    if (order == null) {
+      Utils.showErrorMessage(context, 'Order details not available');
+      return;
+    }
+
+    final double paidAmountInput = double.tryParse(amountPaidController.text.trim()) ?? 0;
+    if (paidAmountInput <= 0) {
+      Utils.showErrorMessage(context, 'Please enter valid payment amount');
+      return;
+    }
+
+    final paymentViewModel = Provider.of<ReceivePaymentViewModel>(
+      context,
+      listen: false,
+    );
+
+    bool success = await paymentViewModel.receivePayment(
+      url: '${ApiConstants.baseUrl}orders/${order.id}/pay',
+      amount: paidAmountInput,
+      paymentOption: selectedPaymentMode.toLowerCase() == 'online' ? 2 : 1,
+    );
+
+    if (mounted) {
+      if (success) {
+        amountPaidController.clear();
+
+        dynamic respData = paymentViewModel.paymentResponse?['data'] ??
+            paymentViewModel.paymentResponse?['order'];
+
+        setState(() {
+          _addNewPaymentRecord(paidAmountInput, selectedPaymentMode);
+
+          if (respData != null && respData is Map<String, dynamic>) {
+            currentOrder = OrderdsDataModel.fromJson(respData);
+            if (currentOrder!.payments.isNotEmpty) {
+              paymentHistoryList = List.from(currentOrder!.payments);
+            }
+          } else {
+            final baseOrder = currentOrder ?? widget.orderData!;
+            double oldPaid = double.tryParse(baseOrder.amount_paid.replaceAll(',', '')) ?? 0;
+            double totalAmt = double.tryParse(baseOrder.total_amount.replaceAll(',', '')) ?? 0;
+            double advAmt = double.tryParse(baseOrder.advance_amount.replaceAll(',', '')) ?? 0;
+            double newPaid = oldPaid + paidAmountInput;
+            double newRem = totalAmt - (newPaid + advAmt);
+            if (newRem < 0) newRem = 0;
+
+            currentOrder = OrderdsDataModel(
+              id: baseOrder.id,
+              order_number: baseOrder.order_number,
+              invoice_no: baseOrder.invoice_no,
+              client_id: baseOrder.client_id,
+              client_name: baseOrder.client_name,
+              client_mobile: baseOrder.client_mobile,
+              delivery_address: baseOrder.delivery_address,
+              delivery_location: baseOrder.delivery_location,
+              delivery_date: baseOrder.delivery_date,
+              vehicle_number: baseOrder.vehicle_number,
+              order_type: baseOrder.order_type,
+              order_status: baseOrder.order_status,
+              dispatch_status: baseOrder.dispatch_status,
+              sub_total: baseOrder.sub_total,
+              transport_charge: baseOrder.transport_charge,
+              labour_charge: baseOrder.labour_charge,
+              discount: baseOrder.discount,
+              total_amount: baseOrder.total_amount,
+              advance_amount: baseOrder.advance_amount,
+              amount_paid: newPaid.toStringAsFixed(2),
+              remaining_balance: newRem.toStringAsFixed(2),
+              payment_mode: selectedPaymentMode,
+              order_date: baseOrder.order_date,
+              notes: baseOrder.notes,
+              created_at: baseOrder.created_at,
+              updated_at: baseOrder.updated_at,
+              payment_status: newRem <= 0 ? 'Paid' : 'Partial',
+              total_pieces: baseOrder.total_pieces,
+              amount_in_words: baseOrder.amount_in_words,
+              invoice_url: baseOrder.invoice_url,
+              items: baseOrder.items,
+              primary_item: baseOrder.primary_item,
+              payments: paymentHistoryList,
+            );
+          }
+        });
+
+        Provider.of<OrdersListViewModel>(
+          context,
+          listen: false,
+        ).OrdersApi();
+
+        Utils.showSuccessMessage(
+          context,
+          'Payment Received Successfully!',
+        );
+      } else {
+        Utils.showErrorMessage(
+          context,
+          paymentViewModel.errorMessage ?? 'Payment Failed',
+        );
+      }
+    }
   }
 
   Future<void> _shareInvoiceOnWhatsApp(OrderdsDataModel? order) async {
@@ -147,6 +287,44 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
   @override
   void initState() {
     super.initState();
+    currentOrder = widget.orderData;
+
+    final order = widget.orderData;
+    if (order != null) {
+      if (order.payments.isNotEmpty) {
+        paymentHistoryList = List.from(order.payments);
+      } else {
+        double adv = double.tryParse(order.advance_amount.replaceAll(',', '')) ?? 0;
+        double paid = double.tryParse(order.amount_paid.replaceAll(',', '')) ?? 0;
+
+        if (adv > 0) {
+          paymentHistoryList.add(
+            OrderPaymentItem(
+              date: _formatDateOnly(order.order_date.isNotEmpty ? order.order_date : order.created_at),
+              amount: order.advance_amount,
+              mode: order.payment_mode.isNotEmpty ? order.payment_mode : 'Cash',
+              notes: 'Advance',
+              addedBy: 'Admin',
+            ),
+          );
+        }
+
+        if (paid > 0 && paid != adv) {
+          double diff = paid - adv;
+          if (diff > 0) {
+            paymentHistoryList.add(
+              OrderPaymentItem(
+                date: _formatDateOnly(order.updated_at.isNotEmpty ? order.updated_at : order.created_at),
+                amount: diff.toStringAsFixed(2),
+                mode: order.payment_mode.isNotEmpty ? order.payment_mode : 'Cash',
+                notes: 'Installment',
+                addedBy: 'Admin',
+              ),
+            );
+          }
+        }
+      }
+    }
 
     if (widget.orderData != null && widget.orderData!.order_status.isNotEmpty) {
       final s = widget.orderData!.order_status.trim();
@@ -163,7 +341,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
         formattedStatus = 'Completed';
       }
 
-      if (['Pending', 'Processing', 'Completed', 'Cancelled']
+      if (['Pending', 'Completed']
           .contains(formattedStatus)) {
         selectedStatus = formattedStatus;
       } else {
@@ -213,7 +391,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
       }
     }
 
-    final order = widget.orderData;
+    final order = currentOrder ?? widget.orderData;
 
     String getClientLocation(OrderdsDataModel? o) {
       if (o == null) return 'N/A';
@@ -1003,7 +1181,382 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                 },
               ],
             ),
-            SizedBox(height: Sizes.screenHeight * 0.01),
+            Container(
+              width: double.infinity,
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white38,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: AppColor.grey,
+                ),
+              ),
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        isPaymentExpanded = !isPaymentExpanded;
+                      });
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+
+                        Text(
+                          'Payment History',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.stockAmountColor,
+                          ),
+                        ),
+
+                        Icon(
+                          isPaymentExpanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xFF782A17),
+                          size: 22,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  if (isPaymentExpanded) ...[
+
+                    SizedBox(height: 10),
+
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+
+                        double width = constraints.maxWidth;
+
+                        return Column(
+                          children: [
+                            Container(
+                              color: Color(0xFFF7F7F7),
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: width * 0.25,
+                                    child: Padding(
+                                      padding:  EdgeInsets.only(left: 8),
+                                      child: Text(
+                                        'Date',
+                                        style: GoogleFonts.poppins(fontSize: 9),
+                                      ),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    width: width * 0.18,
+                                    child: Text(
+                                      'Amount',
+                                      style: GoogleFonts.poppins(fontSize: 9),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    width: width * 0.14,
+                                    child: Text(
+                                      'Mode',
+                                      style: GoogleFonts.poppins(fontSize: 9),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    width: width * 0.20,
+                                    child: Text(
+                                      'Notes',
+                                      style: GoogleFonts.poppins(fontSize: 9),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    width: width * 0.23,
+                                    child: Text(
+                                      'Added By',
+                                      maxLines: 1,
+                                      style: GoogleFonts.poppins(fontSize: 9),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            Divider(height: 1),
+                            if (paymentHistoryList.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                child: Center(
+                                  child: Text(
+                                    'No payment history available',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 10,
+                                      color: AppColor.gey,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else
+                              ...paymentHistoryList.asMap().entries.map((entry) {
+                                final item = entry.value;
+                                final bool isLast = entry.key == paymentHistoryList.length - 1;
+                                String displayDate = item.date;
+                                if (displayDate.contains('T') || displayDate.contains('-')) {
+                                  displayDate = _formatDateOnly(displayDate);
+                                }
+                                if (displayDate.isEmpty) displayDate = '-';
+
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: width * 0.25,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left: 5),
+                                              child: Text(
+                                                displayDate,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.poppins(fontSize: 9),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: width * 0.18,
+                                            child: Text(
+                                              '₹ ${item.amount}',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: width * 0.14,
+                                            child: Text(
+                                              item.mode.isNotEmpty ? item.mode : 'Cash',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.poppins(fontSize: 9),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: width * 0.20,
+                                            child: Text(
+                                              item.notes.isNotEmpty ? item.notes : '-',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.poppins(fontSize: 9),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: width * 0.23,
+                                            child: Text(
+                                              item.addedBy.isNotEmpty ? item.addedBy : 'Admin',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.poppins(fontSize: 9),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (!isLast) const Divider(height: 1),
+                                  ],
+                                );
+                              }).toList(),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (!isOrderCompleted) ...[
+              SizedBox(height: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFFF8F5),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Color(0xFFF1E5DF),
+                    ),
+                  ),
+
+                  child: Column(
+                    children: [
+
+                      // Heading Row
+                      Row(
+                        children: [
+                          Container(
+                            height: 35,
+                            width: 35,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFFCEBE5),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.receipt_long,
+                              color: Color(0xFF782A17),
+                              size: 20,
+                            ),
+                          ),
+
+                          SizedBox(width: 10),
+
+                          Expanded(
+                            child: Text(
+                              'Order Payment',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF782A17),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 12),
+
+                      // Payment Amount and Payment Mode
+                      Row(
+                        children: [
+
+                          // Payment Amount TextField
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+
+                                Text(
+                                  'Payment Amount',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF782A17),
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                AppTextField(
+                                  controller: amountPaidController,
+                                  hintText: 'Enter Amount',
+                                  keyboardType: TextInputType.number,
+                                  hintFontSize: 13,
+                                  height: Sizes.screenHeight * 0.045,
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(width: 10),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+
+                                Text(
+                                  'Payment Mode',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF782A17),
+                                  ),
+                                ),
+
+                                SizedBox(height: 5),
+
+                                Container(
+                                  height: Sizes.screenHeight * 0.043,
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: Color(0xFFE5B66F),
+                                    ),
+                                  ),
+
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      isExpanded: true,
+                                      value: selectedPaymentMode,
+
+                                      icon: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        size: 18,
+                                        color: Color(0xFF782A17),
+                                      ),
+
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 11,
+                                        color: Colors.black87,
+                                      ),
+                                      items: [
+                                        'Cash',
+                                        'Online',
+                                      ].map((value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList(),
+
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          setState(() {
+                                            selectedPaymentMode = value;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 12),
+
+                      // Payment Received Button
+                      CustomButton(
+                        text: 'Payment Received',
+                        height: Sizes.screenHeight * 0.043,
+                        fontWeight: FontWeight.w500,
+                        isLoading: Provider.of<ReceivePaymentViewModel>(context).loading,
+                        onPressed: () async {
+                          await receivePaymentApi();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+
+            SizedBox(height: Sizes.screenHeight * 0.005),
             Container(
               width: double.infinity,
               margin: EdgeInsets.symmetric(
@@ -1036,9 +1589,9 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                       SizedBox(width: Sizes.screenWidth * 0.024),
                       Expanded(
                         child: Text(
-                          'Update Order Status',
+                          isOrderCompleted ? 'Payment Status' : 'Update Order Status',
                           style: GoogleFonts.poppins(
-                            fontSize: 12,
+                            fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: AppColor.stockTitleColor,
                           ),
@@ -1105,6 +1658,89 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                     ],
                   ),
                   SizedBox(height: Sizes.screenHeight * 0.012),
+                  if (isOrderCompleted) ...[
+                    SizedBox(height: Sizes.screenHeight * 0.008),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Amount Paid',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.gey,
+                                ),
+                              ),
+                              SizedBox(height: Sizes.screenHeight * 0.008),
+                              AppTextField(
+                                controller: amountPaidController,
+                                hintText: 'Enter Amount',
+                                keyboardType: TextInputType.number,
+                                hintFontSize: 13,
+                                height: Sizes.screenHeight * 0.045,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: Sizes.screenWidth * 0.025),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Payment Mode',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.gey,
+                                ),
+                              ),
+                              SizedBox(height: Sizes.screenHeight * 0.005),
+                              Container(
+                                height: Sizes.screenHeight * 0.043,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: Sizes.screenWidth * 0.015,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColor.grey),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    value: selectedPaymentMode,
+                                    items: ['Cash', 'Online'].map((mode) {
+                                      return DropdownMenuItem(
+                                        value: mode,
+                                        child: Text(
+                                          mode,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 10,
+                                            color: AppColor.black,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          selectedPaymentMode = value;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  SizedBox(height: Sizes.screenHeight * 0.008),
                   Row(
                     children: [
                       Container(
@@ -1132,8 +1768,6 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
 
                       SizedBox(width: Sizes.screenWidth * 0.025),
 
-                      // Update Status Button - Right Side
-
                       Expanded(
                         child: CustomButton(
                           text: isOrderCompleted
@@ -1148,51 +1782,55 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                           onPressed: () async {
                             if (order == null) return;
 
-                            Map<String, dynamic> data = {
-                              "order_status": selectedStatus,
-                              "dispatch_status": "Completed on 06 Nov",
-                              "vehicle_number": selectedVehicle?.vehicle_number ?? '',
-                              "payment_option": 2,
-                              "amount_paid": int.tryParse(
-                                order.amount_paid,
-                              ) ?? 0,
-                            };
+                            if (isOrderCompleted) {
+                              await receivePaymentApi();
+                            } else {
 
-                            bool success = await Provider.of<UpdateOrderViewModel>(
-                              context,
-                              listen: false,
-                            ).updateOrderApi(
-                              order.id.toString(),
-                              data,
-                            );
+                              Map<String, dynamic> data = {
+                                "order_status": selectedStatus,
+                                "dispatch_status": "Completed on 06 Nov",
+                                "vehicle_number": selectedVehicle?.vehicle_number ?? '',
+                                "payment_option": 2,
+                                "amount_paid": int.tryParse(order.amount_paid) ?? 0,
+                              };
 
-                            if (context.mounted) {
-                              if (success) {
-                                setState(() {
-                                  if (selectedStatus.toLowerCase() == 'completed') {
-                                    isOrderCompleted = true;
-                                  }
-                                });
-                                Provider.of<OrdersListViewModel>(
-                                  context,
-                                  listen: false,
-                                ).OrdersApi();
+                              bool success = await Provider.of<UpdateOrderViewModel>(
+                                context,
+                                listen: false,
+                              ).updateOrderApi(
+                                order.id.toString(),
+                                data,
+                              );
 
-                                Utils.showSuccessMessage(
-                                  context,
-                                  'Order Status Updated Successfully!',
-                                );
-                              } else {
-                                Utils.showErrorMessage(
-                                  context,
-                                  'Order Status Update Failed',
-                                );
+                              if (context.mounted) {
+                                if (success) {
+                                  setState(() {
+                                    if (selectedStatus.toLowerCase() == 'completed') {
+                                      isOrderCompleted = true;
+                                    }
+                                  });
+
+                                  Provider.of<OrdersListViewModel>(
+                                    context,
+                                    listen: false,
+                                  ).OrdersApi();
+
+                                  Utils.showSuccessMessage(
+                                    context,
+                                    'Order Status Updated Successfully!',
+                                  );
+                                } else {
+                                  Utils.showErrorMessage(
+                                    context,
+                                    'Order Status Update Failed',
+                                  );
+                                }
                               }
                             }
                           },
                         ),
                       ),
-
+                      SizedBox(width: Sizes.screenWidth * 0.020),
                     ],
                   ),
                   SizedBox(height: Sizes.screenHeight * 0.025),
@@ -1219,11 +1857,11 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
         },
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
-          return const Center(
+          return Center(
             child: SizedBox(
-              height: 15,
-              width: 15,
-              child: CircularProgressIndicator(
+              height: Sizes.screenHeight * 0.02,
+              width: Sizes.screenWidth * 0.04,
+              child:  CircularProgressIndicator(
                 strokeWidth: 1.5,
                 color: AppColor.stockAmountColor,
               ),
@@ -1267,7 +1905,6 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
       ),
     );
   }
-
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(

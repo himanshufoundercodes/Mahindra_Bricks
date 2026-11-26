@@ -23,6 +23,7 @@ import 'package:mahindra_bricks/viewmodel/ordersListviewmodel.dart';
 import 'package:mahindra_bricks/viewmodel/paymenthistoryview_model.dart' show PaymentHistoryViewModel;
 import 'package:mahindra_bricks/viewmodel/productDetailsView_model.dart';
 import 'package:mahindra_bricks/viewmodel/profile_viewmodel.dart';
+import 'package:mahindra_bricks/viewmodel/recievedpaymentview_model.dart';
 import 'package:mahindra_bricks/viewmodel/recordcementview_model.dart';
 import 'package:mahindra_bricks/viewmodel/reportsview_model.dart';
 import 'package:mahindra_bricks/viewmodel/save_attendance_viewmodel.dart';
@@ -123,6 +124,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => UpdateOrderViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ReceivePaymentViewModel(),
         ),
       ],
       child: const MyApp(),

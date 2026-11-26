@@ -45,6 +45,98 @@ class OrderdsListModel {
   }
 }
 
+class OrderPaymentItem {
+  final int? id;
+  final String date;
+  final String amount;
+  final String mode;
+  final String notes;
+  final String addedBy;
+
+  OrderPaymentItem({
+    this.id,
+    required this.date,
+    required this.amount,
+    required this.mode,
+    required this.notes,
+    required this.addedBy,
+  });
+
+  factory OrderPaymentItem.fromJson(Map<String, dynamic> json) {
+    String extractDate(Map<String, dynamic> j) {
+      List<String> keys = ['payment_date', 'date', 'created_at', 'updated_at'];
+      for (String k in keys) {
+        if (j[k] != null && j[k].toString().trim().isNotEmpty && j[k].toString().toLowerCase() != 'null') {
+          return j[k].toString().trim();
+        }
+      }
+      return '';
+    }
+
+    String extractAmount(Map<String, dynamic> j) {
+      List<String> keys = ['amount', 'paid_amount', 'payment_amount'];
+      for (String k in keys) {
+        if (j[k] != null && j[k].toString().trim().isNotEmpty && j[k].toString().toLowerCase() != 'null') {
+          return j[k].toString().trim();
+        }
+      }
+      return '0';
+    }
+
+    String extractMode(Map<String, dynamic> j) {
+      List<String> keys = ['payment_mode', 'mode', 'payment_option_name', 'payment_type'];
+      for (String k in keys) {
+        if (j[k] != null && j[k].toString().trim().isNotEmpty && j[k].toString().toLowerCase() != 'null') {
+          return j[k].toString().trim();
+        }
+      }
+      if (j['payment_option'] == 2 || j['payment_option'] == '2') return 'Online';
+      if (j['payment_option'] == 1 || j['payment_option'] == '1') return 'Cash';
+      return 'Cash';
+    }
+
+    String extractNotes(Map<String, dynamic> j) {
+      List<String> keys = ['notes', 'note', 'description', 'payment_type'];
+      for (String k in keys) {
+        if (j[k] != null && j[k].toString().trim().isNotEmpty && j[k].toString().toLowerCase() != 'null') {
+          return j[k].toString().trim();
+        }
+      }
+      return '-';
+    }
+
+    String extractAddedBy(Map<String, dynamic> j) {
+      List<String> keys = ['added_by', 'user_name', 'created_by', 'added_by_name'];
+      for (String k in keys) {
+        if (j[k] != null && j[k].toString().trim().isNotEmpty && j[k].toString().toLowerCase() != 'null') {
+          return j[k].toString().trim();
+        }
+      }
+      return 'Admin';
+    }
+
+    return OrderPaymentItem(
+      id: _toInt(json['id']),
+      date: extractDate(json),
+      amount: extractAmount(json),
+      mode: extractMode(json),
+      notes: extractNotes(json),
+      addedBy: extractAddedBy(json),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) 'id': id,
+      'date': date,
+      'amount': amount,
+      'mode': mode,
+      'notes': notes,
+      'added_by': addedBy,
+    };
+  }
+}
+
 class OrderdsDataModel {
   final int id;
   final String order_number;
@@ -78,6 +170,7 @@ class OrderdsDataModel {
   final String invoice_url;
   final List<OrderItemsModel> items;
   final OrderItemsModel? primary_item;
+  final List<OrderPaymentItem> payments;
 
   OrderdsDataModel({
     required this.id,
@@ -112,6 +205,7 @@ class OrderdsDataModel {
     required this.invoice_url,
     required this.items,
     this.primary_item,
+    this.payments = const [],
   });
 
   factory OrderdsDataModel.fromJson(Map<String, dynamic> json) {
@@ -222,6 +316,16 @@ class OrderdsDataModel {
           : ((json['items'] as List? ?? []).isNotEmpty
               ? OrderItemsModel.fromJson(json['items'][0])
               : null),
+      payments: () {
+        List? pList = json['payments'] as List? ??
+            json['payment_history'] as List? ??
+            json['order_payments'] as List? ??
+            json['history'] as List?;
+        if (pList != null && pList.isNotEmpty) {
+          return pList.map((e) => OrderPaymentItem.fromJson(e)).toList();
+        }
+        return <OrderPaymentItem>[];
+      }(),
     );
   }
 }

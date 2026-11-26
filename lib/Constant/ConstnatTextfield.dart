@@ -167,9 +167,15 @@ class _AppTextFieldState extends State<AppTextField> {
                 child: widget.suffix,
               )
                   : null,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: widget.hintTextHeight ?? 16,
+              // contentPadding: EdgeInsets.symmetric(
+              //   horizontal: 18,
+              //   vertical: widget.hintTextHeight ?? 16,
+              // ),
+              contentPadding: EdgeInsets.only(
+                left: 8,
+                right: 8,
+                top: widget.hintTextHeight ?? 16,
+                bottom: widget.hintTextHeight ?? 16,
               ),
               border: OutlineInputBorder(
                 borderRadius: AppRadius.sl,

@@ -28,16 +28,41 @@ class AddProductRepo {
       '${ApiConstants.baseUrl}updateProduct/$cleanId',
       '${ApiConstants.baseUrl}updateProduct',
       '${ApiConstants.baseUrl}products/$cleanId',
+      '${ApiConstants.baseUrl}products/update/$cleanId',
+      '${ApiConstants.baseUrl}createProducts/$cleanId',
     ];
 
     dynamic lastException;
     for (int i = 0; i < candidateUrls.length; i++) {
       final url = candidateUrls[i];
+      // 1. Try POST request
       try {
         if (kDebugMode) {
-          print("🔄 Trying update product URL [$i]: $url");
+          print("🔄 Trying update product POST [$i]: $url");
         }
         dynamic response = await _apiServices.getPostApiFormData(
+          url,
+          fields,
+          files,
+        );
+        return response;
+      } catch (e) {
+        lastException = e;
+        String errStr = e.toString().toLowerCase();
+        if (!errStr.contains("404") &&
+            !errStr.contains("resource not found") &&
+            !errStr.contains("unauthorised request") &&
+            !errStr.contains("not found")) {
+          rethrow;
+        }
+      }
+
+      // 2. Try PUT request if POST returned 404
+      try {
+        if (kDebugMode) {
+          print("🔄 Trying update product PUT [$i]: $url");
+        }
+        dynamic response = await _apiServices.putFormDataApiResponse(
           url,
           fields,
           files,

@@ -172,7 +172,7 @@ class _EditproductState extends State<Editproduct> {
       listen: false,
     );
     await addProduct.addProductApi(
-      productId: widget.productId, // Product ID required for backend to update
+      productId: widget.productId,
       productImage: selectedImage,
       productName: nameController.text.trim(),
       sku: productCodeController.text.trim(),

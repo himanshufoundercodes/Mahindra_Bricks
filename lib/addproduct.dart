@@ -467,7 +467,7 @@ class _AddproductState extends State<Addproduct> {
                   MaterialPageRoute(
                     builder: (context) => Editproduct(
                       productId: widget.id
-                          ?.toString(), // Pass ID to Editproduct
+                          ?.toString(),
                       image: widget.image,
                       categoryId: widget.categoryId,
                       name: widget.name,

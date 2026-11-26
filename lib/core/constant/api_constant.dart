@@ -31,5 +31,6 @@ class ApiConstants {
   static const String updateOrderUrl = '${baseUrl}updateOrders';
   static const String reportsListUrl = '${baseUrl}reports';
   static const String editProductUrl = '${baseUrl}updateProducts';
+  static const String recievedPaymentUrl = '${baseUrl}api/orders/';
 
 }

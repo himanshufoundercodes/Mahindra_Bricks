@@ -11,6 +11,7 @@ import 'package:mahindra_bricks/viewmodel/stocklist_viewmodel.dart';
 import 'package:mahindra_bricks/viewmodel/vehicle_viewmodel.dart';
 import 'package:provider/provider.dart';
 
+import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constantbutton.dart';
 import 'Constant/ConstnatTextfield.dart';
 import 'Constant/Sizes.dart';
@@ -27,7 +28,8 @@ class _NeworderState extends State<Neworder> {
   final TextEditingController OrdermobileController = TextEditingController();
   final TextEditingController OrderaddressController = TextEditingController();
   final TextEditingController OrderadvanceController = TextEditingController();
-  final TextEditingController OrdertransportController = TextEditingController();
+  final TextEditingController OrdertransportController =
+      TextEditingController();
   final TextEditingController OrderlabourController = TextEditingController();
   final TextEditingController OrderdiscountController = TextEditingController();
 
@@ -57,17 +59,11 @@ class _NeworderState extends State<Neworder> {
       return false;
     }
     if (!RegExp(r'^[6-9]').hasMatch(mobile)) {
-      Utils.showErrorMessage(
-        context,
-        'Please Enter valid mobile number',
-      );
+      Utils.showErrorMessage(context, 'Please Enter valid mobile number');
       return false;
     }
     if (RegExp(r'(\d)\1{3,}').hasMatch(mobile)) {
-      Utils.showErrorMessage(
-        context,
-        'Please Enter valid mobile number',
-      );
+      Utils.showErrorMessage(context, 'Please Enter valid mobile number');
       return false;
     }
     return true;
@@ -100,10 +96,15 @@ class _NeworderState extends State<Neworder> {
       final rate = double.tryParse(rateText) ?? 0;
 
       final productName = product.name?.toString() ?? 'Product';
-      final availableStock = (double.tryParse(product.stockQuantity?.toString() ?? '0') ?? 0).toInt();
+      final availableStock =
+          (double.tryParse(product.stockQuantity?.toString() ?? '0') ?? 0)
+              .toInt();
 
       if (qty <= 0) {
-        Utils.showErrorMessage(context, 'Please enter quantity for $productName');
+        Utils.showErrorMessage(
+          context,
+          'Please enter quantity for $productName',
+        );
         return;
       }
 
@@ -120,13 +121,11 @@ class _NeworderState extends State<Neworder> {
         return;
       }
 
-      final pId = product.id is int ? product.id as int : int.tryParse(product.id.toString()) ?? 0;
+      final pId = product.id is int
+          ? product.id as int
+          : int.tryParse(product.id.toString()) ?? 0;
 
-      itemsPayload.add({
-        "product_id": pId,
-        "quantity": qty,
-        "rate": rate,
-      });
+      itemsPayload.add({"product_id": pId, "quantity": qty, "rate": rate});
     }
 
     final deliveryDateStr =
@@ -138,10 +137,18 @@ class _NeworderState extends State<Neworder> {
       deliveryDateStr,
       selectedVehicle?.vehicle_number?.toString() ?? "",
       selectedPaymentMode,
-      OrdertransportController.text.trim().isEmpty ? "0" : OrdertransportController.text.trim(),
-      OrderlabourController.text.trim().isEmpty ? "0" : OrderlabourController.text.trim(),
-      OrderdiscountController.text.trim().isEmpty ? "0" : OrderdiscountController.text.trim(),
-      OrderadvanceController.text.trim().isEmpty ? "0" : OrderadvanceController.text.trim(),
+      OrdertransportController.text.trim().isEmpty
+          ? "0"
+          : OrdertransportController.text.trim(),
+      OrderlabourController.text.trim().isEmpty
+          ? "0"
+          : OrderlabourController.text.trim(),
+      OrderdiscountController.text.trim().isEmpty
+          ? "0"
+          : OrderdiscountController.text.trim(),
+      OrderadvanceController.text.trim().isEmpty
+          ? "0"
+          : OrderadvanceController.text.trim(),
       itemsPayload,
     );
 
@@ -151,7 +158,10 @@ class _NeworderState extends State<Neworder> {
       Utils.showSuccessMessage(context, 'Order created successfully');
       Navigator.pop(context);
     } else {
-      Utils.showErrorMessage(context, addOrderVM.errorMessage ?? 'Order creation failed');
+      Utils.showErrorMessage(
+        context,
+        addOrderVM.errorMessage ?? 'Order creation failed',
+      );
     }
   }
 
@@ -165,9 +175,14 @@ class _NeworderState extends State<Neworder> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ClientListViewModel>(context, listen: false).clintApi();
-      Provider.of<VehicleViewmodel>(context, listen: false).vehicleApi().then((_) {
+      Provider.of<VehicleViewmodel>(context, listen: false).vehicleApi().then((
+        _,
+      ) {
         if (mounted) {
-          final vehicleVM = Provider.of<VehicleViewmodel>(context, listen: false);
+          final vehicleVM = Provider.of<VehicleViewmodel>(
+            context,
+            listen: false,
+          );
           if (vehicleVM.vehicleList.isNotEmpty && selectedVehicle == null) {
             setState(() {
               selectedVehicle = vehicleVM.vehicleList.first;
@@ -175,10 +190,17 @@ class _NeworderState extends State<Neworder> {
           }
         }
       });
-      Provider.of<StocklistViewmodel>(context, listen: false).stockListApi().then((_) {
+      Provider.of<StocklistViewmodel>(
+        context,
+        listen: false,
+      ).stockListApi().then((_) {
         if (mounted) {
-          final stockVM = Provider.of<StocklistViewmodel>(context, listen: false);
-          if (stockVM.stockListModel?.data != null && stockVM.stockListModel!.data!.isNotEmpty) {
+          final stockVM = Provider.of<StocklistViewmodel>(
+            context,
+            listen: false,
+          );
+          if (stockVM.stockListModel?.data != null &&
+              stockVM.stockListModel!.data!.isNotEmpty) {
             if (selectedProducts.isEmpty) {
               setState(() {
                 final firstProd = stockVM.stockListModel!.data!.first;
@@ -189,7 +211,10 @@ class _NeworderState extends State<Neworder> {
                 qCtrl.addListener(() => setState(() {}));
                 productQuantityControllers[productKey] = qCtrl;
 
-                String rate = firstProd.sellingPrice?.toString() ?? firstProd.pricePerUnit?.toString() ?? '';
+                String rate =
+                    firstProd.sellingPrice?.toString() ??
+                    firstProd.pricePerUnit?.toString() ??
+                    '';
                 final rCtrl = TextEditingController(text: rate);
                 rCtrl.addListener(() => setState(() {}));
                 productRateControllers[productKey] = rCtrl;
@@ -244,147 +269,62 @@ class _NeworderState extends State<Neworder> {
       qCtrl.addListener(() => setState(() {}));
       productQuantityControllers[productKey] = qCtrl;
 
-      String rate = firstProd.sellingPrice?.toString() ?? firstProd.pricePerUnit?.toString() ?? '';
+      String rate =
+          firstProd.sellingPrice?.toString() ??
+          firstProd.pricePerUnit?.toString() ??
+          '';
       final rCtrl = TextEditingController(text: rate);
       rCtrl.addListener(() => setState(() {}));
       productRateControllers[productKey] = rCtrl;
 
       selectedProduct = firstProd;
-      selectedProductId = firstProd.id is int ? firstProd.id as int : int.tryParse(firstProd.id.toString());
+      selectedProductId = firstProd.id is int
+          ? firstProd.id as int
+          : int.tryParse(firstProd.id.toString());
     }
 
     double itemTotal = selectedProducts.fold<double>(0.0, (sum, product) {
       String key = product.id.toString();
-      double qty = double.tryParse(productQuantityControllers[key]?.text.trim() ?? '') ?? 0;
-      double rate = double.tryParse(productRateControllers[key]?.text.trim() ?? '') ?? 0;
+      double qty =
+          double.tryParse(productQuantityControllers[key]?.text.trim() ?? '') ??
+          0;
+      double rate =
+          double.tryParse(productRateControllers[key]?.text.trim() ?? '') ?? 0;
       return sum + (qty * rate);
     });
 
-    double transportCharge = double.tryParse(OrdertransportController.text.trim()) ?? 0;
-    double labourCharge = double.tryParse(OrderlabourController.text.trim()) ?? 0;
+    double transportCharge =
+        double.tryParse(OrdertransportController.text.trim()) ?? 0;
+    double labourCharge =
+        double.tryParse(OrderlabourController.text.trim()) ?? 0;
     double discount = double.tryParse(OrderdiscountController.text.trim()) ?? 0;
     double totalAmount = itemTotal + transportCharge + labourCharge - discount;
     if (totalAmount < 0) totalAmount = 0;
-    double advanceAmount = double.tryParse(OrderadvanceController.text.trim()) ?? 0;
+    double advanceAmount =
+        double.tryParse(OrderadvanceController.text.trim()) ?? 0;
     double remainingBalance = totalAmount - advanceAmount;
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppColor.bodybackgroundColor,
+      appBar: const ConstantAppBar(
+        title: 'Dashboard',
+        showBranding: true,
+        showBackButton: true,
+        logoAsset: 'assets/logo.jpg',
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // HEADER BAR
+              _buildHeader(),
               Container(
-                height: Sizes.screenWidth * 0.15,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(Icons.arrow_back, color: brown, size: 27),
-                    ),
-                    const SizedBox(width: 20),
-                    Container(
-                      height: Sizes.screenWidth * 0.112,
-                      width: Sizes.screenWidth * 0.112,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFFB58B76),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/logo.jpg',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'MAHINDRA BRICKS',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: brown,
-                                height: 1.2,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'P A V E R   B L O C K S',
-                            style: GoogleFonts.poppins(
-                              fontSize: 9,
-                              letterSpacing: 0.5,
-                              color: brown,
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'New Order',
-                            style: GoogleFonts.poppins(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.stockTitleColor,
-                            ),
-                          ),
-                          Text(
-                            'Create a new sales order',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.poppins(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF66615D),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // CLIENT DETAILS CARD
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 12),
-                padding: const EdgeInsets.fromLTRB(13, 10, 13, 13),
+                margin:  EdgeInsets.symmetric(horizontal: 12),
+                padding:  EdgeInsets.fromLTRB(13, 10, 13, 13),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFFDFC),
+                  color:  AppColor.white38,
                   borderRadius: BorderRadius.circular(13),
-                  border: Border.all(color: const Color(0xFFF1EAE6)),
+                  border: Border.all(color:  AppColor.grey),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,8 +334,8 @@ class _NeworderState extends State<Neworder> {
                         Container(
                           height: Sizes.screenHeight * 0.047,
                           width: Sizes.screenWidth * 0.095,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFFEFEB),
+                          decoration:  BoxDecoration(
+                            color: AppColor.lightredbg,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(Icons.person, color: brown, size: 28),
@@ -407,7 +347,7 @@ class _NeworderState extends State<Neworder> {
                             style: GoogleFonts.poppins(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: brown,
+                              color: AppColor.stockAmountColor,
                             ),
                           ),
                         ),
@@ -427,23 +367,23 @@ class _NeworderState extends State<Neworder> {
                             }
                           },
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: brown,
-                            side: BorderSide(color: brown.withOpacity(0.65)),
+                            foregroundColor: AppColor.stockAmountColor,
+                            side: BorderSide(color: AppColor.stockUnitColor),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(7),
                             ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 8,
+                            padding:  EdgeInsets.symmetric(
+                              horizontal: Sizes.screenWidth * 0.020,
+                              vertical: Sizes.screenHeight * 0.008,
                             ),
-                            minimumSize: const Size(0, 34),
+                            minimumSize:  Size(0, 34),
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.add, size: 18),
-                              const SizedBox(width: 5),
+                               Icon(Icons.add, size: 18),
+                              SizedBox(width: Sizes.screenWidth * 0.012),
                               Text(
                                 'Add New Client',
                                 style: GoogleFonts.poppins(
@@ -456,48 +396,48 @@ class _NeworderState extends State<Neworder> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: Sizes.screenHeight * 0.010),
                     RichText(
                       text: TextSpan(
                         style: GoogleFonts.poppins(
                           fontSize: 11,
-                          color: const Color(0xFF34404B),
+                          color: AppColor.gey,
                         ),
                         children: [
-                          const TextSpan(text: 'Select Client '),
+                           TextSpan(text: 'Select Client '),
                           TextSpan(
                             text: '*',
                             style: GoogleFonts.poppins(
-                              color: Colors.red.shade700,
+                              color: AppColor.red,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: Sizes.screenHeight * 0.005),
                     Container(
                       height: Sizes.screenHeight * 0.049,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFCFCFC),
-                        border: Border.all(color: borderColor),
+                        color: AppColor.white38,
+                        border: Border.all(color: AppColor.grey),
                         borderRadius: BorderRadius.circular(7),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                           Icon(
                             Icons.search,
-                            color: Color(0xFF646B72),
+                            color: AppColor.gey,
                             size: 21,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: Sizes.screenWidth * 0.020),
                           Expanded(
                             child: clientList.loading
-                                ? const Center(
+                                ?  Center(
                                     child: SizedBox(
-                                      height: 18,
-                                      width: 18,
+                                      height: Sizes.screenHeight * 0.022,
+                                      width: Sizes.screenWidth * 0.045,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
                                       ),
@@ -511,29 +451,33 @@ class _NeworderState extends State<Neworder> {
                                         'Select client name or mobile number',
                                         style: GoogleFonts.poppins(
                                           fontSize: 11,
-                                          color: const Color(0xFF858B94),
+                                          color:  AppColor.gey,
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      icon: const Icon(
+                                      icon:  Icon(
                                         Icons.keyboard_arrow_down,
                                         size: 21,
-                                        color: Color(0xFF555B62),
+                                        color: AppColor.gey,
                                       ),
-                                      items: clientList.clientListModel?.data
-                                          ?.map((clientItem) {
-                                        final company = clientItem.companyName
+                                      items: clientList.clientListModel?.data?.map((
+                                        clientItem,
+                                      ) {
+                                        final company =
+                                            clientItem.companyName
                                                 ?.toString() ??
                                             '';
-                                        final contact = clientItem.contactPerson
+                                        final contact =
+                                            clientItem.contactPerson
                                                 ?.toString() ??
                                             '';
                                         final name = company.isNotEmpty
                                             ? company
                                             : (contact.isNotEmpty
-                                                ? contact
-                                                : 'Client #${clientItem.id}');
-                                        final mobile = clientItem.mobile != null &&
+                                                  ? contact
+                                                  : 'Client #${clientItem.id}');
+                                        final mobile =
+                                            clientItem.mobile != null &&
                                                 clientItem.mobile
                                                     .toString()
                                                     .isNotEmpty
@@ -561,7 +505,7 @@ class _NeworderState extends State<Neworder> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 11),
+                    SizedBox(height: Sizes.screenHeight * 0.013),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -573,10 +517,10 @@ class _NeworderState extends State<Neworder> {
                                 'Mobile Number',
                                 style: GoogleFonts.poppins(
                                   fontSize: 11,
-                                  color: const Color(0xFF34404B),
+                                  color: AppColor.gey,
                                 ),
                               ),
-                              const SizedBox(height: 3),
+                              SizedBox(height: 3),
                               SizedBox(
                                 height: Sizes.screenHeight * 0.052,
                                 child: AppTextField(
@@ -594,7 +538,7 @@ class _NeworderState extends State<Neworder> {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 11),
+                        SizedBox(width: Sizes.screenWidth * 0.027),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -603,21 +547,21 @@ class _NeworderState extends State<Neworder> {
                                 text: TextSpan(
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: const Color(0xFF34404B),
+                                    color: AppColor.gey,
                                   ),
                                   children: [
-                                    const TextSpan(text: 'Delivery Address '),
+                                     TextSpan(text: 'Delivery Address '),
                                     TextSpan(
                                       text: '*',
                                       style: GoogleFonts.poppins(
-                                        color: Colors.red.shade700,
+                                        color: AppColor.red,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 3),
+                              SizedBox(height: Sizes.screenHeight * 0.004),
                               SizedBox(
                                 height: Sizes.screenHeight * 0.055,
                                 child: AppTextField(
@@ -638,17 +582,17 @@ class _NeworderState extends State<Neworder> {
                 ),
               ),
 
-              const SizedBox(height: 8),
-
-              // PRODUCT DETAILS CARD
+              SizedBox(height: Sizes.screenHeight * 0.010),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: Sizes.screenWidth * 0.020,
+                ),
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                  padding:  EdgeInsets.fromLTRB(10, 8, 10, 8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFFBF8),
+                    color:  AppColor.white38,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFF0E6E0)),
+                    border: Border.all(color: AppColor.grey),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -659,16 +603,16 @@ class _NeworderState extends State<Neworder> {
                             height: Sizes.screenHeight * 0.034,
                             width: Sizes.screenWidth * 0.07,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF8E7E1),
+                              color:  AppColor.lightredbg,
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Icon(
+                            child:  Icon(
                               Icons.inventory_2,
-                              color: Color(0xFF8B291C),
+                              color: AppColor.stockAmountColor,
                               size: 18,
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: Sizes.screenWidth * 0.020),
                           Text(
                             'Product Details',
                             style: GoogleFonts.poppins(
@@ -680,8 +624,7 @@ class _NeworderState extends State<Neworder> {
                         ],
                       ),
 
-                      const SizedBox(height: 6),
-
+                      SizedBox(height: Sizes.screenHeight * 0.007),
                       Text.rich(
                         TextSpan(
                           children: [
@@ -689,23 +632,20 @@ class _NeworderState extends State<Neworder> {
                               text: 'Select Product ',
                               style: GoogleFonts.poppins(
                                 fontSize: 11,
-                                color: const Color(0xFF34404B),
+                                color: AppColor.gey,
                               ),
                             ),
                             TextSpan(
                               text: '*',
                               style: GoogleFonts.poppins(
                                 fontSize: 11,
-                                color: Colors.red,
+                                color: AppColor.red,
                               ),
                             ),
                           ],
                         ),
                       ),
-
-                      const SizedBox(height: 3),
-
-                      // PRODUCT DROPDOWN TRIGGER
+                      SizedBox(height: Sizes.screenHeight * 0.004),
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -714,10 +654,12 @@ class _NeworderState extends State<Neworder> {
                         },
                         child: Container(
                           height: Sizes.screenHeight * 0.052,
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Sizes.screenWidth * 0.012,
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFCFCFC),
-                            border: Border.all(color: const Color(0xFFDDE0E3)),
+                            color:  AppColor.white,
+                            border: Border.all(color: AppColor.grey),
                             borderRadius: BorderRadius.circular(7),
                           ),
                           child: Row(
@@ -725,8 +667,9 @@ class _NeworderState extends State<Neworder> {
                               Container(
                                 height: Sizes.screenHeight * 0.034,
                                 width: Sizes.screenWidth * 0.07,
-                                color: const Color(0xFFF9E9E2),
-                                child: (selectedProduct?.imageUrl != null &&
+                                color:  Color(0xFFF9E9E2),
+                                child:
+                                    (selectedProduct?.imageUrl != null &&
                                         selectedProduct!.imageUrl
                                             .toString()
                                             .isNotEmpty)
@@ -736,16 +679,16 @@ class _NeworderState extends State<Neworder> {
                                         errorBuilder:
                                             (context, error, stackTrace) =>
                                                 Image.asset(
-                                          'assets/bricks.jpg',
-                                          fit: BoxFit.contain,
-                                        ),
+                                                  'assets/bricks.jpg',
+                                                  fit: BoxFit.contain,
+                                                ),
                                       )
                                     : Image.asset(
                                         'assets/bricks.jpg',
                                         fit: BoxFit.contain,
                                       ),
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: Sizes.screenWidth * 0.012),
                               Expanded(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -759,17 +702,17 @@ class _NeworderState extends State<Neworder> {
                                       style: GoogleFonts.poppins(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF263747),
+                                        color:  AppColor.gey,
                                       ),
                                     ),
-                                    const SizedBox(height: 1),
+                                    SizedBox(height: Sizes.screenHeight * 0.001),
                                     Text(
                                       '${selectedProduct?.dimensions ?? 'N/A'} | ${selectedProduct?.colour ?? 'Red'}',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.poppins(
                                         fontSize: 9,
-                                        color: const Color(0xFF687078),
+                                        color: AppColor.gey,
                                       ),
                                     ),
                                   ],
@@ -780,14 +723,13 @@ class _NeworderState extends State<Neworder> {
                                     ? Icons.keyboard_arrow_up
                                     : Icons.keyboard_arrow_down,
                                 size: 18,
-                                color: const Color(0xFF59636F),
+                                color: AppColor.gey,
                               ),
                             ],
                           ),
                         ),
                       ),
 
-                      // PRODUCT LIST DROPDOWN
                       if (isProductDropdownOpen)
                         Container(
                           width: double.infinity,
@@ -805,172 +747,167 @@ class _NeworderState extends State<Neworder> {
                                   ),
                                 )
                               : stockList.isEmpty
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Center(
-                                        child: Text(
-                                          'No Products Available',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 11,
-                                          ),
+                              ? Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Center(
+                                    child: Text(
+                                      'No Products Available',
+                                      style: GoogleFonts.poppins(fontSize: 11),
+                                    ),
+                                  ),
+                                )
+                              : Column(
+                                  children: stockList.map((product) {
+                                    bool isSelected = selectedProducts.any(
+                                      (item) =>
+                                          item.id.toString() ==
+                                          product.id.toString(),
+                                    );
+
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          String productKey = product.id
+                                              .toString();
+
+                                          if (isSelected) {
+                                            selectedProducts.removeWhere(
+                                              (item) =>
+                                                  item.id.toString() ==
+                                                  productKey,
+                                            );
+                                            productQuantityControllers
+                                                .remove(productKey)
+                                                ?.dispose();
+                                            productRateControllers
+                                                .remove(productKey)
+                                                ?.dispose();
+                                          } else {
+                                            selectedProducts.add(product);
+
+                                            final qCtrl =
+                                                TextEditingController();
+                                            qCtrl.addListener(
+                                              () => setState(() {}),
+                                            );
+                                            productQuantityControllers[productKey] =
+                                                qCtrl;
+
+                                            String rate =
+                                                product.sellingPrice
+                                                    ?.toString() ??
+                                                product.pricePerUnit
+                                                    ?.toString() ??
+                                                '';
+                                            final rCtrl = TextEditingController(
+                                              text: rate,
+                                            );
+                                            rCtrl.addListener(
+                                              () => setState(() {}),
+                                            );
+                                            productRateControllers[productKey] =
+                                                rCtrl;
+                                          }
+
+                                          selectedProduct =
+                                              selectedProducts.isNotEmpty
+                                              ? selectedProducts.last
+                                              : null;
+
+                                          selectedProductId =
+                                              selectedProduct?.id is int
+                                              ? selectedProduct?.id as int
+                                              : int.tryParse(
+                                                  selectedProduct?.id
+                                                          .toString() ??
+                                                      '',
+                                                );
+                                        });
+                                      },
+                                      child: Container(
+                                        color: isSelected
+                                            ?  Color(0xFFFFF0EE)
+                                            : Colors.white,
+                                        padding:  EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 8,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: Sizes.screenHeight * 0.037,
+                                              width: Sizes.screenWidth * 0.075,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                                color:  Color(0xFFF9E9E2),
+                                              ),
+                                              child:
+                                                  (product.imageUrl != null &&
+                                                      product.imageUrl
+                                                          .toString()
+                                                          .isNotEmpty)
+                                                  ? Image.network(
+                                                      product.imageUrl
+                                                          .toString(),
+                                                      fit: BoxFit.cover,
+                                                      errorBuilder:
+                                                          (
+                                                            context,
+                                                            error,
+                                                            stackTrace,
+                                                          ) => Image.asset(
+                                                            'assets/bricks.jpg',
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                    )
+                                                  : Image.asset(
+                                                      'assets/bricks.jpg',
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                            ),
+                                            SizedBox(width: Sizes.screenWidth * 0.020),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    product.name?.toString() ??
+                                                        '',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Size: ${product.dimensions ?? 'N/A'} | Stock: ${product.stockQuantity ?? 0}',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 9,
+                                                      color:  Color(
+                                                        0xFF687078,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Icon(
+                                              isSelected
+                                                  ? Icons.check_circle
+                                                  : Icons.circle_outlined,
+                                              color: isSelected
+                                                  ?  Color(0xFF24713C)
+                                                  :  Color(0xFF9AA0A6),
+                                              size: 20,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    )
-                                  : Column(
-                                      children: stockList.map((product) {
-                                        bool isSelected = selectedProducts.any(
-                                          (item) =>
-                                              item.id.toString() ==
-                                              product.id.toString(),
-                                        );
-
-                                        return InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              String productKey =
-                                                  product.id.toString();
-
-                                              if (isSelected) {
-                                                selectedProducts.removeWhere(
-                                                  (item) =>
-                                                      item.id.toString() ==
-                                                      productKey,
-                                                );
-                                                productQuantityControllers
-                                                    .remove(productKey)
-                                                    ?.dispose();
-                                                productRateControllers
-                                                    .remove(productKey)
-                                                    ?.dispose();
-                                              } else {
-                                                selectedProducts.add(product);
-
-                                                final qCtrl =
-                                                    TextEditingController();
-                                                qCtrl.addListener(
-                                                    () => setState(() {}));
-                                                productQuantityControllers[
-                                                    productKey] = qCtrl;
-
-                                                String rate = product
-                                                        .sellingPrice
-                                                        ?.toString() ??
-                                                    product.pricePerUnit
-                                                        ?.toString() ??
-                                                    '';
-                                                final rCtrl =
-                                                    TextEditingController(
-                                                        text: rate);
-                                                rCtrl.addListener(
-                                                    () => setState(() {}));
-                                                productRateControllers[
-                                                    productKey] = rCtrl;
-                                              }
-
-                                              selectedProduct = selectedProducts
-                                                      .isNotEmpty
-                                                  ? selectedProducts.last
-                                                  : null;
-
-                                              selectedProductId =
-                                                  selectedProduct?.id is int
-                                                      ? selectedProduct?.id
-                                                          as int
-                                                      : int.tryParse(
-                                                          selectedProduct?.id
-                                                                  .toString() ??
-                                                              '',
-                                                        );
-                                            });
-                                          },
-                                          child: Container(
-                                            color: isSelected
-                                                ? const Color(0xFFFFF0EE)
-                                                : Colors.white,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: 8,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                    color: const Color(
-                                                        0xFFF9E9E2),
-                                                  ),
-                                                  child: (product.imageUrl !=
-                                                              null &&
-                                                          product.imageUrl
-                                                              .toString()
-                                                              .isNotEmpty)
-                                                      ? Image.network(
-                                                          product.imageUrl
-                                                              .toString(),
-                                                          fit: BoxFit.cover,
-                                                          errorBuilder: (context,
-                                                                  error,
-                                                                  stackTrace) =>
-                                                              Image.asset(
-                                                            'assets/bricks.jpg',
-                                                            fit:
-                                                                BoxFit.contain,
-                                                          ),
-                                                        )
-                                                      : Image.asset(
-                                                          'assets/bricks.jpg',
-                                                          fit: BoxFit.contain,
-                                                        ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        product.name
-                                                                ?.toString() ??
-                                                            '',
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          fontSize: 11,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        'Size: ${product.dimensions ?? 'N/A'} | Stock: ${product.stockQuantity ?? 0}',
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          fontSize: 9,
-                                                          color: const Color(
-                                                              0xFF687078),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Icon(
-                                                  isSelected
-                                                      ? Icons.check_circle
-                                                      : Icons.circle_outlined,
-                                                  color: isSelected
-                                                      ? const Color(0xFF24713C)
-                                                      : const Color(0xFF9AA0A6),
-                                                  size: 20,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                    );
+                                  }).toList(),
+                                ),
                         ),
 
                       // SELECTED PRODUCTS CARDS
@@ -984,7 +921,7 @@ class _NeworderState extends State<Neworder> {
                               style: GoogleFonts.poppins(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF263747),
+                                color: AppColor.black,
                               ),
                             ),
                             Text(
@@ -992,39 +929,43 @@ class _NeworderState extends State<Neworder> {
                               style: GoogleFonts.poppins(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF24713C),
+                                color: AppColor.green,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 5),
+                        SizedBox(height: Sizes.screenHeight * 0.006),
                         ...selectedProducts.map((product) {
                           String productKey = product.id.toString();
                           TextEditingController quantityController =
                               productQuantityControllers[productKey] ??
-                                  TextEditingController();
+                              TextEditingController();
                           TextEditingController rateController =
                               productRateControllers[productKey] ??
-                                  TextEditingController();
+                              TextEditingController();
 
-                          final availableStock = (double.tryParse(
-                                      product.stockQuantity?.toString() ??
-                                          '0') ??
-                                  0)
-                              .toInt();
+                          final availableStock =
+                              (double.tryParse(
+                                        product.stockQuantity?.toString() ??
+                                            '0',
+                                      ) ??
+                                      0)
+                                  .toInt();
 
                           final double singleItemTotal =
                               (double.tryParse(quantityController.text) ?? 0) *
-                                  (double.tryParse(rateController.text) ?? 0);
+                              (double.tryParse(rateController.text) ?? 0);
 
                           return Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            padding: const EdgeInsets.all(7),
+                            margin: EdgeInsets.only(
+                              bottom: Sizes.screenHeight * 0.010,
+                            ),
+                            padding:  EdgeInsets.all(7),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppColor.white,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: const Color(0xFFF0E6E0),
+                                color:  AppColor.grey,
                               ),
                             ),
                             child: Column(
@@ -1033,32 +974,36 @@ class _NeworderState extends State<Neworder> {
                                 Row(
                                   children: [
                                     Container(
-                                      height: 38,
-                                      width: 38,
+                                      height: Sizes.screenHeight * 0.047,
+                                      width: Sizes.screenWidth * 0.095,
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFF9E9E2),
+                                        color:  Color(0xFFF9E9E2),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
-                                      child: (product.imageUrl != null &&
+                                      child:
+                                          (product.imageUrl != null &&
                                               product.imageUrl
                                                   .toString()
                                                   .isNotEmpty)
                                           ? Image.network(
                                               product.imageUrl.toString(),
                                               fit: BoxFit.cover,
-                                              errorBuilder: (context, error,
-                                                      stackTrace) =>
-                                                  Image.asset(
-                                                'assets/bricks.jpg',
-                                                fit: BoxFit.contain,
-                                              ),
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => Image.asset(
+                                                    'assets/bricks.jpg',
+                                                    fit: BoxFit.contain,
+                                                  ),
                                             )
                                           : Image.asset(
                                               'assets/bricks.jpg',
                                               fit: BoxFit.contain,
                                             ),
                                     ),
-                                    const SizedBox(width: 8),
+                                    SizedBox(width: Sizes.screenWidth * 0.020),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -1071,7 +1016,7 @@ class _NeworderState extends State<Neworder> {
                                             style: GoogleFonts.poppins(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600,
-                                              color: const Color(0xFF263747),
+                                              color:  AppColor.black,
                                             ),
                                           ),
                                           const SizedBox(height: 2),
@@ -1079,14 +1024,14 @@ class _NeworderState extends State<Neworder> {
                                             '${product.dimensions ?? 'N/A'} | ${product.colour ?? 'Red'}',
                                             style: GoogleFonts.poppins(
                                               fontSize: 9,
-                                              color: const Color(0xFF687078),
+                                              color:  AppColor.gey,
                                             ),
                                           ),
                                           Text(
                                             'Stock: $availableStock pcs',
                                             style: GoogleFonts.poppins(
                                               fontSize: 9,
-                                              color: const Color(0xFF24713C),
+                                              color: AppColor.green,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
@@ -1098,7 +1043,8 @@ class _NeworderState extends State<Neworder> {
                                         setState(() {
                                           selectedProducts.removeWhere(
                                             (item) =>
-                                                item.id.toString() == productKey,
+                                                item.id.toString() ==
+                                                productKey,
                                           );
                                           productQuantityControllers
                                               .remove(productKey)
@@ -1109,36 +1055,37 @@ class _NeworderState extends State<Neworder> {
 
                                           selectedProduct =
                                               selectedProducts.isNotEmpty
-                                                  ? selectedProducts.last
-                                                  : null;
+                                              ? selectedProducts.last
+                                              : null;
 
                                           selectedProductId =
                                               selectedProduct?.id is int
-                                                  ? selectedProduct?.id as int
-                                                  : int.tryParse(
-                                                      selectedProduct?.id
-                                                              .toString() ??
-                                                          '',
-                                                    );
+                                              ? selectedProduct?.id as int
+                                              : int.tryParse(
+                                                  selectedProduct?.id
+                                                          .toString() ??
+                                                      '',
+                                                );
                                         });
                                       },
                                       child: Container(
-                                        padding: const EdgeInsets.all(5),
+                                        padding:  EdgeInsets.all(5),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFFFFEEEE),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
+                                          color:  AppColor.lightredbg,
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
                                         ),
-                                        child: const Icon(
+                                        child:  Icon(
                                           Icons.close,
-                                          color: Colors.red,
+                                          color: AppColor.red2,
                                           size: 17,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 9),
+                                SizedBox(height: Sizes.screenHeight * 0.011),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -1151,10 +1098,10 @@ class _NeworderState extends State<Neworder> {
                                             'Quantity (pcs)',
                                             style: GoogleFonts.poppins(
                                               fontSize: 10,
-                                              color: const Color(0xFF34404B),
+                                              color:  AppColor.gey,
                                             ),
                                           ),
-                                          const SizedBox(height: 3),
+                                          SizedBox(height: Sizes.screenHeight * 0.004),
                                           SizedBox(
                                             height: Sizes.screenHeight * 0.039,
                                             child: AppTextField(
@@ -1166,6 +1113,7 @@ class _NeworderState extends State<Neworder> {
                                                     .digitsOnly,
                                               ],
                                               hintText: 'Enter Qty',
+                                              hintFontSize: 13,
                                               height:
                                                   Sizes.screenHeight * 0.039,
                                               hintTextHeight:
@@ -1179,20 +1127,20 @@ class _NeworderState extends State<Neworder> {
                                                       availableStock) {
                                                     quantityController.text =
                                                         availableStock > 0
-                                                            ? availableStock
-                                                                .toString()
-                                                            : '';
+                                                        ? availableStock
+                                                              .toString()
+                                                        : '';
 
                                                     quantityController
                                                             .selection =
-                                                        TextSelection
-                                                            .fromPosition(
-                                                      TextPosition(
-                                                        offset:
-                                                            quantityController
-                                                                .text.length,
-                                                      ),
-                                                    );
+                                                        TextSelection.fromPosition(
+                                                          TextPosition(
+                                                            offset:
+                                                                quantityController
+                                                                    .text
+                                                                    .length,
+                                                          ),
+                                                        );
 
                                                     Utils.showErrorMessage(
                                                       context,
@@ -1207,7 +1155,7 @@ class _NeworderState extends State<Neworder> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(width: 6),
+                                    SizedBox(width: Sizes.screenWidth * 0.012),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -1217,20 +1165,19 @@ class _NeworderState extends State<Neworder> {
                                             'Rate (₹)',
                                             style: GoogleFonts.poppins(
                                               fontSize: 10,
-                                              color: const Color(0xFF34404B),
+                                              color:  AppColor.gey,
                                             ),
                                           ),
-                                          const SizedBox(height: 3),
+                                          SizedBox(height: Sizes.screenHeight * 0.004),
                                           SizedBox(
                                             height: Sizes.screenHeight * 0.039,
                                             child: AppTextField(
                                               prefixIcon: Icons.currency_rupee,
                                               controller: rateController,
                                               keyboardType:
-                                                  const TextInputType
-                                                      .numberWithOptions(
-                                                decimal: true,
-                                              ),
+                                                   TextInputType.numberWithOptions(
+                                                    decimal: true,
+                                                  ),
                                               hintText: 'Enter Rate',
                                               height:
                                                   Sizes.screenHeight * 0.039,
@@ -1244,18 +1191,19 @@ class _NeworderState extends State<Neworder> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(width: 6),
+                                    SizedBox(width: Sizes.screenWidth * 0.012),
                                     Expanded(
                                       child: Container(
                                         height: Sizes.screenHeight * 0.059,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 6,
-                                          vertical: 4,
+                                        padding:  EdgeInsets.symmetric(
+                                          horizontal: Sizes.screenWidth * 0.012,
+                                          vertical: Sizes.screenHeight * 0.005,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFFFFF0EE),
-                                          borderRadius:
-                                              BorderRadius.circular(7),
+                                          color:  AppColor.bgbacklight,
+                                          borderRadius: BorderRadius.circular(
+                                            7,
+                                          ),
                                         ),
                                         child: Column(
                                           crossAxisAlignment:
@@ -1267,10 +1215,10 @@ class _NeworderState extends State<Neworder> {
                                               'Item Total',
                                               style: GoogleFonts.poppins(
                                                 fontSize: 10,
-                                                color: const Color(0xFF81241B),
+                                                color: AppColor.stockUnitColor,
                                               ),
                                             ),
-                                            const SizedBox(height: 1),
+                                            SizedBox(height: Sizes.screenHeight * 0.001),
                                             Text(
                                               '₹ ${singleItemTotal.toStringAsFixed(2)}',
                                               maxLines: 1,
@@ -1292,23 +1240,24 @@ class _NeworderState extends State<Neworder> {
                           );
                         }).toList(),
                       ],
-                      const SizedBox(height: 6),
+                      SizedBox(height: Sizes.screenHeight * 0.007),
                     ],
                   ),
                 ),
               ),
 
-              const SizedBox(height: 8),
+              SizedBox(height: Sizes.screenHeight * 0.010),
 
-              // VEHICLE DETAILS CARD
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: Sizes.screenWidth * 0.020,
+                ),
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                  padding:  EdgeInsets.fromLTRB(10, 8, 10, 8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFFBF8),
+                    color:  AppColor.white38,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFF0E6E0)),
+                    border: Border.all(color:  AppColor.grey),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1319,16 +1268,16 @@ class _NeworderState extends State<Neworder> {
                             height: Sizes.screenHeight * 0.034,
                             width: Sizes.screenWidth * 0.07,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF8E7E1),
+                              color:  AppColor.grey,
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Icon(
+                            child:  Icon(
                               Icons.directions_bus,
-                              color: Color(0xFF8B291C),
+                              color: AppColor.stockAmountColor,
                               size: 18,
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: Sizes.screenWidth * 0.020),
                           Text(
                             'Vehicle Details',
                             style: GoogleFonts.poppins(
@@ -1339,24 +1288,28 @@ class _NeworderState extends State<Neworder> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: Sizes.screenHeight * 0.007),
                       Text.rich(
                         TextSpan(
                           children: [
                             TextSpan(
                               text: 'Select Vehicle ',
                               style: GoogleFonts.poppins(
-                                  fontSize: 11, color: const Color(0xFF34404B)),
+                                fontSize: 11,
+                                color: AppColor.gey,
+                              ),
                             ),
                             TextSpan(
                               text: '*',
                               style: GoogleFonts.poppins(
-                                  fontSize: 11, color: Colors.red),
+                                fontSize: 11,
+                                color: AppColor.red,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 3),
+                      SizedBox(height: Sizes.screenHeight * 0.004),
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -1365,10 +1318,10 @@ class _NeworderState extends State<Neworder> {
                         },
                         child: Container(
                           height: Sizes.screenHeight * 0.052,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          padding:  EdgeInsets.symmetric(horizontal: 8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFCFCFC),
-                            border: Border.all(color: const Color(0xFFDDE0E3)),
+                            color: AppColor.white,
+                            border: Border.all(color:  AppColor.grey),
                             borderRadius: BorderRadius.circular(7),
                           ),
                           child: Row(
@@ -1377,16 +1330,16 @@ class _NeworderState extends State<Neworder> {
                                 height: Sizes.screenHeight * 0.034,
                                 width: Sizes.screenWidth * 0.07,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF9E9E2),
+                                  color:  AppColor.bgbacklight,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: const Icon(
+                                child:  Icon(
                                   Icons.local_shipping_outlined,
-                                  color: Color(0xFF8B291C),
+                                  color: AppColor.stockAmountColor,
                                   size: 18,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: Sizes.screenWidth * 0.020),
                               Expanded(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1401,17 +1354,17 @@ class _NeworderState extends State<Neworder> {
                                       style: GoogleFonts.poppins(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF263747),
+                                        color:  AppColor.black,
                                       ),
                                     ),
-                                    const SizedBox(height: 1),
+                                    SizedBox(height: Sizes.screenHeight * 0.001),
                                     Text(
                                       'Number: ${selectedVehicle?.vehicle_number ?? 'N/A'}  |  Driver: ${selectedVehicle?.driver_name ?? 'N/A'}',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.poppins(
                                         fontSize: 9,
-                                        color: const Color(0xFF687078),
+                                        color: AppColor.gey,
                                       ),
                                     ),
                                   ],
@@ -1422,7 +1375,7 @@ class _NeworderState extends State<Neworder> {
                                     ? Icons.keyboard_arrow_up
                                     : Icons.keyboard_arrow_down,
                                 size: 18,
-                                color: const Color(0xFF59636F),
+                                color:  AppColor.black,
                               ),
                             ],
                           ),
@@ -1431,9 +1384,9 @@ class _NeworderState extends State<Neworder> {
                       if (isVehicleDropdownOpen)
                         Container(
                           width: double.infinity,
-                          margin: const EdgeInsets.only(top: 4),
+                          margin:  EdgeInsets.only(top: 4),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: AppColor.white,
                             borderRadius: BorderRadius.circular(7),
                             border: Border.all(color: const Color(0xFFDDE0E3)),
                           ),
@@ -1441,103 +1394,95 @@ class _NeworderState extends State<Neworder> {
                               ? const Padding(
                                   padding: EdgeInsets.all(12),
                                   child: Center(
-                                      child: CircularProgressIndicator()),
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 )
                               : vehicleList.isEmpty
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Center(
-                                        child: Text(
-                                          'No Vehicles Available',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 11),
+                              ? Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Center(
+                                    child: Text(
+                                      'No Vehicles Available',
+                                      style: GoogleFonts.poppins(fontSize: 11),
+                                    ),
+                                  ),
+                                )
+                              : Column(
+                                  children: vehicleList.map((vehicle) {
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedVehicle = vehicle;
+                                          isVehicleDropdownOpen = false;
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding:  EdgeInsets.symmetric(
+                                          horizontal: Sizes.screenWidth * 0.020,
+                                          vertical: Sizes.screenHeight * 0.010,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: Sizes.screenHeight * 0.037,
+                                              width: Sizes.screenWidth * 0.075,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                                color:  AppColor.bgbacklight,
+                                              ),
+                                              child:  Icon(
+                                                Icons.directions_bus,
+                                                color: AppColor.stockAmountColor,
+                                                size: 16,
+                                              ),
+                                            ),
+                                            SizedBox(width: Sizes.screenWidth * 0.020),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${vehicle.vehicle_name ?? ''} (${vehicle.vehicle_number ?? ''})',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Driver: ${vehicle.driver_name ?? 'N/A'} | Phone: ${vehicle.driver_mobile ?? 'N/A'}',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 9,
+                                                      color: AppColor.gey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    )
-                                  : Column(
-                                      children: vehicleList.map((vehicle) {
-                                        return InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedVehicle = vehicle;
-                                              isVehicleDropdownOpen = false;
-                                            });
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: 8,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(4),
-                                                    color: const Color(
-                                                        0xFFF9E9E2),
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.directions_bus,
-                                                    color: Color(0xFF8B291C),
-                                                    size: 16,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        '${vehicle.vehicle_name ?? ''} (${vehicle.vehicle_number ?? ''})',
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          fontSize: 11,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        'Driver: ${vehicle.driver_name ?? 'N/A'} | Phone: ${vehicle.driver_mobile ?? 'N/A'}',
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          fontSize: 9,
-                                                          color: const Color(
-                                                              0xFF687078),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                    );
+                                  }).toList(),
+                                ),
                         ),
                     ],
                   ),
                 ),
               ),
-
-              const SizedBox(height: 10),
-
-              // AMOUNT DETAILS CARD
+              SizedBox(height: Sizes.screenHeight * 0.012),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: Sizes.screenWidth * 0.020,
+                ),
                 child: Container(
-                  padding: const EdgeInsets.all(10),
+                  padding:  EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFFBF8),
+                    color:  AppColor.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFFF0E6E0),
-                    ),
+                    border: Border.all(color: AppColor.grey),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1548,16 +1493,16 @@ class _NeworderState extends State<Neworder> {
                             height: Sizes.screenHeight * 0.042,
                             width: Sizes.screenWidth * 0.085,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF8E7E1),
+                              color: AppColor.bgbacklight,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Icon(
+                            child:  Icon(
                               Icons.calculate,
                               size: 23,
-                              color: Color(0xFF81241B),
+                              color: AppColor.stockAmountColor,
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: Sizes.screenWidth * 0.025),
                           Text(
                             'Amount Details',
                             style: GoogleFonts.poppins(
@@ -1568,11 +1513,11 @@ class _NeworderState extends State<Neworder> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 5),
+                      SizedBox(height: Sizes.screenHeight * 0.006),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 3,
-                          vertical: 5,
+                        padding:  EdgeInsets.symmetric(
+                          horizontal: Sizes.screenWidth * 0.006,
+                          vertical: Sizes.screenHeight * 0.006,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1581,7 +1526,7 @@ class _NeworderState extends State<Neworder> {
                               'Sub Total',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: const Color(0xFF59636F),
+                                color:  AppColor.gey,
                               ),
                             ),
                             Text(
@@ -1589,20 +1534,17 @@ class _NeworderState extends State<Neworder> {
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF172A40),
+                                color: AppColor.black,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const Divider(
-                        height: 1,
-                        color: Color(0xFFEDE3DE),
-                      ),
+                       Divider(height: Sizes.screenHeight * 0.001, color: AppColor.grey),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 3,
-                          vertical: 4,
+                        padding:  EdgeInsets.symmetric(
+                          horizontal: Sizes.screenWidth * 0.006,
+                          vertical: Sizes.screenHeight * 0.005,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1611,7 +1553,7 @@ class _NeworderState extends State<Neworder> {
                               'Transport Charge',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: const Color(0xFF59636F),
+                                color: AppColor.gey,
                               ),
                             ),
                             SizedBox(
@@ -1620,38 +1562,38 @@ class _NeworderState extends State<Neworder> {
                               child: TextField(
                                 controller: OrdertransportController,
                                 keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
+                                     TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
                                 textAlign: TextAlign.end,
                                 style: GoogleFonts.poppins(fontSize: 11),
                                 decoration: InputDecoration(
                                   hintText: '0.00',
                                   hintStyle: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: const Color(0xFF858B94),
+                                    color:  AppColor.gey,
                                   ),
-                                  prefixIcon: const Icon(
+                                  prefixIcon:  Icon(
                                     Icons.currency_rupee,
                                     size: 14,
-                                    color: Color(0xFF59636F),
+                                    color: AppColor.gey,
                                   ),
-                                  prefixIconConstraints: const BoxConstraints(
+                                  prefixIconConstraints:  BoxConstraints(
                                     minWidth: 24,
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(
+                                  contentPadding:  EdgeInsets.symmetric(
                                     horizontal: 5,
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(6),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFFDDE0E3),
+                                    borderSide:  BorderSide(
+                                      color: AppColor.gey,
                                     ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(6),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFFDDE0E3),
+                                    borderSide:  BorderSide(
+                                      color: AppColor.gey,
                                     ),
                                   ),
                                 ),
@@ -1660,12 +1602,9 @@ class _NeworderState extends State<Neworder> {
                           ],
                         ),
                       ),
-                      const Divider(
-                        height: 1,
-                        color: Color(0xFFEDE3DE),
-                      ),
+                       Divider(height: Sizes.screenHeight * 0.001, color: AppColor.grey),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding:  EdgeInsets.symmetric(
                           horizontal: 3,
                           vertical: 4,
                         ),
@@ -1676,7 +1615,7 @@ class _NeworderState extends State<Neworder> {
                               'Labour Charge',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: const Color(0xFF59636F),
+                                color: AppColor.gey,
                               ),
                             ),
                             SizedBox(
@@ -1685,9 +1624,9 @@ class _NeworderState extends State<Neworder> {
                               child: TextField(
                                 controller: OrderlabourController,
                                 keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
+                                     TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
                                 textAlign: TextAlign.end,
                                 style: GoogleFonts.poppins(fontSize: 11),
                                 decoration: InputDecoration(
@@ -1725,10 +1664,7 @@ class _NeworderState extends State<Neworder> {
                           ],
                         ),
                       ),
-                      const Divider(
-                        height: 1,
-                        color: Color(0xFFEDE3DE),
-                      ),
+                      Divider(height: Sizes.screenHeight * 0.001, color: AppColor.grey),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 3,
@@ -1741,7 +1677,7 @@ class _NeworderState extends State<Neworder> {
                               'Discount (Optional)',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: const Color(0xFF59636F),
+                                color: AppColor.gey,
                               ),
                             ),
                             SizedBox(
@@ -1751,8 +1687,8 @@ class _NeworderState extends State<Neworder> {
                                 controller: OrderdiscountController,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
+                                      decimal: true,
+                                    ),
                                 textAlign: TextAlign.end,
                                 style: GoogleFonts.poppins(fontSize: 11),
                                 decoration: InputDecoration(
@@ -1829,7 +1765,6 @@ class _NeworderState extends State<Neworder> {
 
               const SizedBox(height: 10),
 
-              // PAYMENT DETAILS CARD
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Container(
@@ -1837,9 +1772,7 @@ class _NeworderState extends State<Neworder> {
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFFBF8),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFFF0E6E0),
-                    ),
+                    border: Border.all(color: const Color(0xFFF0E6E0)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1889,7 +1822,7 @@ class _NeworderState extends State<Neworder> {
                                 SizedBox(
                                   height: Sizes.screenHeight * 0.043,
                                   child: AppTextField(
-                                    prefixIcon: Icons.currency_rupee,
+                                    // prefixIcon: Icons.currency_rupee,
                                     controller: OrderadvanceController,
                                     keyboardType: TextInputType.number,
                                     hintText: 'Enter amount',
@@ -1929,8 +1862,8 @@ class _NeworderState extends State<Neworder> {
                                     decoration: InputDecoration(
                                       contentPadding:
                                           const EdgeInsets.symmetric(
-                                        horizontal: 9,
-                                      ),
+                                            horizontal: 9,
+                                          ),
                                       filled: true,
                                       fillColor: const Color(0xFFFCFCFC),
                                       border: OutlineInputBorder(
@@ -2008,8 +1941,6 @@ class _NeworderState extends State<Neworder> {
               ),
 
               const SizedBox(height: 15),
-
-              // SAVE / CANCEL BUTTONS
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: SaveCancelButtons(
@@ -2025,6 +1956,47 @@ class _NeworderState extends State<Neworder> {
               const SizedBox(height: 15),
             ],
           ),
+        ),
+      ),
+    );
+  }
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: Sizes.screenHeight * 0.010,
+        vertical: Sizes.screenHeight * 0.010,
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'New Order',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.stockAmountColor,
+                  ),
+                ),
+                Text(
+                  'Create a new sales order',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.gey,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
