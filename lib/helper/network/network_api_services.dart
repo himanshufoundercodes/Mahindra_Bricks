@@ -94,6 +94,34 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  @override
+  Future getDeleteApiResponse(String url) async {
+    final token = await UserViewModel().getToken();
+
+    dynamic responseJson;
+
+    try {
+      final response = await http.delete(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (kDebugMode) {
+        print('Delete Api Url : $url');
+        print('Delete Status Code : ${response.statusCode}');
+      }
+
+      responseJson = returnRequest(response);
+    } on SocketException {
+      throw FetchDataException('No Internet Connection');
+    }
+
+    return responseJson;
+  }
+
   Future<dynamic> putFormDataApiResponse(
       String url,
       Map<String, String> fields,
@@ -178,6 +206,7 @@ class NetworkApiServices extends BaseApiServices {
       }
     }
   }
+
 
   dynamic returnRequest(response) {
     switch (response.statusCode) {

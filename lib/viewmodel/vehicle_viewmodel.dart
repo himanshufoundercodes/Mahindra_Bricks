@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 import '../model/vehicle_model.dart';
 import '../repo/vehicle_repo.dart';
 
 class VehicleViewmodel with ChangeNotifier {
-
   final VehicleRepo _vehicleRepo = VehicleRepo();
 
   bool _loading = false;
@@ -17,13 +15,11 @@ class VehicleViewmodel with ChangeNotifier {
   List<VehicleModel> get vehicleList => _vehicleList;
 
   Future<bool> vehicleApi() async {
-
     _loading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-
       final response = await _vehicleRepo.vehicleApi();
 
       _vehicleList = response;
@@ -31,26 +27,34 @@ class VehicleViewmodel with ChangeNotifier {
       debugPrint("Vehicle Successfully Loaded");
       debugPrint("Total Vehicles: ${_vehicleList.length}");
 
-      for (var item in _vehicleList) {
-        debugPrint("Vehicle Name: ${item.vehicle_name}");
-        debugPrint("Driver Name: ${item.driver_name}");
-      }
-
       return true;
-
     } catch (e) {
-
       _errorMessage = e.toString();
-
       debugPrint("Vehicle Error: $e");
-
       return false;
-
     } finally {
-
       _loading = false;
       notifyListeners();
+    }
+  }
 
+  Future<bool> updateVehicleApi(String id, Map<String, dynamic> data) async {
+    _loading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final response = await _vehicleRepo.updateVehicleApi(id, data);
+      debugPrint("Update Vehicle Response: $response");
+      await vehicleApi();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      debugPrint("Update Vehicle Error: $e");
+      return false;
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
   }
 }

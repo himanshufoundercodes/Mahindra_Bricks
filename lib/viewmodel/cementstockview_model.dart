@@ -14,13 +14,13 @@ class CementStockViewModel with ChangeNotifier {
   CementStockModel? _cementStockModel;
   CementStockModel? get cementStockModel => _cementStockModel;
 
-  Future<bool> cementStockApi() async {
+  Future<bool> cementStockApi([dynamic date]) async {
     _loading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final response = await _cementStockRepo.cementStockApi();
+      final response = await _cementStockRepo.cementStockApi(date);
 
       _cementStockModel = response;
 

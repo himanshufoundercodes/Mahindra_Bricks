@@ -87,10 +87,14 @@ class OrderPaymentItem {
       List<String> keys = ['payment_mode', 'mode', 'payment_option_name', 'payment_type'];
       for (String k in keys) {
         if (j[k] != null && j[k].toString().trim().isNotEmpty && j[k].toString().toLowerCase() != 'null') {
-          return j[k].toString().trim();
+          String m = j[k].toString().trim();
+          if (m.toLowerCase() == 'upi') return 'UPI';
+          if (m.toLowerCase() == 'online') return 'Online';
+          if (m.toLowerCase() == 'cash') return 'Cash';
+          return m;
         }
       }
-      if (j['payment_option'] == 2 || j['payment_option'] == '2') return 'Online';
+      if (j['payment_option'] == 2 || j['payment_option'] == '2') return 'UPI';
       if (j['payment_option'] == 1 || j['payment_option'] == '1') return 'Cash';
       return 'Cash';
     }

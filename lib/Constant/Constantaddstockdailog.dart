@@ -205,9 +205,9 @@ class _CustomAddStockDialogState
 
                   final date = await showDatePicker(
                     context: context,
-                    initialDate: selectedDate,
+                    initialDate: selectedDate.isAfter(DateTime.now()) ? DateTime.now() : selectedDate,
                     firstDate: DateTime(2020),
-                    lastDate: DateTime(2100),
+                    lastDate: DateTime.now(),
 
                     builder: (context, child) {
                       return Theme(
@@ -224,6 +224,15 @@ class _CustomAddStockDialogState
                   );
 
                   if (date != null && mounted) {
+                    final now = DateTime.now();
+                    final today = DateTime(now.year, now.month, now.day);
+                    final selDay = DateTime(date.year, date.month, date.day);
+
+                    if (selDay.isAfter(today)) {
+                      Utils.showErrorMessage(context, 'Future date not allowed');
+                      return;
+                    }
+
                     setState(() {
                       selectedDate = date;
                     });

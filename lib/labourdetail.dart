@@ -8,25 +8,34 @@ import 'Constant/Constant_Color.dart';
 import 'Constant/Constant_attendence_card.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
-
+import 'EditLabourdetails.dart';
 
 class Labourdetail extends StatefulWidget {
-final Data data;
+  final Data data;
 
-const Labourdetail({
-super.key,
-required this.data,
-});
+  const Labourdetail({
+    super.key,
+    required this.data,
+  });
 
-@override
-State<Labourdetail> createState() => _LabourdetailState();
+  @override
+  State<Labourdetail> createState() => _LabourdetailState();
 }
+
 class _LabourdetailState extends State<Labourdetail> {
+  late Data currentData;
+
+  @override
+  void initState() {
+    super.initState();
+    currentData = widget.data;
+  }
+
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
+    return Scaffold(
       backgroundColor: AppColor.bodybackgroundColor,
-      appBar:  ConstantAppBar(
+      appBar: ConstantAppBar(
         title: 'Dashboard',
         showBranding: true,
         showBackButton: true,
@@ -36,8 +45,8 @@ class _LabourdetailState extends State<Labourdetail> {
         children: [
           _buildHeader(),
           Container(
-            margin: EdgeInsets.all(10),
-            padding: EdgeInsets.all(8),
+            margin: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -51,7 +60,7 @@ class _LabourdetailState extends State<Labourdetail> {
                     vertical: Sizes.screenHeight * 0.009,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFFF3F0),
+                    color: const Color(0xFFFFF3F0),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -69,7 +78,7 @@ class _LabourdetailState extends State<Labourdetail> {
                           size: 22,
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
 
                       Expanded(
                         child: Text(
@@ -83,7 +92,37 @@ class _LabourdetailState extends State<Labourdetail> {
                       ),
                       CustomButton(
                         text: "Edit",
-                        onPressed: () {
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditLabourDetails(data: currentData),
+                            ),
+                          );
+
+                          if (result != null && result is Data) {
+                            setState(() {
+                              currentData = Data(
+                                id: result.id ?? currentData.id,
+                                labourCode: result.labourCode ?? currentData.labourCode,
+                                name: result.name ?? currentData.name,
+                                mobile: result.mobile ?? currentData.mobile,
+                                dailyRate: result.dailyRate ?? currentData.dailyRate,
+                                status: result.status ?? currentData.status,
+                                totalEarned: result.totalEarned ?? currentData.totalEarned,
+                                totalPaid: result.totalPaid ?? currentData.totalPaid,
+                                remainingBalance: result.remainingBalance ?? currentData.remainingBalance,
+                                createdAt: result.createdAt ?? currentData.createdAt,
+                                updatedAt: result.updatedAt ?? currentData.updatedAt,
+                                profileImage: result.profileImage ?? currentData.profileImage,
+                                approvedOvertime: currentData.approvedOvertime,
+                                approvedOvertimeAmount: currentData.approvedOvertimeAmount,
+                                totalOvertimeHours: currentData.totalOvertimeHours,
+                                attendanceSummary: currentData.attendanceSummary,
+                                overtimeSummary: currentData.overtimeSummary,
+                              );
+                            });
+                          }
                         },
                         type: CustomButtonType.outlined,
                         width: Sizes.screenWidth * 0.15,
@@ -94,10 +133,10 @@ class _LabourdetailState extends State<Labourdetail> {
                         iconSize: 10,
                         iconOnLeft: true,
                         backgroundColor: AppColor.lightredbg,
-                        textColor:AppColor.stockUnitColor,
+                        textColor: AppColor.stockUnitColor,
                         borderColor: AppColor.stockUnitColor,
                         borderRadius: 9,
-                        padding:  EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: Sizes.screenWidth * 0.021,
                           vertical: Sizes.screenHeight * 0.005,
                         ),
@@ -129,7 +168,7 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                       ),
                       Text(
-                        widget.data.labourCode.toString(),
+                        currentData.labourCode.toString(),
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -144,7 +183,7 @@ class _LabourdetailState extends State<Labourdetail> {
                     horizontal: Sizes.screenWidth * 0.021,
                     vertical: Sizes.screenHeight * 0.009,
                   ),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
                       bottom: BorderSide(color: Color(0xFFF0F0F0)),
                     ),
@@ -153,7 +192,7 @@ class _LabourdetailState extends State<Labourdetail> {
                     children: [
                       SizedBox(
                         width: Sizes.screenWidth * 0.352,
-                        child: Text(
+                        child: const Text(
                           'Labour Name',
                           style: TextStyle(
                             color: Color(0xFF858B96),
@@ -162,8 +201,8 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                       ),
                       Text(
-                        widget.data.name.toString(),
-                        style: TextStyle(
+                        currentData.name.toString(),
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -179,7 +218,7 @@ class _LabourdetailState extends State<Labourdetail> {
                   ),
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color:AppColor.grey),
+                      bottom: BorderSide(color: AppColor.grey),
                     ),
                   ),
                   child: Row(
@@ -197,7 +236,7 @@ class _LabourdetailState extends State<Labourdetail> {
 
                       Expanded(
                         child: Text(
-                          widget.data.mobile.toString(),
+                          currentData.mobile.toString(),
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -205,16 +244,18 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                       ),
                       CustomButton(
-                        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.011,
-                          vertical: Sizes.screenHeight * 0.005),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Sizes.screenWidth * 0.011,
+                          vertical: Sizes.screenHeight * 0.005,
+                        ),
                         height: Sizes.screenHeight * 0.038,
                         width: Sizes.screenWidth * 0.175,
                         text: 'Call',
                         backgroundColor: AppColor.green,
-                        fontSize:  12,
-                        fontWeight: .w500,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                         onPressed: () {
-                          launchUrl(Uri.parse('tel:${widget.data.mobile}'));
+                          launchUrl(Uri.parse('tel:${currentData.mobile}'));
                         },
                         iconOnLeft: true,
                         icon: Icons.call,
@@ -243,7 +284,7 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                       ),
                       Text(
-                        widget.data.dailyRate.toString(),
+                        currentData.dailyRate.toString(),
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -261,7 +302,7 @@ class _LabourdetailState extends State<Labourdetail> {
               children: [
                 Container(
                   margin: EdgeInsets.only(bottom: Sizes.screenHeight * 0.012),
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppColor.white,
                     borderRadius: BorderRadius.circular(12),
@@ -285,7 +326,7 @@ class _LabourdetailState extends State<Labourdetail> {
                               color: AppColor.stockUnitColor,
                               size: 22,
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 'Attendance Summary',
@@ -309,7 +350,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.green,
                             valueColor: AppColor.green,
                             textColor: AppColor.gey,
-                            value: widget.data.attendanceSummary?.presentDays?.toString() ?? '0',
+                            value: currentData.attendanceSummary?.presentDays?.toString() ?? '0',
                             text: 'Present Days',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.065,
@@ -322,14 +363,12 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.darkyellow,
                             valueColor: AppColor.stockAmountColor,
                             textColor: AppColor.gey,
-                            value: widget.data.attendanceSummary?.halfDays?.toString() ?? '0',
+                            value: currentData.attendanceSummary?.halfDays?.toString() ?? '0',
                             text: 'Half Days',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.065,
                           ),
-
                           SizedBox(width: Sizes.screenWidth * 0.016),
-
                           CustomAttendanceCard(
                             icon: Icons.close,
                             backgroundColor: AppColor.lightred,
@@ -337,7 +376,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.stockUnitColor,
                             valueColor: AppColor.stockUnitColor,
                             textColor: AppColor.gey,
-                            value: widget.data.attendanceSummary?.absentDays?.toString() ?? '0',
+                            value: currentData.attendanceSummary?.absentDays?.toString() ?? '0',
                             text: 'Absent Days',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.065,
@@ -349,12 +388,12 @@ class _LabourdetailState extends State<Labourdetail> {
                 ),
 
                 Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.all(8),
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Color(0xFFF1E7E2)),
+                    border: Border.all(color: const Color(0xFFF1E7E2)),
                   ),
                   child: Column(
                     children: [
@@ -369,13 +408,13 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.watch_later,
                               color: Color(0xFF922216),
                               size: 22,
                             ),
                             SizedBox(width: Sizes.screenWidth * 0.027),
-                            Text(
+                            const Text(
                               'Overtime Summary',
                               style: TextStyle(
                                 color: Color(0xFF922216),
@@ -387,7 +426,7 @@ class _LabourdetailState extends State<Labourdetail> {
                         ),
                       ),
                       SizedBox(height: Sizes.screenHeight * 0.012),
-                       Row(
+                      Row(
                         children: [
                           CustomAttendanceCard(
                             icon: Icons.check_circle,
@@ -396,8 +435,8 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.blue,
                             valueColor: AppColor.black,
                             textColor: AppColor.gey,
-                            value: widget.data.overtimeSummary?.totalOvertimeHours?.toString() ??
-                                widget.data.totalOvertimeHours?.toString() ?? '0',
+                            value: currentData.overtimeSummary?.totalOvertimeHours?.toString() ??
+                                currentData.totalOvertimeHours?.toString() ?? '0',
                             text: 'Total Overtime Hours',
                             width: Sizes.screenWidth * 0.40,
                             height: Sizes.screenHeight * 0.065,
@@ -410,8 +449,8 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.black,
                             valueColor: AppColor.black,
                             textColor: AppColor.gey,
-                            value: widget.data.overtimeSummary?.approvedOvertime?.toString() ??
-                                widget.data.approvedOvertime?.toString() ?? '0',
+                            value: currentData.overtimeSummary?.approvedOvertime?.toString() ??
+                                currentData.approvedOvertime?.toString() ?? '0',
                             text: 'Approved Overtime',
                             width: Sizes.screenWidth * 0.47,
                             height: Sizes.screenHeight * 0.065,
@@ -422,7 +461,7 @@ class _LabourdetailState extends State<Labourdetail> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -468,7 +507,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.green,
                             valueColor: AppColor.green,
                             textColor: AppColor.gey,
-                            value: widget.data.totalEarned?.toString() ?? '0',
+                            value: currentData.totalEarned?.toString() ?? '0',
                             text: 'Total Earned',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.060,
@@ -481,14 +520,12 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.blue,
                             valueColor: AppColor.blue,
                             textColor: AppColor.gey,
-                            value: widget.data.totalPaid?.toString() ?? '0',
+                            value: currentData.totalPaid?.toString() ?? '0',
                             text: 'Total Paid',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.060,
                           ),
-
                           SizedBox(width: Sizes.screenWidth * 0.015),
-
                           CustomAttendanceCard(
                             icon: Icons.currency_rupee,
                             backgroundColor: AppColor.lightred,
@@ -496,7 +533,7 @@ class _LabourdetailState extends State<Labourdetail> {
                             iconColor: AppColor.stockUnitColor,
                             valueColor: AppColor.stockUnitColor,
                             textColor: AppColor.gey,
-                            value: widget.data.remainingBalance?.toString() ?? '0',
+                            value: currentData.remainingBalance?.toString() ?? '0',
                             text: 'Remaining',
                             width: Sizes.screenWidth * 0.29,
                             height: Sizes.screenHeight * 0.060,
@@ -510,59 +547,16 @@ class _LabourdetailState extends State<Labourdetail> {
             ),
           ),
           SizedBox(height: Sizes.screenHeight * 0.012),
-          // Container(
-          //   padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.027),
-          //   child: Column(
-          //     children: [
-          //       SizedBox(height: Sizes.screenHeight * 0.006),
-          //       Row(
-          //         children: [
-          //           CustomButton(
-          //             padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.015,
-          //               vertical: Sizes.screenHeight * 0.005,),
-          //             height: Sizes.screenHeight * 0.052,
-          //             width: Sizes.screenWidth * 0.410,
-          //             text: 'Mark Attendence',
-          //             fontSize:  14,
-          //             fontWeight: .w500,
-          //             onPressed: () {
-          //             },
-          //             iconOnLeft: true,
-          //             icon: Icons.calendar_month_rounded,
-          //             iconSize: 18,
-          //             iconSpacing: 5,
-          //           ),
-          //           SizedBox(width: Sizes.screenWidth * 0.025),
-          //           CustomButton(
-          //             padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.011,
-          //               vertical: Sizes.screenHeight * 0.005,),
-          //             height: Sizes.screenHeight * 0.052,
-          //             width: Sizes.screenWidth * 0.475,
-          //             text: 'Add Payout',
-          //             fontSize:  14,
-          //             fontWeight: .w500,
-          //             onPressed: () {
-          //             },
-          //             iconOnLeft: true,
-          //             icon: Icons.account_balance_wallet_rounded,
-          //             iconSize: 18,
-          //             iconSpacing: 5,
-          //           ),
-          //         ],
-          //       ),
-          //     ],
-          //   ),
-          // )
-
         ],
       ),
     );
   }
+
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: Sizes.screenHeight * 0.010,
-          vertical: Sizes.screenHeight * 0.010
+        horizontal: Sizes.screenHeight * 0.010,
+        vertical: Sizes.screenHeight * 0.010,
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
@@ -594,7 +588,6 @@ class _LabourdetailState extends State<Labourdetail> {
                 ),
               ],
             ),
-
           ],
         ),
       ),

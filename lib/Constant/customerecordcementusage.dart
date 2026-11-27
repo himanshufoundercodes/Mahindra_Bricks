@@ -31,6 +31,17 @@ class _CustomerecordcementusageState extends State<Customerecordcementusage> {
   }
 
   Future<void> handleRecordCementStock() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selectedDay = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+
+    if (selectedDay.isAfter(today)) {
+      Utils.showErrorMessage(
+        context,
+        'Future date not allowed',
+      );
+      return;
+    }
 
     if (quantityController.text.trim().isEmpty) {
       Utils.showErrorMessage(
@@ -239,11 +250,20 @@ class _CustomerecordcementusageState extends State<Customerecordcementusage> {
                   ),
 
                   child: CalendarDatePicker(
-                    initialDate: selectedDate,
+                    initialDate: selectedDate.isAfter(DateTime.now()) ? DateTime.now() : selectedDate,
                     firstDate: DateTime(2020),
-                    lastDate: DateTime(2100),
+                    lastDate: DateTime.now(),
 
                     onDateChanged: (date) {
+                      final now = DateTime.now();
+                      final today = DateTime(now.year, now.month, now.day);
+                      final selDay = DateTime(date.year, date.month, date.day);
+
+                      if (selDay.isAfter(today)) {
+                        Utils.showErrorMessage(context, 'Future date not allowed');
+                        return;
+                      }
+
                       setState(() {
                         selectedDate = date;
                         showCalendar = true;

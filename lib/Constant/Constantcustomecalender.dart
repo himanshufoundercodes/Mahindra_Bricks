@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mahindra_bricks/utils/utils.dart';
 
 class CustomCalendar extends StatefulWidget {
   final bool isRange;
@@ -68,6 +69,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
         widget.maxDate!.day,
       );
       if (dateOnly.isAfter(maxOnly)) {
+        Utils.showErrorMessage(context, 'Future date not allowed');
         return;
       }
     }

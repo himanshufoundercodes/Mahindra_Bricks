@@ -80,230 +80,223 @@ class _ClientsState extends State<Clients> {
               _buildHeader(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColor.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: Sizes.screenHeight * 0.044,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: AppColor.searchbarbackcolor,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColor.grey),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.search, size: 18, color: AppColor.gey),
-                            SizedBox(width: Sizes.screenWidth * 0.02),
-                            Expanded(
-                              child: Text(
-                                'Search by client name or mobile number...',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: AppColor.gey,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                child: Column(
+                  children: [
+                    Container(
+                      height: Sizes.screenHeight * 0.046,
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: AppColor.searchbarbackcolor,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppColor.grey),
                       ),
-
-                      SizedBox(height: Sizes.screenHeight * 0.012),
-
-                      Row(
+                      child: Row(
                         children: [
+                          Icon(Icons.search, size: 18, color: AppColor.gey),
+                          SizedBox(width: Sizes.screenWidth * 0.02),
                           Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedIndex = 0;
-                                });
-                              },
-                              child: Container(
-                                height: Sizes.screenHeight * 0.035,
-                                decoration: BoxDecoration(
-                                  color: selectedIndex == 0
-                                      ? AppColor.stockUnitColor
-                                      : AppColor.white,
-                                  borderRadius: BorderRadius.circular(7),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.people,
-                                      size: 13,
-                                      color: selectedIndex == 0
-                                          ? AppColor.white
-                                          : AppColor.black87,
-                                    ),
-                                    SizedBox(width: Sizes.screenWidth * 0.01),
-                                    Text(
-                                      'All Clients',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 9,
-                                        color: selectedIndex == 0
-                                            ? AppColor.white
-                                            : AppColor.gey,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(width: Sizes.screenWidth * 0.0125),
-
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedIndex = 1;
-                                });
-                              },
-                              child: Container(
-                                height: Sizes.screenHeight * 0.035,
-                                decoration: BoxDecoration(
-                                  color: selectedIndex == 1
-                                      ? AppColor.stockUnitColor
-                                      : AppColor.white,
-                                  borderRadius: BorderRadius.circular(7),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: 6,
-                                      color: selectedIndex == 1
-                                          ? AppColor.white
-                                          : AppColor.green,
-                                    ),
-                                    SizedBox(width: Sizes.screenWidth * 0.01),
-                                    Text(
-                                      'Active',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 9,
-                                        color: selectedIndex == 1
-                                            ? AppColor.white
-                                            : AppColor.black87,
-                                        fontWeight: selectedIndex == 1
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(width: Sizes.screenWidth * 0.0125),
-
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedIndex = 2;
-                                });
-                              },
-                              child: Container(
-                                height: Sizes.screenHeight * 0.035,
-                                decoration: BoxDecoration(
-                                  color: selectedIndex == 2
-                                      ? AppColor.stockUnitColor
-                                      : AppColor.white,
-                                  borderRadius: BorderRadius.circular(7),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: 6,
-                                      color: selectedIndex == 2
-                                          ? AppColor.white
-                                          : AppColor.red,
-                                    ),
-                                    SizedBox(width: Sizes.screenWidth * 0.01),
-                                    Flexible(
-                                      child: Text(
-                                        'Pending Balance',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 8,
-                                          color: selectedIndex == 2
-                                              ? AppColor.white
-                                              : AppColor.black87,
-                                          fontWeight: selectedIndex == 2
-                                              ? FontWeight.w600
-                                              : FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(width: Sizes.screenWidth * 0.0125),
-
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedIndex = 3;
-                                });
-                              },
-                              child: Container(
-                                height: Sizes.screenHeight * 0.035,
-                                decoration: BoxDecoration(
-                                  color: selectedIndex == 3
-                                      ? AppColor.stockUnitColor
-                                      : AppColor.white,
-                                  borderRadius: BorderRadius.circular(7),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: 6,
-                                      color: selectedIndex == 3
-                                          ? AppColor.white
-                                          : AppColor.grey,
-                                    ),
-                                    SizedBox(width: Sizes.screenWidth * 0.01),
-                                    Text(
-                                      'Inactive',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 9,
-                                        color: selectedIndex == 3
-                                            ? AppColor.white
-                                            : AppColor.black87,
-                                        fontWeight: selectedIndex == 3
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            child: Text(
+                              'Search by client name or mobile number...',
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                color: AppColor.gey,
                               ),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+
+                    // SizedBox(height: Sizes.screenHeight * 0.012),
+
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: GestureDetector(
+                    //         onTap: () {
+                    //           setState(() {
+                    //             selectedIndex = 0;
+                    //           });
+                    //         },
+                    //         child: Container(
+                    //           height: Sizes.screenHeight * 0.035,
+                    //           decoration: BoxDecoration(
+                    //             color: selectedIndex == 0
+                    //                 ? AppColor.stockUnitColor
+                    //                 : AppColor.white,
+                    //             borderRadius: BorderRadius.circular(7),
+                    //           ),
+                    //           child: Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: [
+                    //               Icon(
+                    //                 Icons.people,
+                    //                 size: 13,
+                    //                 color: selectedIndex == 0
+                    //                     ? AppColor.white
+                    //                     : AppColor.black87,
+                    //               ),
+                    //               SizedBox(width: Sizes.screenWidth * 0.01),
+                    //               Text(
+                    //                 'All Clients',
+                    //                 style: GoogleFonts.poppins(
+                    //                   fontSize: 9,
+                    //                   color: selectedIndex == 0
+                    //                       ? AppColor.white
+                    //                       : AppColor.gey,
+                    //                   fontWeight: FontWeight.w600,
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //
+                    //     SizedBox(width: Sizes.screenWidth * 0.0125),
+                    //
+                    //     Expanded(
+                    //       child: GestureDetector(
+                    //         onTap: () {
+                    //           setState(() {
+                    //             selectedIndex = 1;
+                    //           });
+                    //         },
+                    //         child: Container(
+                    //           height: Sizes.screenHeight * 0.035,
+                    //           decoration: BoxDecoration(
+                    //             color: selectedIndex == 1
+                    //                 ? AppColor.stockUnitColor
+                    //                 : AppColor.white,
+                    //             borderRadius: BorderRadius.circular(7),
+                    //           ),
+                    //           child: Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: [
+                    //               Icon(
+                    //                 Icons.circle,
+                    //                 size: 6,
+                    //                 color: selectedIndex == 1
+                    //                     ? AppColor.white
+                    //                     : AppColor.green,
+                    //               ),
+                    //               SizedBox(width: Sizes.screenWidth * 0.01),
+                    //               Text(
+                    //                 'Active',
+                    //                 style: GoogleFonts.poppins(
+                    //                   fontSize: 9,
+                    //                   color: selectedIndex == 1
+                    //                       ? AppColor.white
+                    //                       : AppColor.black87,
+                    //                   fontWeight: selectedIndex == 1
+                    //                       ? FontWeight.w600
+                    //                       : FontWeight.normal,
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //
+                    //     SizedBox(width: Sizes.screenWidth * 0.0125),
+                    //
+                    //     Expanded(
+                    //       child: GestureDetector(
+                    //         onTap: () {
+                    //           setState(() {
+                    //             selectedIndex = 2;
+                    //           });
+                    //         },
+                    //         child: Container(
+                    //           height: Sizes.screenHeight * 0.035,
+                    //           decoration: BoxDecoration(
+                    //             color: selectedIndex == 2
+                    //                 ? AppColor.stockUnitColor
+                    //                 : AppColor.white,
+                    //             borderRadius: BorderRadius.circular(7),
+                    //           ),
+                    //           child: Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: [
+                    //               Icon(
+                    //                 Icons.circle,
+                    //                 size: 6,
+                    //                 color: selectedIndex == 2
+                    //                     ? AppColor.white
+                    //                     : AppColor.red,
+                    //               ),
+                    //               SizedBox(width: Sizes.screenWidth * 0.01),
+                    //               Flexible(
+                    //                 child: Text(
+                    //                   'Pending Balance',
+                    //                   maxLines: 1,
+                    //                   overflow: TextOverflow.ellipsis,
+                    //                   style: GoogleFonts.poppins(
+                    //                     fontSize: 8,
+                    //                     color: selectedIndex == 2
+                    //                         ? AppColor.white
+                    //                         : AppColor.black87,
+                    //                     fontWeight: selectedIndex == 2
+                    //                         ? FontWeight.w600
+                    //                         : FontWeight.normal,
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //
+                    //     SizedBox(width: Sizes.screenWidth * 0.0125),
+                    //
+                    //     Expanded(
+                    //       child: GestureDetector(
+                    //         onTap: () {
+                    //           setState(() {
+                    //             selectedIndex = 3;
+                    //           });
+                    //         },
+                    //         child: Container(
+                    //           height: Sizes.screenHeight * 0.035,
+                    //           decoration: BoxDecoration(
+                    //             color: selectedIndex == 3
+                    //                 ? AppColor.stockUnitColor
+                    //                 : AppColor.white,
+                    //             borderRadius: BorderRadius.circular(7),
+                    //           ),
+                    //           child: Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: [
+                    //               Icon(
+                    //                 Icons.circle,
+                    //                 size: 6,
+                    //                 color: selectedIndex == 3
+                    //                     ? AppColor.white
+                    //                     : AppColor.grey,
+                    //               ),
+                    //               SizedBox(width: Sizes.screenWidth * 0.01),
+                    //               Text(
+                    //                 'Inactive',
+                    //                 style: GoogleFonts.poppins(
+                    //                   fontSize: 9,
+                    //                   color: selectedIndex == 3
+                    //                       ? AppColor.white
+                    //                       : AppColor.black87,
+                    //                   fontWeight: selectedIndex == 3
+                    //                       ? FontWeight.w600
+                    //                       : FontWeight.normal,
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                  ],
                 ),
               ),
               SizedBox(height: Sizes.screenHeight * 0.006),

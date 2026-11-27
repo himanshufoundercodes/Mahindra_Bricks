@@ -4,6 +4,7 @@ import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/model/cementstock_model.dart';
 import 'package:mahindra_bricks/viewmodel/addcementstock_viewmodel.dart';
 import 'package:mahindra_bricks/viewmodel/cementstockview_model.dart';
+import 'package:mahindra_bricks/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import 'Constant/Conctantcementstock.dart';
@@ -40,7 +41,7 @@ class _AddcementstockState extends State<Addcementstock> {
       Provider.of<CementStockViewModel>(
         context,
         listen: false,
-      ).cementStockApi();
+      ).cementStockApi(selectedDate);
     });
   }
 
@@ -52,12 +53,12 @@ class _AddcementstockState extends State<Addcementstock> {
         color: AppColor.stockAmountColor,
         backgroundColor: Colors.white,
         displacement: 30,
-          onRefresh: () async {
-            await Provider.of<CementStockViewModel>(
-              context,
-              listen: false,
-            ).cementStockApi();
-          },
+        onRefresh: () async {
+          await Provider.of<CementStockViewModel>(
+            context,
+            listen: false,
+          ).cementStockApi(selectedDate);
+        },
         child: cementStock.loading
             ? Center(
           child: Transform.translate(
@@ -119,11 +120,27 @@ class _AddcementstockState extends State<Addcementstock> {
                               child: CustomCalendar(
                                 isRange: false,
                                 selectedDate: selectedDate,
+                                maxDate: DateTime.now(),
                                 onDateSelected: (date) {
+                                  final now = DateTime.now();
+                                  final today = DateTime(now.year, now.month, now.day);
+                                  final selectedDay = DateTime(date.year, date.month, date.day);
+
+                                  if (selectedDay.isAfter(today)) {
+                                    Utils.showErrorMessage(context, 'Future date not allowed');
+                                    return;
+                                  }
+
                                   setState(() {
                                     selectedDate = date;
                                   });
+
                                   Navigator.pop(context);
+
+                                  Provider.of<CementStockViewModel>(
+                                    context,
+                                    listen: false,
+                                  ).cementStockApi(selectedDate);
                                 },
                               ),
                             );
@@ -424,15 +441,15 @@ class _AddcementstockState extends State<Addcementstock> {
                                           color: Color(0xFF263238),
                                         ),
                                       ),
-                                      Text(
-                                        '10:30 AM',
-                                        maxLines: 1,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 8,
-                                          fontWeight: FontWeight.normal,
-                                          color: AppColor.gey,
-                                        ),
-                                      ),
+                                      // Text(
+                                      //   '10:30 AM',
+                                      //   maxLines: 1,
+                                      //   style: GoogleFonts.poppins(
+                                      //     fontSize: 8,
+                                      //     fontWeight: FontWeight.normal,
+                                      //     color: AppColor.gey,
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),

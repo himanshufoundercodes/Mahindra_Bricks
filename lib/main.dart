@@ -15,8 +15,10 @@ import 'package:mahindra_bricks/viewmodel/cementstockview_model.dart';
 import 'package:mahindra_bricks/viewmodel/clientview_model.dart';
 import 'package:mahindra_bricks/viewmodel/dailyattendenceview_model.dart';
 import 'package:mahindra_bricks/viewmodel/dashboardview_model.dart';
+import 'package:mahindra_bricks/viewmodel/deleteVehicleView_model.dart';
 import 'package:mahindra_bricks/viewmodel/editproductview_model.dart' show EditProductViewModel, ProductUpdateViewModel;
 import 'package:mahindra_bricks/viewmodel/labour_viewmodel.dart';
+import 'package:mahindra_bricks/viewmodel/labourview_model.dart';
 import 'package:mahindra_bricks/viewmodel/labourpayoutview_model.dart';
 import 'package:mahindra_bricks/viewmodel/loginview_model.dart';
 import 'package:mahindra_bricks/viewmodel/ordersListviewmodel.dart';
@@ -93,6 +95,9 @@ Future<void> main() async {
           create: (_) => LabourListViewModel(),
         ),
         ChangeNotifierProvider(
+          create: (_) => LabourViewModel(),
+        ),
+        ChangeNotifierProvider(
           create: (_) => DailyattendenceViewModel(),
         ),
         ChangeNotifierProvider(
@@ -127,6 +132,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => ReceivePaymentViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => DeleteVehicleViewModel(),
         ),
       ],
       child: const MyApp(),

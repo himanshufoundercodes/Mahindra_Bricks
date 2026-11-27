@@ -10,4 +10,6 @@ abstract class BaseApiServices{
 
   Future<dynamic> getPostApiFormData(String url, Map<String, String> fields, Map<String, dynamic> files);
 
+  Future<dynamic> getDeleteApiResponse(String url);
+
 }

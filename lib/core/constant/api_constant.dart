@@ -32,5 +32,8 @@ class ApiConstants {
   static const String reportsListUrl = '${baseUrl}reports';
   static const String editProductUrl = '${baseUrl}updateProducts';
   static const String recievedPaymentUrl = '${baseUrl}api/orders/';
+  static const String updateLabourUrl = '${baseUrl}updateLabour';
+  static const String updateVehicleUrl = '${baseUrl}updateVehicles';
+  static const String deleteVehicleUrl = '${baseUrl}deleteVehicles';
 
 }

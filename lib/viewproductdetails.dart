@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/url_launcher.dart';
 import 'package:mahindra_bricks/utils/utils.dart';
@@ -11,6 +13,7 @@ import 'package:mahindra_bricks/viewmodel/user_view_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
@@ -22,6 +25,36 @@ import 'core/constant/api_constant.dart';
 import 'model/orderlist_model.dart';
 import 'model/vehicle_model.dart';
 import 'viewmodel/vehicle_viewmodel.dart';
+
+class OrderPaymentStorage {
+  static String _getKey(int orderId) => 'order_payments_$orderId';
+
+  static Future<List<OrderPaymentItem>> getPayments(int orderId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? jsonStr = prefs.getString(_getKey(orderId));
+      if (jsonStr != null && jsonStr.isNotEmpty) {
+        final List decoded = jsonDecode(jsonStr);
+        return decoded
+            .map((e) => OrderPaymentItem.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+      }
+    } catch (e) {
+      debugPrint("Error loading order payments: $e");
+    }
+    return [];
+  }
+
+  static Future<void> savePayments(int orderId, List<OrderPaymentItem> payments) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final List listMap = payments.map((e) => e.toJson()).toList();
+      await prefs.setString(_getKey(orderId), jsonEncode(listMap));
+    } catch (e) {
+      debugPrint("Error saving order payments: $e");
+    }
+  }
+}
 
 class Viewproductdetails extends StatefulWidget {
   final OrderdsDataModel? orderData;
@@ -77,14 +110,83 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
 
   void _addNewPaymentRecord(double amount, String mode) {
     final String formattedDate = _formatTodayDate();
+    String formattedMode = mode;
+    if (mode.toLowerCase() == 'upi') {
+      formattedMode = 'UPI';
+    } else if (mode.toLowerCase() == 'online') {
+      formattedMode = 'Online';
+    } else if (mode.toLowerCase() == 'cash') {
+      formattedMode = 'Cash';
+    }
+
     final newPayment = OrderPaymentItem(
       date: formattedDate,
       amount: amount.toStringAsFixed(2),
-      mode: mode,
+      mode: formattedMode,
       notes: 'Installment',
       addedBy: 'Admin',
     );
     paymentHistoryList.insert(0, newPayment);
+
+    final order = currentOrder ?? widget.orderData;
+    if (order != null) {
+      OrderPaymentStorage.savePayments(order.id, paymentHistoryList);
+    }
+  }
+
+  Future<void> _loadPaymentHistory() async {
+    final order = widget.orderData ?? currentOrder;
+    if (order == null) return;
+
+    List<OrderPaymentItem> localPayments =
+        await OrderPaymentStorage.getPayments(order.id);
+
+    if (mounted) {
+      setState(() {
+        if (localPayments.isNotEmpty) {
+          paymentHistoryList = localPayments;
+        } else if (order.payments.isNotEmpty) {
+          paymentHistoryList = List.from(order.payments);
+          OrderPaymentStorage.savePayments(order.id, paymentHistoryList);
+        } else {
+          double adv = double.tryParse(order.advance_amount.replaceAll(',', '')) ?? 0;
+          double paid = double.tryParse(order.amount_paid.replaceAll(',', '')) ?? 0;
+
+          List<OrderPaymentItem> initialList = [];
+          if (adv > 0) {
+            initialList.add(
+              OrderPaymentItem(
+                date: _formatDateOnly(order.order_date.isNotEmpty ? order.order_date : order.created_at),
+                amount: order.advance_amount,
+                mode: order.payment_mode.isNotEmpty ? order.payment_mode : 'Cash',
+                notes: 'Advance',
+                addedBy: 'Admin',
+              ),
+            );
+          }
+
+          if (paid > 0 && paid != adv) {
+            double diff = paid - adv;
+            if (diff > 0) {
+              initialList.add(
+                OrderPaymentItem(
+                  date: _formatDateOnly(order.updated_at.isNotEmpty ? order.updated_at : order.created_at),
+                  amount: diff.toStringAsFixed(2),
+                  mode: order.payment_mode.isNotEmpty ? order.payment_mode : 'Cash',
+                  notes: 'Installment',
+                  addedBy: 'Admin',
+                ),
+              );
+            }
+          }
+
+          if (initialList.isNotEmpty) {
+            paymentHistoryList = initialList;
+            OrderPaymentStorage.savePayments(order.id, paymentHistoryList);
+          }
+        }
+      });
+    }
   }
 
   Future<void> receivePaymentApi() async {
@@ -100,6 +202,9 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
       return;
     }
 
+    final String mode = selectedPaymentMode;
+    final int paymentOption = (mode.toLowerCase() == 'online' || mode.toLowerCase() == 'upi') ? 2 : 1;
+
     final paymentViewModel = Provider.of<ReceivePaymentViewModel>(
       context,
       listen: false,
@@ -108,7 +213,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
     bool success = await paymentViewModel.receivePayment(
       url: '${ApiConstants.baseUrl}orders/${order.id}/pay',
       amount: paidAmountInput,
-      paymentOption: selectedPaymentMode.toLowerCase() == 'online' ? 2 : 1,
+      paymentOption: paymentOption,
     );
 
     if (mounted) {
@@ -119,12 +224,13 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
             paymentViewModel.paymentResponse?['order'];
 
         setState(() {
-          _addNewPaymentRecord(paidAmountInput, selectedPaymentMode);
+          _addNewPaymentRecord(paidAmountInput, mode);
 
           if (respData != null && respData is Map<String, dynamic>) {
             currentOrder = OrderdsDataModel.fromJson(respData);
             if (currentOrder!.payments.isNotEmpty) {
               paymentHistoryList = List.from(currentOrder!.payments);
+              OrderPaymentStorage.savePayments(order.id, paymentHistoryList);
             }
           } else {
             final baseOrder = currentOrder ?? widget.orderData!;
@@ -157,7 +263,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
               advance_amount: baseOrder.advance_amount,
               amount_paid: newPaid.toStringAsFixed(2),
               remaining_balance: newRem.toStringAsFixed(2),
-              payment_mode: selectedPaymentMode,
+              payment_mode: mode,
               order_date: baseOrder.order_date,
               notes: baseOrder.notes,
               created_at: baseOrder.created_at,
@@ -194,6 +300,12 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
   Future<void> _shareInvoiceOnWhatsApp(OrderdsDataModel? order) async {
     if (order == null) {
       Utils.showErrorMessage(context, 'Order details not available');
+      return;
+    }
+
+    final String clientMobile = order.client_mobile.trim();
+    if (clientMobile.isEmpty) {
+      Utils.showErrorMessage(context, 'Client mobile number not available');
       return;
     }
 
@@ -244,16 +356,30 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
       }
 
       if (await pdfFile.exists() && (await pdfFile.length()) > 0) {
-        final xFile = XFile(
-          pdfFile.path,
-          mimeType: 'application/pdf',
-          name: 'Invoice_ORD_$orderNum.pdf',
-        );
-        await Share.shareXFiles(
-          [xFile],
-          text: 'Invoice for Order #ORD-$orderNum',
-          subject: 'Invoice #ORD-$orderNum',
-        );
+        String cleanPhone = clientMobile.replaceAll(RegExp(r'[^0-9]'), '');
+        if (cleanPhone.length == 10) {
+          cleanPhone = '91$cleanPhone';
+        }
+
+        const platform = MethodChannel('com.example.mahindra_bricks/whatsapp');
+        try {
+          await platform.invokeMethod('sharePdfToWhatsapp', {
+            'filePath': pdfFile.path,
+            'phone': cleanPhone,
+            'text': 'Invoice for Order #ORD-$orderNum',
+          });
+        } catch (channelError) {
+          final xFile = XFile(
+            pdfFile.path,
+            mimeType: 'application/pdf',
+            name: 'Invoice_ORD_$orderNum.pdf',
+          );
+          await Share.shareXFiles(
+            [xFile],
+            text: 'Invoice for Order #ORD-$orderNum',
+            subject: 'Invoice #ORD-$orderNum',
+          );
+        }
       } else {
         throw Exception('Downloaded PDF file is empty');
       }
@@ -267,15 +393,15 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
 
       // Fallback: Share text link if PDF download fails
       try {
-        final String message = 'Order Invoice (#ORD-$orderNum):\n$invoiceUrl';
-        if (order.client_mobile.trim().isNotEmpty) {
-          await CustomLauncher.whatsapp(
-            order.client_mobile.trim(),
-            message: message,
-          );
-        } else {
-          await Share.share(message);
+        String cleanPhone = clientMobile.replaceAll(RegExp(r'[^0-9]'), '');
+        if (cleanPhone.length == 10) {
+          cleanPhone = '91$cleanPhone';
         }
+        final String message = 'Order Invoice (#ORD-$orderNum):\n$invoiceUrl';
+        await CustomLauncher.whatsapp(
+          cleanPhone,
+          message: message,
+        );
       } catch (err) {
         if (mounted) {
           Utils.showErrorMessage(context, 'Could not share invoice: $err');
@@ -289,42 +415,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
     super.initState();
     currentOrder = widget.orderData;
 
-    final order = widget.orderData;
-    if (order != null) {
-      if (order.payments.isNotEmpty) {
-        paymentHistoryList = List.from(order.payments);
-      } else {
-        double adv = double.tryParse(order.advance_amount.replaceAll(',', '')) ?? 0;
-        double paid = double.tryParse(order.amount_paid.replaceAll(',', '')) ?? 0;
-
-        if (adv > 0) {
-          paymentHistoryList.add(
-            OrderPaymentItem(
-              date: _formatDateOnly(order.order_date.isNotEmpty ? order.order_date : order.created_at),
-              amount: order.advance_amount,
-              mode: order.payment_mode.isNotEmpty ? order.payment_mode : 'Cash',
-              notes: 'Advance',
-              addedBy: 'Admin',
-            ),
-          );
-        }
-
-        if (paid > 0 && paid != adv) {
-          double diff = paid - adv;
-          if (diff > 0) {
-            paymentHistoryList.add(
-              OrderPaymentItem(
-                date: _formatDateOnly(order.updated_at.isNotEmpty ? order.updated_at : order.created_at),
-                amount: diff.toStringAsFixed(2),
-                mode: order.payment_mode.isNotEmpty ? order.payment_mode : 'Cash',
-                notes: 'Installment',
-                addedBy: 'Admin',
-              ),
-            );
-          }
-        }
-      }
-    }
+    _loadPaymentHistory();
 
     if (widget.orderData != null && widget.orderData!.order_status.isNotEmpty) {
       final s = widget.orderData!.order_status.trim();
@@ -1314,13 +1405,13 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                 return Column(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      padding:  EdgeInsets.symmetric(vertical: 8),
                                       child: Row(
                                         children: [
                                           SizedBox(
                                             width: width * 0.25,
                                             child: Padding(
-                                              padding: const EdgeInsets.only(left: 5),
+                                              padding:  EdgeInsets.only(left: 5),
                                               child: Text(
                                                 displayDate,
                                                 maxLines: 1,
@@ -1371,7 +1462,9 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                         ],
                                       ),
                                     ),
-                                    if (!isLast) const Divider(height: 1),
+                                    if (!isLast) Divider(
+                                      height: Sizes.screenHeight * 0.0012,
+                                    ),
                                   ],
                                 );
                               }).toList(),
@@ -1384,67 +1477,60 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
               ),
             ),
             if (!isOrderCompleted) ...[
-              SizedBox(height: 10),
+              SizedBox(height: Sizes.screenHeight * 0.012),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(
+                  horizontal: Sizes.screenWidth * 0.025,
+                ),
                 child: Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFFF8F5),
+                    color: AppColor.bgbacklight,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Color(0xFFF1E5DF),
+                      color: AppColor.grey,
                     ),
                   ),
 
                   child: Column(
                     children: [
 
-                      // Heading Row
                       Row(
                         children: [
                           Container(
-                            height: 35,
-                            width: 35,
+                            height: Sizes.screenHeight * 0.043,
+                            width: Sizes.screenWidth * 0.09,
                             decoration: BoxDecoration(
-                              color: Color(0xFFFCEBE5),
+                              color: AppColor.bgbacklight,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
                               Icons.receipt_long,
-                              color: Color(0xFF782A17),
+                              color: AppColor.stockAmountColor,
                               size: 20,
                             ),
                           ),
-
-                          SizedBox(width: 10),
-
+                          SizedBox(width: Sizes.screenWidth * 0.025),
                           Expanded(
                             child: Text(
                               'Order Payment',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF782A17),
+                                color: AppColor.stockAmountColor,
                               ),
                             ),
                           ),
                         ],
                       ),
-
-                      SizedBox(height: 12),
-
-                      // Payment Amount and Payment Mode
+                      SizedBox(height: Sizes.screenHeight * 0.015),
                       Row(
                         children: [
-
-                          // Payment Amount TextField
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-
                                 Text(
                                   'Payment Amount',
                                   style: GoogleFonts.poppins(
@@ -1453,7 +1539,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                     color: Color(0xFF782A17),
                                   ),
                                 ),
-                                SizedBox(height: 5),
+                                SizedBox(height: Sizes.screenHeight * 0.006),
                                 AppTextField(
                                   controller: amountPaidController,
                                   hintText: 'Enter Amount',
@@ -1464,36 +1550,32 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                               ],
                             ),
                           ),
-
-                          SizedBox(width: 10),
-
+                          SizedBox(width: Sizes.screenWidth * 0.025),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-
                                 Text(
                                   'Payment Mode',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
-                                    color: Color(0xFF782A17),
+                                    color: AppColor.stockAmountColor,
                                   ),
                                 ),
-
-                                SizedBox(height: 5),
-
+                                SizedBox(height: Sizes.screenHeight * 0.006),
                                 Container(
                                   height: Sizes.screenHeight * 0.043,
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: Sizes.screenWidth * 0.02,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
-                                      color: Color(0xFFE5B66F),
+                                      color: AppColor.grey,
                                     ),
                                   ),
-
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton<String>(
                                       isExpanded: true,
@@ -1502,7 +1584,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                       icon: Icon(
                                         Icons.keyboard_arrow_down,
                                         size: 18,
-                                        color: Color(0xFF782A17),
+                                        color: AppColor.black,
                                       ),
 
                                       style: GoogleFonts.poppins(
@@ -1538,9 +1620,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                         ],
                       ),
 
-                      SizedBox(height: 12),
-
-                      // Payment Received Button
+                      SizedBox(height: Sizes.screenHeight * 0.015),
                       CustomButton(
                         text: 'Payment Received',
                         height: Sizes.screenHeight * 0.043,
@@ -1712,7 +1792,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                                   child: DropdownButton<String>(
                                     isExpanded: true,
                                     value: selectedPaymentMode,
-                                    items: ['Cash', 'Online'].map((mode) {
+                                    items: ['Cash', 'UPI', 'Online'].map((mode) {
                                       return DropdownMenuItem(
                                         value: mode,
                                         child: Text(

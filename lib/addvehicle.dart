@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mahindra_bricks/url_launcher.dart';
 import 'package:mahindra_bricks/utils/utils.dart' ;
+import 'package:mahindra_bricks/viewmodel/deleteVehicleView_model.dart';
 import 'package:mahindra_bricks/viewmodel/vehicle_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,7 @@ import 'Constant/Constant_Appbar.dart';
 import 'Constant/Constant_Color.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
+import 'EditVehicleDetails.dart';
 import 'addvihclecategory.dart';
 import 'circularprogressindicator.dart';
 
@@ -391,6 +393,52 @@ class _AddvehicleState extends State<Addvehicle> {
                                     ),
                                   ),
 
+                                  // SizedBox(
+                                  //   width: Sizes.screenWidth * 0.040,
+                                  //   height: Sizes.screenHeight * 0.035,
+                                  //
+                                  //   child: PopupMenuButton<String>(
+                                  //     padding: EdgeInsets.zero,
+                                  //     iconSize: 22,
+                                  //
+                                  //     icon: Icon(
+                                  //       Icons.more_vert,
+                                  //       color: Color(0xFF7D838B),
+                                  //     ),
+                                  //
+                                  //     onSelected: (value) async {
+                                  //       if (value == 'edit') {
+                                  //         final navContext = context;
+                                  //         final updated = await Navigator.push(
+                                  //           navContext,
+                                  //           MaterialPageRoute(
+                                  //             builder: (context) => Editvehicledetails(vehicle: item),
+                                  //           ),
+                                  //         );
+                                  //         if (updated == true && navContext.mounted) {
+                                  //           Provider.of<VehicleViewmodel>(
+                                  //             navContext,
+                                  //             listen: false,
+                                  //           ).vehicleApi();
+                                  //         }
+                                  //       }
+                                  //     },
+                                  //
+                                  //     itemBuilder: (context) => [
+                                  //
+                                  //       PopupMenuItem(
+                                  //         value: 'edit',
+                                  //         child: Text('Edit'),
+                                  //       ),
+                                  //
+                                  //       PopupMenuItem(
+                                  //         value: 'delete',
+                                  //         child: Text('Delete'),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
+
                                   SizedBox(
                                     width: Sizes.screenWidth * 0.040,
                                     height: Sizes.screenHeight * 0.035,
@@ -404,7 +452,92 @@ class _AddvehicleState extends State<Addvehicle> {
                                         color: Color(0xFF7D838B),
                                       ),
 
-                                      onSelected: (value) {},
+                                      onSelected: (value) async {
+
+                                        if (value == 'edit') {
+                                          final navContext = context;
+
+                                          final updated = await Navigator.push(
+                                            navContext,
+                                            MaterialPageRoute(
+                                              builder: (context) => Editvehicledetails(vehicle: item),
+                                            ),
+                                          );
+
+                                          if (updated == true && navContext.mounted) {
+                                            Provider.of<VehicleViewmodel>(
+                                              navContext,
+                                              listen: false,
+                                            ).vehicleApi();
+                                          }
+                                        }
+
+                                        // DELETE VEHICLE
+                                        else if (value == 'delete') {
+
+                                          showDialog(
+                                            context: context,
+                                            builder: (dialogContext) {
+                                              return AlertDialog(
+                                                title: Text('Delete Vehicle'),
+
+                                                content: Text(
+                                                  'Are you sure you want to delete this vehicle?',
+                                                ),
+
+                                                actions: [
+
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(dialogContext);
+                                                    },
+                                                    child: Text('Cancel'),
+                                                  ),
+
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      final currentCtx = context;
+                                                      Navigator.pop(dialogContext);
+
+                                                      try {
+                                                        await Provider.of<DeleteVehicleViewModel>(
+                                                          currentCtx,
+                                                          listen: false,
+                                                        ).deleteVehicle(item.id.toString());
+
+                                                        if (currentCtx.mounted) {
+                                                          Utils.showSuccessMessage(
+                                                            currentCtx,
+                                                            'Vehicle deleted successfully',
+                                                          );
+
+                                                          Provider.of<VehicleViewmodel>(
+                                                            currentCtx,
+                                                            listen: false,
+                                                          ).vehicleApi();
+                                                        }
+                                                      } catch (e) {
+                                                        if (currentCtx.mounted) {
+                                                          Utils.showErrorMessage(
+                                                            currentCtx,
+                                                            'Failed to delete vehicle',
+                                                          );
+                                                        }
+                                                      }
+                                                    },
+                                                    child: const Text(
+                                                      'Delete',
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
 
                                       itemBuilder: (context) => [
 
@@ -417,6 +550,7 @@ class _AddvehicleState extends State<Addvehicle> {
                                           value: 'delete',
                                           child: Text('Delete'),
                                         ),
+
                                       ],
                                     ),
                                   ),

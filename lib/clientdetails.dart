@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:mahindra_bricks/Constant/Constant_Color.dart';
 import 'package:mahindra_bricks/Constant/Sizes.dart';
 import 'package:mahindra_bricks/Constant/customesamrycard.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl;
 
 import 'Constant/ConstantOrderhistory.dart';
+import 'Constant/Constant_Appbar.dart';
 import 'model/clistlist_model.dart';
 
 class Clientdetails extends StatefulWidget {
@@ -16,117 +18,51 @@ class Clientdetails extends StatefulWidget {
     required this.data,
   });
 
-  //Clientdetails({super.key});
   @override
   State<Clientdetails> createState() => _ClientdetailsState();
 }
+
 class _ClientdetailsState extends State<Clientdetails> {
+  String _formatOrderDateTime(dynamic createdAt, dynamic orderDate) {
+    String rawStr = '';
+    if (createdAt != null &&
+        createdAt.toString().trim().isNotEmpty &&
+        createdAt.toString().toLowerCase() != 'null') {
+      rawStr = createdAt.toString().trim();
+    } else if (orderDate != null &&
+        orderDate.toString().trim().isNotEmpty &&
+        orderDate.toString().toLowerCase() != 'null') {
+      rawStr = orderDate.toString().trim();
+    }
+
+    if (rawStr.isEmpty) return '-';
+
+    try {
+      DateTime dt = DateTime.parse(rawStr).toLocal();
+      String formattedDate = DateFormat('dd-MM-yyyy').format(dt);
+      String formattedTime = DateFormat('hh:mm a').format(dt);
+      return '$formattedDate\n$formattedTime';
+    } catch (e) {
+      return rawStr;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFBF3EF),
+      backgroundColor: AppColor.bodybackgroundColor,
+      appBar: ConstantAppBar(
+        title: 'Dashboard',
+        showBranding: true,
+        showBackButton: true,
+        logoAsset: 'assets/logo.jpg',
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: Sizes.screenHeight * 0.083,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          Icons.arrow_back,
-                          size: 27,
-                          color: Color(0xFF81241B),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: Sizes.screenWidth * 0.12,
-                          width: Sizes.screenWidth * 0.12,
-                          padding: EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Color(0xFFB88C7B),
-                              width: 1.5,
-                            ),
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/logo.jpg',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 7),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'MAHINDRA BRICKS',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF81241B),
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            Text(
-                              'P A V E R   B L O C K S',
-                              style: GoogleFonts.poppins(
-                                fontSize: 8,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF81241B),
-                                letterSpacing: 0.6,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 8),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Client Details',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF81241B),
-                      ),
-                    ),
-                    Text(
-                      'View customer information and orders',
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: Color(0xFF687078),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 8),
+              _buildHeader(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Container(
@@ -489,7 +425,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                               : '';
                           return OrderHistoryItem(
                             orderNo: order.orderNumber?.toString() ?? '',
-                            date: order.orderDate?.toString() ?? '',
+                            date: _formatOrderDateTime(order.createdAt, order.orderDate),
                             product: productName,
                             quantity: quantity,
                             totalAmount: '₹ ${order.totalAmount ?? '0'}',
@@ -499,7 +435,7 @@ class _ClientdetailsState extends State<Clientdetails> {
                           );
                         }).toList()
                       : [],
-                  onOrderTap: (order) {
+                     onOrderTap: (order) {
                     debugPrint('Selected Order: ${order.orderNo}');
                   },
                 ),
@@ -509,6 +445,68 @@ class _ClientdetailsState extends State<Clientdetails> {
 
             ],
           ),
+        ),
+      ),
+    );
+  }
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: Sizes.screenHeight * 0.010,
+        vertical: Sizes.screenHeight * 0.010,
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Sizes.screenWidth * 0.010),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Client Details',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.stockAmountColor,
+                  ),
+                ),
+                Text(
+                  'View customer information and orders',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.gey,
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(width: 8),
+
+            // CustomButton(
+            //   padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            //   height: 35,
+            //   width: 100,
+            //   text: 'Add Client',
+            //   fontSize: 12,
+            //   fontWeight: .w500,
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => Addclient()),
+            //     );
+            //   },
+            //   iconOnLeft: true,
+            //   icon: Icons.add,
+            //   iconSize: 15,
+            //   iconSpacing: 2,
+            // ),
+          ],
         ),
       ),
     );

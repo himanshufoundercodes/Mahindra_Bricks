@@ -105,7 +105,7 @@ class OrderHistoryTable extends StatelessWidget {
                     children: const [
                       _OrderCell('#', 32, isHeader: true),
                       _OrderCell('Order No.', 100, isHeader: true),
-                      _OrderCell('Date', 82, isHeader: true),
+                      _OrderCell('Date & Time', 90, isHeader: true),
                       _OrderCell('Product & Qty', 95, isHeader: true),
                       _OrderCell('Total Amount', 82, isHeader: true),
                       _OrderCell('Paid / Pending', 90, isHeader: true),
@@ -176,7 +176,7 @@ class OrderHistoryTile extends StatelessWidget {
       children: [
         _OrderCell('$number', 32),
         _OrderCell(order.orderNo, 100),
-        _OrderCell(order.date, 82),
+        _OrderCell(order.date, 90),
         _OrderCell(
           '${order.product}\n${order.quantity}',
           95,

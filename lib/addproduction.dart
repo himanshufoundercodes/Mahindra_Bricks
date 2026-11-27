@@ -74,6 +74,8 @@ class _AddProductionState extends State<AddProduction> {
     if (success) {
       Utils.showSuccessMessage(context, "Save Production Successfully!");
 
+      Provider.of<StocklistViewmodel>(context, listen: false).stockListApi();
+
       await Future.delayed(Duration(milliseconds: 500));
 
       if (!mounted) return;
@@ -94,8 +96,16 @@ class _AddProductionState extends State<AddProduction> {
     final stockViewModel = Provider.of<StocklistViewmodel>(context);
     final stockList = stockViewModel.stockListModel?.data ?? [];
 
-    if (selectedProduct == null && stockList.isNotEmpty) {
-      selectedProduct = stockList.first;
+    if (stockList.isNotEmpty) {
+      if (selectedProduct == null) {
+        selectedProduct = stockList.first;
+      } else {
+        final match = stockList.firstWhere(
+          (p) => p.id == selectedProduct!.id,
+          orElse: () => stockList.first,
+        );
+        selectedProduct = match;
+      }
     }
 
     return Scaffold(
@@ -554,6 +564,9 @@ class _AddProductionState extends State<AddProduction> {
                             child: TextField(
                               controller: quanityController,
                               keyboardType: TextInputType.number,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
                               decoration: InputDecoration(
                                 hintText: '5000',
                                 hintStyle: GoogleFonts.poppins(
