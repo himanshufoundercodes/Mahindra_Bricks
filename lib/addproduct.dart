@@ -107,6 +107,12 @@ class _AddproductState extends State<Addproduct> {
             widget.category.toString().trim().isNotEmpty)
         ? widget.category.toString().trim()
         : 'Bricks';
+    final String colourStr =
+        (widget.colour != null &&
+            widget.colour.toString().trim().isNotEmpty &&
+            widget.colour.toString().toLowerCase() != 'null')
+        ? widget.colour.toString().trim()
+        : 'Red';
     final String displayStatus =
         (widget.stockStatus != null &&
             widget.stockStatus.toString().trim().isNotEmpty)
@@ -258,28 +264,33 @@ class _AddproductState extends State<Addproduct> {
                             children: [
                               Row(
                                 children: [
-                                  product(
-                                    title: 'Category',
-                                    subtitle: categoryStr,
-                                    icon: Icons.eighteen_mp,
+                                  Expanded(
+                                    child: product(
+                                      title: 'Category',
+                                      subtitle: categoryStr,
+                                      icon: Icons.category,
+                                    ),
                                   ),
-                                  SizedBox(width: Sizes.screenWidth * 0.005),
-                                  product(
-                                    title: 'Size (L × W × H)',
-                                    subtitle: sizeStr,
-                                    icon: Icons.straighten,
+                                   SizedBox(width: 4),
+                                  Expanded(
+                                    child: product(
+                                      title: 'Colour',
+                                      subtitle: colourStr,
+                                      icon: Icons.palette,
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 10),
+                               SizedBox(height: 8),
                               Row(
                                 children: [
-                                  product(
-                                    title: 'Colour',
-                                    subtitle: 'Red',
-                                    icon: Icons.view_in_ar,
+                                  Expanded(
+                                    child: product(
+                                      title: 'Size (L × W × H)',
+                                      subtitle: sizeStr,
+                                      icon: Icons.straighten,
+                                    ),
                                   ),
-                                  const SizedBox(width: 18),
                                 ],
                               ),
                             ],
@@ -427,32 +438,36 @@ class _AddproductState extends State<Addproduct> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Product Details',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColor.stockAmountColor,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Product Details',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.stockAmountColor,
+                    ),
                   ),
-                ),
-                Text(
-                  'View product information and stock details',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.gey,
+                  Text(
+                    'View product information and stock details',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.gey,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
-            SizedBox(width: 8),
+            SizedBox(width: 6),
 
             CustomButton(
               padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
@@ -485,6 +500,7 @@ class _AddproductState extends State<Addproduct> {
                       widthMm: widget.widthMm,
                       heightMm: widget.heightMm,
                       stockStatus: widget.stockStatus,
+                      size: widget.size,
                     ),
                   ),
                 );
@@ -507,31 +523,39 @@ class _AddproductState extends State<Addproduct> {
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: EdgeInsets.all(4),
+          padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             color: AppColor.imgbg,
             borderRadius: BorderRadius.circular(5),
           ),
-          child: Icon(icon, size: 16, color: AppColor.stockTitleColor),
+          child: Icon(icon, size: 14, color: AppColor.stockTitleColor),
         ),
-        SizedBox(width: 6),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: GoogleFonts.poppins(fontSize: 10, color: Colors.blueGrey),
-            ),
-            Text(
-              subtitle,
-              style: GoogleFonts.poppins(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
+        const SizedBox(width: 4),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.poppins(fontSize: 9, color: Colors.blueGrey),
               ),
-            ),
-          ],
+              Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.poppins(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

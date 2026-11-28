@@ -135,6 +135,7 @@ class _NeworderState extends State<Neworder> {
     final success = await addOrderVM.orderApi(
       selectedClient!,
       deliveryDateStr,
+      OrderaddressController.text.trim(),
       selectedVehicle?.vehicle_number?.toString() ?? "",
       selectedPaymentMode,
       OrdertransportController.text.trim().isEmpty

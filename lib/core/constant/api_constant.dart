@@ -35,5 +35,6 @@ class ApiConstants {
   static const String updateLabourUrl = '${baseUrl}updateLabour';
   static const String updateVehicleUrl = '${baseUrl}updateVehicles';
   static const String deleteVehicleUrl = '${baseUrl}deleteVehicles';
+  static const String labourAttendanceHistoryUrl = '${baseUrl}labour/attendance-history/';
 
 }

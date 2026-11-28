@@ -23,6 +23,11 @@ class MainActivity: FlutterActivity() {
                 if (filePath != null && phone != null) {
                     try {
                         val file = File(filePath)
+                        if (!file.exists()) {
+                            result.error("FILE_NOT_FOUND", "PDF file does not exist", null)
+                            return@setMethodCallHandler
+                        }
+
                         val uri: Uri = FileProvider.getUriForFile(
                             this,
                             "${applicationContext.packageName}.fileprovider",
@@ -34,7 +39,7 @@ class MainActivity: FlutterActivity() {
                             formattedPhone = "91$formattedPhone"
                         }
 
-                        val intent = Intent(Intent.ACTION_SEND).apply {
+                        val baseIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "application/pdf"
                             putExtra(Intent.EXTRA_STREAM, uri)
                             putExtra("jid", "$formattedPhone@s.whatsapp.net")
@@ -42,28 +47,46 @@ class MainActivity: FlutterActivity() {
                                 putExtra(Intent.EXTRA_TEXT, text)
                             }
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
 
-                        // Try standard WhatsApp first
-                        intent.setPackage("com.whatsapp")
-                        if (intent.resolveActivity(packageManager) != null) {
-                            startActivity(intent)
+                        // 1. Try Standard WhatsApp directly
+                        try {
+                            applicationContext.grantUriPermission("com.whatsapp", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            val waIntent = Intent(baseIntent).apply {
+                                setPackage("com.whatsapp")
+                            }
+                            startActivity(waIntent)
                             result.success(true)
                             return@setMethodCallHandler
+                        } catch (_: Exception) {
+                            // Standard WhatsApp not installed or failed
                         }
 
-                        // Try WhatsApp Business
-                        intent.setPackage("com.whatsapp.w4b")
-                        if (intent.resolveActivity(packageManager) != null) {
-                            startActivity(intent)
+                        // 2. Try WhatsApp Business directly
+                        try {
+                            applicationContext.grantUriPermission("com.whatsapp.w4b", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            val w4bIntent = Intent(baseIntent).apply {
+                                setPackage("com.whatsapp.w4b")
+                            }
+                            startActivity(w4bIntent)
                             result.success(true)
                             return@setMethodCallHandler
+                        } catch (_: Exception) {
+                            // WhatsApp Business not installed or failed
                         }
 
-                        // Fallback: chooser
-                        intent.setPackage(null)
-                        startActivity(Intent.createChooser(intent, "Share Invoice PDF"))
-                        result.success(true)
+                        // 3. Fallback: Chooser
+                        try {
+                            val chooser = Intent.createChooser(baseIntent, "Share Invoice PDF").apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            startActivity(chooser)
+                            result.success(true)
+                        } catch (e: Exception) {
+                            result.error("SHARE_ERROR", e.localizedMessage, null)
+                        }
                     } catch (e: Exception) {
                         result.error("SHARE_ERROR", e.localizedMessage, null)
                     }

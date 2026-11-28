@@ -16,6 +16,7 @@ class AddOrderViewModel with ChangeNotifier {
   Future<bool> orderApi(
       String clientId,
       String deliveryDate,
+      String deliveryAddress,
       String vehicleNumber,
       String paymentOption,
       String transportCharge,
@@ -34,6 +35,8 @@ class AddOrderViewModel with ChangeNotifier {
       var data = {
         "client_id": clientId,
         "delivery_date": deliveryDate,
+        "delivery_address": deliveryAddress,
+        "delivery_location": deliveryAddress,
         "vehicle_number": vehicleNumber,
         "payment_option": paymentOption,
         "items": items,
@@ -43,11 +46,11 @@ class AddOrderViewModel with ChangeNotifier {
         "advance_amount": advanceAmount,
       };
 
-      debugPrint("Attendance Data: $data");
+      debugPrint("Order Data: $data");
 
       final response = await _addOrderRepo.orderApi(data);
 
-      debugPrint("Attendance Saved Successfully");
+      debugPrint("Order Saved Successfully");
       debugPrint("Response: $response");
 
       return true;

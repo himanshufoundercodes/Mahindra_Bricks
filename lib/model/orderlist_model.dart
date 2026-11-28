@@ -148,6 +148,7 @@ class OrderdsDataModel {
   final String client_id;
   final String client_name;
   final String client_mobile;
+  final String client_address;
   final String delivery_address;
   final String delivery_location;
   final String delivery_date;
@@ -183,6 +184,7 @@ class OrderdsDataModel {
     required this.client_id,
     required this.client_name,
     required this.client_mobile,
+    this.client_address = '',
     required this.delivery_address,
     required this.delivery_location,
     required this.delivery_date,
@@ -232,29 +234,28 @@ class OrderdsDataModel {
       return '';
     }
 
-    // Client Address (Client Details Card): Prioritize client_address -> address -> delivery_address
-    String addressVal = extractKey([
+    // Client Address (Client Details Card): Prioritize client_address -> address -> client_location
+    String clientAddressVal = extractKey([
       'client_address',
       'address',
-      'delivery_address',
       'client_location',
     ]);
 
-    // Delivery Location (Delivery Details Card): Prioritize delivery_location -> location -> site_location -> delivery_address
-    String locationVal = extractKey([
-      'delivery_location',
-      'location',
-      'site_location',
+    // Delivery Address
+    String deliveryAddressVal = extractKey([
       'delivery_address',
+      'delivery_location',
+      'site_location',
+      'location',
     ]);
 
-    // Fallbacks if one is missing
-    if (addressVal.isEmpty) {
-      addressVal = locationVal;
-    }
-    if (locationVal.isEmpty) {
-      locationVal = addressVal;
-    }
+    // Delivery Location (Delivery Details Card)
+    String locationVal = extractKey([
+      'delivery_location',
+      'delivery_address',
+      'location',
+      'site_location',
+    ]);
 
     return OrderdsDataModel(
       id: _toInt(json['id']),
@@ -263,7 +264,8 @@ class OrderdsDataModel {
       client_id: json['client_id']?.toString() ?? '',
       client_name: json['client_name']?.toString() ?? '',
       client_mobile: json['client_mobile']?.toString() ?? '',
-      delivery_address: addressVal,
+      client_address: clientAddressVal,
+      delivery_address: deliveryAddressVal,
       delivery_location: locationVal,
       delivery_date: json['delivery_date']?.toString() ?? '',
       vehicle_number: json['vehicle_number']?.toString() ?? '',

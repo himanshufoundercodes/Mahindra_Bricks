@@ -10,6 +10,7 @@ import 'package:mahindra_bricks/viewmodel/addnewproductview_model.dart';
 import 'package:mahindra_bricks/viewmodel/addorder_viewmodel.dart';
 import 'package:mahindra_bricks/viewmodel/addproductionview_model.dart';
 import 'package:mahindra_bricks/viewmodel/addvehicleview_model.dart';
+import 'package:mahindra_bricks/viewmodel/attendenceView_model.dart';
 import 'package:mahindra_bricks/viewmodel/categoryview_model.dart';
 import 'package:mahindra_bricks/viewmodel/cementstockview_model.dart';
 import 'package:mahindra_bricks/viewmodel/clientview_model.dart';
@@ -135,6 +136,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => DeleteVehicleViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LabourDetailViewModel(),
         ),
       ],
       child: const MyApp(),

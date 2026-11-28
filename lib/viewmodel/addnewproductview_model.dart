@@ -7,7 +7,9 @@ import 'package:mahindra_bricks/Constant/Constant_bottomnav.dart'
     show CustomBottomNavBar;
 import 'package:mahindra_bricks/repo/addproduct_repo.dart';
 import 'package:mahindra_bricks/utils/utils.dart';
+import 'package:mahindra_bricks/viewmodel/stocklist_viewmodel.dart';
 import 'package:mahindra_bricks/viewmodel/user_view_model.dart';
+import 'package:provider/provider.dart';
 
 class AddNewProductViewModel with ChangeNotifier {
   final AddProductRepo _addProductRepo = AddProductRepo();
@@ -60,7 +62,9 @@ class AddNewProductViewModel with ChangeNotifier {
       "product_status": productStatus,
     };
 
-    Map<String, dynamic> files = {"product_images": productImage};
+    Map<String, dynamic> files = {
+      if (productImage != null) "product_image": productImage,
+    };
 
     //  PRINT REQUEST DATA (DEBUG)
     print("=================== 📤 JOB REQUEST DEBUG ===================");
@@ -72,7 +76,9 @@ class AddNewProductViewModel with ChangeNotifier {
     });
 
     print("\n FILE FIELDS:");
-    // print("  profile_photo → ${profilePhoto.path}");
+    if (productImage != null) {
+      print("  productImage → ${productImage.path}");
+    }
 
     print("============================================================\n");
 
@@ -99,6 +105,15 @@ class AddNewProductViewModel with ChangeNotifier {
                   ? "Product updated successfully"
                   : "Product added successfully"),
         );
+
+        PaintingBinding.instance.imageCache.clear();
+        PaintingBinding.instance.imageCache.clearLiveImages();
+
+        Provider.of<StocklistViewmodel>(
+          context,
+          listen: false,
+        ).stockListApi();
+
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(

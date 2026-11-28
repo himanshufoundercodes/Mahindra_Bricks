@@ -12,6 +12,7 @@ import 'Constant/Constantcustomecalender.dart';
 import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
 import 'circularprogressindicator.dart';
+import 'dailyattendencesummary.dart';
 import 'model/dailyattendence.dart';
 
 class Dailyattendence extends StatefulWidget {
@@ -27,6 +28,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
   final TextEditingController searchController = TextEditingController();
   final Map<int, String> _attendanceStatus = {};
   final Map<int, TextEditingController> _overtimeControllers = {};
+  String selectedStatusFilter = 'All';
 
   @override
   void initState() {
@@ -68,7 +70,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
       return false;
     }
     if (targetDate.isAtSameMomentAs(today)) {
-      return now.hour >= 18;
+      return now.hour >= 9;
     }
     return true;
   }
@@ -178,11 +180,24 @@ class _DailyattendenceState extends State<Dailyattendence> {
   List<Workers> getFilteredWorkers(List<Workers>? apiWorkers) {
     if (apiWorkers == null) return [];
     String query = searchController.text.toLowerCase();
-    if (query.isEmpty) return apiWorkers;
     return apiWorkers.where((worker) {
       final name = worker.name.toLowerCase();
       final mobile = worker.mobile.toLowerCase();
-      return name.contains(query) || mobile.contains(query);
+      final matchesSearch = query.isEmpty || name.contains(query) || mobile.contains(query);
+
+      final status = _getLabourStatus(worker);
+      bool matchesFilter = true;
+      if (selectedStatusFilter == 'Present') {
+        matchesFilter = status == 'Present';
+      } else if (selectedStatusFilter == 'Half Day') {
+        matchesFilter = status == 'Half Day';
+      } else if (selectedStatusFilter == 'Absent') {
+        matchesFilter = status == 'Absent';
+      } else if (selectedStatusFilter == 'Not Marked') {
+        matchesFilter = status.isEmpty;
+      }
+
+      return matchesSearch && matchesFilter;
     }).toList();
   }
 
@@ -201,9 +216,28 @@ class _DailyattendenceState extends State<Dailyattendence> {
       }
     }
 
-    final summary = apiModel?.summary;
     final allWorkersList = apiModel?.workers ?? [];
     final workers = getFilteredWorkers(apiModel?.workers);
+
+    int liveTotalLabour = allWorkersList.length;
+    int livePresentCount = 0;
+    int liveHalfDayCount = 0;
+    int liveAbsentCount = 0;
+    int liveNotMarkedCount = 0;
+
+    for (var labour in allWorkersList) {
+      final status = _getLabourStatus(labour);
+      if (status == 'Present') {
+        livePresentCount++;
+      } else if (status == 'Half Day') {
+        liveHalfDayCount++;
+      } else if (status == 'Absent') {
+        liveAbsentCount++;
+      } else {
+        liveNotMarkedCount++;
+      }
+    }
+
     final canSave = _canMarkAttendance() && _isAllAttendanceMarked(allWorkersList);
 
     return Scaffold(
@@ -322,7 +356,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
                         });
                         _fetchAttendanceForDate(selectedDate);
                       },
-                      child: const Padding(
+                      child:  Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         child: Icon(
                           Icons.chevron_right,
@@ -423,10 +457,16 @@ class _DailyattendenceState extends State<Dailyattendence> {
                             width: Sizes.screenWidth * 0.25,
                             child: _attendanceCard(
                               icon: Icons.groups,
-                              count: summary?.totalLabour?.toString() ?? '0',
+                              count: liveTotalLabour.toString(),
                               title: 'Total Labour',
                               iconColor: AppColor.stockUnitColor,
                               bgColor: AppColor.bgbacklight,
+                              isSelected: selectedStatusFilter == 'All',
+                              onTap: () {
+                                setState(() {
+                                  selectedStatusFilter = 'All';
+                                });
+                              },
                             ),
                           ),
                           SizedBox(width: Sizes.screenWidth * 0.015),
@@ -434,10 +474,16 @@ class _DailyattendenceState extends State<Dailyattendence> {
                             width: Sizes.screenWidth * 0.25,
                             child: _attendanceCard(
                               icon: Icons.check_circle,
-                              count: summary?.present?.toString() ?? '0',
+                              count: livePresentCount.toString(),
                               title: 'Present',
                               iconColor: AppColor.green,
                               bgColor: AppColor.lightgreenbg,
+                              isSelected: selectedStatusFilter == 'Present',
+                              onTap: () {
+                                setState(() {
+                                  selectedStatusFilter = 'Present';
+                                });
+                              },
                             ),
                           ),
                           SizedBox(width: Sizes.screenWidth * 0.015),
@@ -445,10 +491,16 @@ class _DailyattendenceState extends State<Dailyattendence> {
                             width: Sizes.screenWidth * 0.25,
                             child: _attendanceCard(
                               icon: Icons.watch_later,
-                              count: summary?.halfDay?.toString() ?? '0',
+                              count: liveHalfDayCount.toString(),
                               title: 'Half Day',
                               iconColor: AppColor.yellow,
                               bgColor: AppColor.lightyellow,
+                              isSelected: selectedStatusFilter == 'Half Day',
+                              onTap: () {
+                                setState(() {
+                                  selectedStatusFilter = 'Half Day';
+                                });
+                              },
                             ),
                           ),
                           SizedBox(width: Sizes.screenWidth * 0.015),
@@ -456,10 +508,16 @@ class _DailyattendenceState extends State<Dailyattendence> {
                             width: Sizes.screenWidth * 0.25,
                             child: _attendanceCard(
                               icon: Icons.cancel,
-                              count: summary?.absent?.toString() ?? '0',
+                              count: liveAbsentCount.toString(),
                               title: 'Absent',
                               iconColor: AppColor.red2,
                               bgColor: AppColor.verylightredbg,
+                              isSelected: selectedStatusFilter == 'Absent',
+                              onTap: () {
+                                setState(() {
+                                  selectedStatusFilter = 'Absent';
+                                });
+                              },
                             ),
                           ),
                           SizedBox(width: Sizes.screenWidth * 0.015),
@@ -467,10 +525,16 @@ class _DailyattendenceState extends State<Dailyattendence> {
                             width: Sizes.screenWidth * 0.25,
                             child: _attendanceCard(
                               icon: Icons.remove_circle,
-                              count: summary?.notMarked?.toString() ?? '0',
+                              count: liveNotMarkedCount.toString(),
                               title: 'Not Marked',
                               iconColor: AppColor.bggrey,
                               bgColor: AppColor.darkgrey,
+                              isSelected: selectedStatusFilter == 'Not Marked',
+                              onTap: () {
+                                setState(() {
+                                  selectedStatusFilter = 'Not Marked';
+                                });
+                              },
                             ),
                           ),
                         ],
@@ -629,16 +693,30 @@ class _DailyattendenceState extends State<Dailyattendence> {
                         final labourId = labour.labourId;
                         final currentStatus = _getLabourStatus(labour);
 
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 8, left: 10, right: 10),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: AppColor.white,
-                            borderRadius: BorderRadius.circular(9),
-                            border: Border.all(
-                                color: AppColor.grey),
-                          ),
-                          child: Column(
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DailyAttendanceSummary(
+                                  labour: labour,
+                                  selectedDate: selectedDate,
+                                  attendanceStatus: currentStatus,
+                                ),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(9),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 8, left: 10, right: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
+                              borderRadius: BorderRadius.circular(9),
+                              border: Border.all(
+                                  color: AppColor.grey),
+                            ),
+                            child: Column(
                             children: [
                               Row(
                                 children: [
@@ -864,6 +942,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
                               ),
                             ],
                           ),
+                        ),
                         );
                       },
                     ),
@@ -952,14 +1031,23 @@ class _DailyattendenceState extends State<Dailyattendence> {
     required String title,
     required Color iconColor,
     required Color bgColor,
+    bool isSelected = false,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 9),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(9),
-      ),
-      child: Row(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 9),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(9),
+          border: Border.all(
+            color: isSelected ? iconColor : Colors.transparent,
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 21, color: iconColor),
@@ -991,6 +1079,7 @@ class _DailyattendenceState extends State<Dailyattendence> {
           ),
         ],
       ),
+      )
     );
   }
 }

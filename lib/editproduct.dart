@@ -34,6 +34,7 @@ class Editproduct extends StatefulWidget {
   final dynamic widthMm;
   final dynamic heightMm;
   final dynamic stockStatus;
+  final dynamic size;
 
   Editproduct({
     super.key,
@@ -55,6 +56,7 @@ class Editproduct extends StatefulWidget {
     this.widthMm,
     this.heightMm,
     this.stockStatus,
+    this.size,
   });
 
   @override
@@ -199,28 +201,72 @@ class _EditproductState extends State<Editproduct> {
     nameController.text = widget.name?.toString() ?? '';
     productCodeController.text = widget.code?.toString() ?? '';
     productTypeController.text = widget.productType?.toString() ?? '';
-    lengthController.text = widget.lengthMm?.toString() ?? '';
-    widthController.text = widget.widthMm?.toString() ?? '';
-    hightController.text = widget.heightMm?.toString() ?? '';
+
+    String len = widget.lengthMm?.toString().trim() ?? '';
+    String wid = widget.widthMm?.toString().trim() ?? '';
+    String hei = widget.heightMm?.toString().trim() ?? '';
+
+    if (len.isEmpty || wid.isEmpty || hei.isEmpty) {
+      String dimStr = widget.size?.toString() ?? widget.description?.toString() ?? '';
+      dimStr = dimStr.replaceAll(RegExp(r'[^0-9×xX\s]'), '').trim();
+      List<String> parts = dimStr.split(RegExp(r'[×xX]'));
+      if (parts.length >= 3) {
+        if (len.isEmpty) len = parts[0].trim();
+        if (wid.isEmpty) wid = parts[1].trim();
+        if (hei.isEmpty) hei = parts[2].trim();
+      }
+    }
+
+    lengthController.text = len;
+    widthController.text = wid;
+    hightController.text = hei;
+
     quantityController.text = widget.AvaibleStock?.toString() ?? '';
     minimumStockController.text = widget.MinimumStockAlert?.toString() ?? '';
     costPriceController.text = widget.CostPrice?.toString() ?? '';
     selllingPriceController.text = widget.SellingPrice?.toString() ?? '';
     descriptionController.text = widget.description?.toString() ?? '';
 
-    if (widget.colour != null && widget.colour.toString().isNotEmpty) {
-      selectedColour = widget.colour.toString();
+    if (widget.colour != null && widget.colour.toString().trim().isNotEmpty) {
+      String c = widget.colour.toString().trim();
+      if (c.isNotEmpty) {
+        c = '${c[0].toUpperCase()}${c.substring(1).toLowerCase()}';
+        if (['Red', 'Grey', 'Yellow', 'Other'].contains(c)) {
+          selectedColour = c;
+        } else {
+          selectedColour = 'Other';
+        }
+      }
     }
+
     if (widget.stockStatus != null &&
-        widget.stockStatus.toString().isNotEmpty) {
-      productStatus = widget.stockStatus.toString();
+        widget.stockStatus.toString().trim().isNotEmpty) {
+      productStatus = widget.stockStatus.toString().trim();
     }
-    if (widget.categoryId != null && widget.categoryId.toString().isNotEmpty) {
-      selectedCategory = widget.categoryId.toString();
+
+    if (widget.categoryId != null && widget.categoryId.toString().trim().isNotEmpty) {
+      selectedCategory = widget.categoryId.toString().trim();
+    } else if (widget.category != null && widget.category.toString().trim().isNotEmpty) {
+      selectedCategory = widget.category.toString().trim();
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<CategoryViewModel>(context, listen: false).categoryApi();
+      Provider.of<CategoryViewModel>(context, listen: false).categoryApi().then((_) {
+        if (mounted) {
+          final catVM = Provider.of<CategoryViewModel>(context, listen: false);
+          if (catVM.categoryList.isNotEmpty) {
+            final match = catVM.categoryList.firstWhere(
+              (c) =>
+                  c.id.toString() == selectedCategory ||
+                  c.name?.toString().toLowerCase() == selectedCategory?.toLowerCase(),
+              orElse: () => catVM.categoryList.first,
+            );
+            setState(() {
+              selectedCategory = match.id.toString();
+            });
+          }
+        }
+      });
     });
   }
 
@@ -291,36 +337,14 @@ class _EditproductState extends State<Editproduct> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: selectedImage != null
-                                  ? Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.camera_alt_outlined,
-                                          size: 27,
-                                          color: AppColor.grey,
-                                        ),
-
-                                        SizedBox(height: 5),
-
-                                        Text(
-                                          'Tap to add image',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            color: Color(0xFF555555),
-                                          ),
-                                        ),
-
-                                        SizedBox(height: 3),
-
-                                        Text(
-                                          'JPG, PNG (Max 5 MB)',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 10,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ],
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.file(
+                                        selectedImage!,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                      ),
                                     )
                                   : Column(
                                       mainAxisAlignment:
@@ -333,15 +357,18 @@ class _EditproductState extends State<Editproduct> {
                                         ),
                                         SizedBox(height: 5),
                                         Text(
-                                          'Tap to add image',
+                                          (widget.image != null &&
+                                                  widget.image
+                                                      .toString()
+                                                      .isNotEmpty)
+                                              ? 'Tap to change image'
+                                              : 'Tap to add image',
                                           style: GoogleFonts.poppins(
                                             fontSize: 12,
-                                            color: Color(0xFF555555),
+                                            color: const Color(0xFF555555),
                                           ),
                                         ),
-
                                         SizedBox(height: 3),
-
                                         Text(
                                           'JPG, PNG (Max 5 MB)',
                                           style: GoogleFonts.poppins(

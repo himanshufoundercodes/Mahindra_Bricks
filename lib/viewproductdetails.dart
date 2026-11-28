@@ -23,6 +23,8 @@ import 'Constant/Constnat_Appbutton.dart';
 import 'Constant/Sizes.dart';
 import 'core/constant/api_constant.dart';
 import 'model/orderlist_model.dart';
+import 'model/clistlist_model.dart';
+import 'viewmodel/clientview_model.dart';
 import 'model/vehicle_model.dart';
 import 'viewmodel/vehicle_viewmodel.dart';
 
@@ -248,6 +250,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
               client_id: baseOrder.client_id,
               client_name: baseOrder.client_name,
               client_mobile: baseOrder.client_mobile,
+              client_address: baseOrder.client_address,
               delivery_address: baseOrder.delivery_address,
               delivery_location: baseOrder.delivery_location,
               delivery_date: baseOrder.delivery_date,
@@ -297,7 +300,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
     }
   }
 
-  Future<void> _shareInvoiceOnWhatsApp(OrderdsDataModel? order) async {
+  Future<void> _shareInvoice(OrderdsDataModel? order) async {
     if (order == null) {
       Utils.showErrorMessage(context, 'Order details not available');
       return;
@@ -333,6 +336,12 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
       final tempDir = await getTemporaryDirectory();
       final String filePath = '${tempDir.path}/Invoice_ORD_$orderNum.pdf';
       final File pdfFile = File(filePath);
+
+      if (await pdfFile.exists()) {
+        try {
+          await pdfFile.delete();
+        } catch (_) {}
+      }
 
       final token = await UserViewModel().getToken();
       final dio = Dio();
@@ -440,6 +449,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
       }
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ClientListViewModel>(context, listen: false).clintApi();
       Provider.of<VehicleViewmodel>(context, listen: false).vehicleApi().then((_) {
         if (mounted) {
           final vehicleVM = Provider.of<VehicleViewmodel>(context, listen: false);
@@ -486,26 +496,33 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
 
     String getClientLocation(OrderdsDataModel? o) {
       if (o == null) return 'N/A';
-      if (o.delivery_address.trim().isNotEmpty &&
-          o.delivery_address.trim().toLowerCase() != 'null') {
-        return o.delivery_address.trim();
+      if (o.client_address.trim().isNotEmpty &&
+          o.client_address.trim().toLowerCase() != 'null') {
+        return o.client_address.trim();
       }
-      if (o.delivery_location.trim().isNotEmpty &&
-          o.delivery_location.trim().toLowerCase() != 'null') {
-        return o.delivery_location.trim();
-      }
+      try {
+        final clientVM = Provider.of<ClientListViewModel>(context, listen: false);
+        final clients = clientVM.clientListModel?.data ?? [];
+        final matchedClient = clients.firstWhere(
+          (c) => c.id.toString() == o.client_id || c.mobile?.toString() == o.client_mobile,
+          orElse: () => clients.isNotEmpty ? clients.first : Data(),
+        );
+        if (matchedClient.address != null && matchedClient.address.toString().trim().isNotEmpty) {
+          return matchedClient.address.toString().trim();
+        }
+      } catch (_) {}
       return 'N/A';
     }
 
     String getDeliveryLocation(OrderdsDataModel? o) {
       if (o == null) return 'N/A';
-      if (o.delivery_location.trim().isNotEmpty &&
-          o.delivery_location.trim().toLowerCase() != 'null') {
-        return o.delivery_location.trim();
-      }
       if (o.delivery_address.trim().isNotEmpty &&
           o.delivery_address.trim().toLowerCase() != 'null') {
         return o.delivery_address.trim();
+      }
+      if (o.delivery_location.trim().isNotEmpty &&
+          o.delivery_location.trim().toLowerCase() != 'null') {
+        return o.delivery_location.trim();
       }
       return 'N/A';
     }
@@ -1841,7 +1858,7 @@ class _ViewproductdetailsState extends State<Viewproductdetails> {
                             size: 20,
                           ),
                           onPressed: () {
-                            _shareInvoiceOnWhatsApp(order);
+                            _shareInvoice(order);
                           },
                         ),
                       ),
